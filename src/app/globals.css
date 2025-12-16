@@ -1,0 +1,97 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Background: #0F0F10 -> HSL(240, 3%, 6%) */
+    --background: 240 3% 6%;
+
+    /* Foreground: #F5F5F0 -> HSL(60, 17%, 95%) */
+    --foreground: 60 17% 95%;
+
+    /* Card: Match Background or slightly lighter for depth - using Background for full industrial minimalist or Secondary */
+    /* User specified Secondary for cards: #27272A */
+    --card: 240 4% 16%;
+    --card-foreground: 60 17% 95%;
+
+    --popover: 240 3% 6%;
+    --popover-foreground: 60 17% 95%;
+
+    /* Primary: #E65100 -> HSL(21, 100%, 45%) */
+    --primary: 21 100% 45%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: #27272A -> HSL(240, 4%, 16%) */
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 60 17% 95%;
+
+    /* Muted: #71717A -> HSL(240, 4%, 46%) */
+    --muted: 240 4% 16%; /* Using secondary background for muted containers */
+    --muted-foreground: 240 4% 46%; /* The users specific muted color text */
+
+    --accent: 240 4% 16%;
+    --accent-foreground: 60 17% 95%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* Border: #3F3F46 -> HSL(240, 5%, 26%) */
+    --border: 240 5% 26%;
+    --input: 240 5% 26%;
+    --ring: 21 100% 45%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    /* Dark mode is the default/only mode in this theme, mapping same values */
+    --background: 240 3% 6%;
+    --foreground: 60 17% 95%;
+    --card: 240 4% 16%;
+    --card-foreground: 60 17% 95%;
+    --popover: 240 3% 6%;
+    --popover-foreground: 60 17% 95%;
+    --primary: 21 100% 45%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 60 17% 95%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 4% 46%;
+    --accent: 240 4% 16%;
+    --accent-foreground: 60 17% 95%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 5% 26%;
+    --input: 240 5% 26%;
+    --ring: 21 100% 45%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Industrial Typography Rules */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-bold uppercase tracking-tight;
+  }
+}
+
+@layer utilities {
+  .font-heading {
+    font-family: var(--font-playfair);
+  }
+  .font-body {
+    font-family: var(--font-inter);
+  }
+}
