@@ -78,17 +78,78 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
                       <SelectValue placeholder="Choose main material" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="forged-steel">Forged Steel</SelectItem>
+                      <SelectItem value="carbon-steel">Carbon Steel</SelectItem>
                       <SelectItem value="stainless-steel">Stainless Steel</SelectItem>
-                      <SelectItem value="iron">Iron</SelectItem>
+                      <SelectItem value="wrought-iron">Wrought Iron</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* 2. DIMENSIONS */}
-                <div className="space-y-2">
-                   <Label htmlFor="dimensions-new">Estimated Dimensions</Label>
-                   <Input id="dimensions-new" placeholder="e.g.: Length, Width, Height" />
+                <div className="space-y-4">
+                   <Label>Estimated Dimensions</Label>
+                   
+                   {/* Diagram Image Placeholder */}
+                   <div className="relative w-full h-48 bg-secondary/20 rounded-lg overflow-hidden border border-border flex items-center justify-center">
+                      <Image 
+                        src="/dimensions-guide-pic.jpeg" 
+                        alt="Dimensions Guide" 
+                        fill
+                        className="object-contain p-4"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <span className="text-muted-foreground text-sm bg-background/80 px-2 py-1 rounded hidden">
+                          Image Placeholder
+                        </span>
+                      </div>
+                   </div>
+
+                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      {/* Blade Width: 1-7cm */}
+                      <div className="space-y-2">
+                        <Label htmlFor="blade-width" className="text-xs text-muted-foreground uppercase tracking-wide">Blade Width (cm)</Label>
+                        <Select>
+                          <SelectTrigger id="blade-width">
+                            <SelectValue placeholder="Select width" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[200px]">
+                            {Array.from({ length: 7 }, (_, i) => i + 1).map((num) => (
+                              <SelectItem key={num} value={num.toString()}>{num} cm</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Blade Length: 5-30cm */}
+                      <div className="space-y-2">
+                        <Label htmlFor="blade-length" className="text-xs text-muted-foreground uppercase tracking-wide">Blade Length (cm)</Label>
+                        <Select>
+                          <SelectTrigger id="blade-length">
+                            <SelectValue placeholder="Select length" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[200px]">
+                             {Array.from({ length: 26 }, (_, i) => i + 5).map((num) => (
+                              <SelectItem key={num} value={num.toString()}>{num} cm</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      {/* Handle Length: 10-50cm */}
+                      <div className="space-y-2">
+                        <Label htmlFor="handle-length" className="text-xs text-muted-foreground uppercase tracking-wide">Handle Length (cm)</Label>
+                         <Select>
+                          <SelectTrigger id="handle-length">
+                            <SelectValue placeholder="Select length" />
+                          </SelectTrigger>
+                          <SelectContent className="max-h-[200px]">
+                             {Array.from({ length: 41 }, (_, i) => i + 10).map((num) => (
+                              <SelectItem key={num} value={num.toString()}>{num} cm</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                   </div>
                 </div>
 
                 {/* 3. ACCURATE DESCRIPTION */}
@@ -188,9 +249,9 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
                       <SelectValue placeholder="Choose material" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="forged-steel">Forged Steel</SelectItem>
+                      <SelectItem value="carbon-steel">Carbon Steel</SelectItem>
                       <SelectItem value="stainless-steel">Stainless Steel</SelectItem>
-                      <SelectItem value="iron">Iron</SelectItem>
+                      <SelectItem value="wrought-iron">Wrought Iron</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
