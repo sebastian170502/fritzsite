@@ -45,25 +45,30 @@
   }
 
   .dark {
-    /* Dark mode is the default/only mode in this theme, mapping same values */
-    --background: 240 3% 6%;
-    --foreground: 60 17% 95%;
-    --card: 240 4% 16%;
-    --card-foreground: 60 17% 95%;
-    --popover: 240 3% 6%;
-    --popover-foreground: 60 17% 95%;
+    /* Keeping Dark Mode settings in case we want to toggle later, 
+       BUT putting the requested LIGHT values in :root means default is now light. 
+       If system preference is dark, next-themes might force .dark class.
+       For now, I'll update .dark to match :root to FORCE the look 
+       regardless of system setting, as requested "change... to plain white" */
+
+    --background: 0 0% 100%;
+    --foreground: 240 3% 6%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 3% 6%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 3% 6%;
     --primary: 21 100% 45%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 4% 16%;
-    --secondary-foreground: 60 17% 95%;
-    --muted: 240 4% 16%;
-    --muted-foreground: 240 4% 46%;
-    --accent: 240 4% 16%;
-    --accent-foreground: 60 17% 95%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 3% 6%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 3% 46%;
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 3% 6%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 5% 26%;
-    --input: 240 5% 26%;
+    --border: 240 5% 84%;
+    --input: 240 5% 84%;
     --ring: 21 100% 45%;
   }
 }

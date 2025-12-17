@@ -29,7 +29,7 @@ export default async function ShopPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col text-foreground">
-      <main className="flex-1 container mx-auto px-4 py-16">
+      <main className="flex-1 container mx-auto px-4 pt-16 pb-32">
         {/* Header Section */}
         <div className="flex flex-col items-center mb-16 text-center space-y-4">
           <h1 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tight">

@@ -17,6 +17,7 @@ export default async function CustomOrderPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Visual Header Section (Moved from Home) */}
+      {/* Visual Header Section (Moved from Home) */}
       <section className="relative w-full bg-secondary text-secondary-foreground">
         <div className="grid grid-cols-1 md:grid-cols-2 min-h-[500px]">
            {/* Video Section */}
@@ -35,11 +36,11 @@ export default async function CustomOrderPage() {
 
           {/* Text Content */}
           <div className="flex flex-col justify-center p-12 md:p-24 order-2 relative">
-            <h1 className="text-3xl md:text-5xl font-heading font-bold mb-6 leading-tight tracking-tighter uppercase text-white">
+            <h1 className="text-3xl md:text-5xl font-heading font-bold mb-6 leading-tight tracking-tighter uppercase text-foreground">
               Custom Order
             </h1>
-            <p className="text-lg md:text-xl font-light opacity-80 max-w-lg leading-relaxed font-body text-gray-300">
-               Personalized forged steel, stainless steel and iron tools.
+            <p className="text-muted-foreground/80 max-w-xl text-lg mb-8 font-light">
+              Personalized carbon steel, stainless steel and wrought iron tools.
             </p>
           </div>
         </div>
@@ -48,7 +49,7 @@ export default async function CustomOrderPage() {
         <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background via-background/60 to-transparent pointer-events-none z-10" />
       </section>
 
-      <main className="container mx-auto px-4 pb-20 -mt-10 relative z-20">
+      <main className="container mx-auto px-4 pb-32 -mt-10 relative z-20">
         <CustomOrderForm products={products} />
       </main>
     </div>

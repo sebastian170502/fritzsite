@@ -2,17 +2,8 @@
 
 import * as React from "react"
 import Link from "next/link"
-import Image from "next/image"
-import { Globe, ShoppingCart, ChevronDown, Menu } from "lucide-react"
+import { ShoppingCart, Menu, Info } from "lucide-react"
 import { CartSheet } from "@/components/cart-sheet"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
@@ -20,15 +11,15 @@ export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between px-4">
+    <header className="fixed top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="w-full h-16 flex items-center justify-between px-4 md:px-8">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2 transition-colors hover:opacity-80 z-50">
            <span className="text-xl font-heading font-bold tracking-tight uppercase">Fritz&apos;s Forge</span>
         </Link>
         
-            {/* Desktop Navigation */}
-        <nav className="hidden md:flex gap-8 items-center text-sm font-medium text-muted-foreground ml-8">
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex gap-8 items-center text-sm font-medium text-muted-foreground absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
             <Link href="/" className="hover:text-primary transition-colors font-body uppercase tracking-wider text-xs">
                 Home
             </Link>
@@ -41,7 +32,9 @@ export function Navbar() {
         </nav>
 
         {/* Actions */}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-4">
+          <CartSheet />
+
           {/* Mobile Menu */}
            <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
             <SheetTrigger asChild>
@@ -49,7 +42,7 @@ export function Navbar() {
                     <Menu className="h-5 w-5" />
                 </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="bg-background border-r border-border">
+            <SheetContent side="right" className="bg-background border-l border-border w-[300px]">
                 <div className="flex flex-col gap-8 mt-12">
                      <Link href="/" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold uppercase tracking-tight hover:text-primary">Home</Link>
                      <Link href="/shop" onClick={() => setIsMobileMenuOpen(false)} className="text-2xl font-bold uppercase tracking-tight hover:text-primary">Shop</Link>
@@ -57,27 +50,6 @@ export function Navbar() {
                 </div>
             </SheetContent>
           </Sheet>
-
-          {/* Language Selector */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full hidden md:flex">
-                    <Globe className="h-5 w-5 opacity-70" />
-                </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="bg-card border-border">
-                <DropdownMenuLabel>Language</DropdownMenuLabel>
-                <DropdownMenuSeparator className="bg-border" />
-                <DropdownMenuItem className="font-bold flex justify-between focus:bg-primary/20">
-                    English <span>✓</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="focus:bg-primary/20">
-                    Romanian
-                </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          <CartSheet />
         </div>
       </div>
     </header>

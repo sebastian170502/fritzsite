@@ -65,7 +65,7 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
               <CardHeader>
                 <CardTitle>Start Custom Order Request</CardTitle>
                 <CardDescription>
-                  Feel free to share any details or specific wishes regarding your product.
+                  Please share details and specific wishes regarding your product.
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -90,12 +90,12 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
                    <Label>Estimated Dimensions</Label>
                    
                    {/* Diagram Image Placeholder */}
-                   <div className="relative w-full h-48 bg-secondary/20 rounded-lg overflow-hidden border border-border flex items-center justify-center">
+                  <div className="relative w-full h-48 bg-secondary/20 rounded-lg overflow-hidden border border-border flex items-center justify-center">
                       <Image 
-                        src="/dimensions-guide-pic.jpeg" 
+                        src="/dimensions-guide-pic.jpg" 
                         alt="Dimensions Guide" 
                         fill
-                        className="object-contain p-4"
+                        className="object-cover"
                       />
                       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                         <span className="text-muted-foreground text-sm bg-background/80 px-2 py-1 rounded hidden">
@@ -107,7 +107,7 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       {/* Blade Width: 1-7cm */}
                       <div className="space-y-2">
-                        <Label htmlFor="blade-width" className="text-xs text-muted-foreground uppercase tracking-wide">Blade Width (cm)</Label>
+                        <Label htmlFor="blade-width" className="text-xs text-muted-foreground uppercase tracking-wide">1. Blade Width (cm)</Label>
                         <Select>
                           <SelectTrigger id="blade-width">
                             <SelectValue placeholder="Select width" />
@@ -122,7 +122,7 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
 
                       {/* Blade Length: 5-30cm */}
                       <div className="space-y-2">
-                        <Label htmlFor="blade-length" className="text-xs text-muted-foreground uppercase tracking-wide">Blade Length (cm)</Label>
+                        <Label htmlFor="blade-length" className="text-xs text-muted-foreground uppercase tracking-wide">2. Blade Length (cm)</Label>
                         <Select>
                           <SelectTrigger id="blade-length">
                             <SelectValue placeholder="Select length" />
@@ -137,7 +137,7 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
 
                       {/* Handle Length: 10-50cm */}
                       <div className="space-y-2">
-                        <Label htmlFor="handle-length" className="text-xs text-muted-foreground uppercase tracking-wide">Handle Length (cm)</Label>
+                        <Label htmlFor="handle-length" className="text-xs text-muted-foreground uppercase tracking-wide">3. Handle Length (cm)</Label>
                          <Select>
                           <SelectTrigger id="handle-length">
                             <SelectValue placeholder="Select length" />
@@ -154,7 +154,7 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
 
                 {/* 3. ACCURATE DESCRIPTION */}
                 <div className="space-y-2">
-                  <Label htmlFor="notes-new">Accurate Description with Tool/Product</Label>
+                  <Label htmlFor="notes-new">Accurate Description about Product</Label>
                   <Textarea 
                     id="notes-new" 
                     placeholder="Describe exactly what you want (e.g. 'Hand-forged hammer with oak handle'). Include functionality and style details."
