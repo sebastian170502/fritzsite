@@ -143,7 +143,7 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
                             <SelectValue placeholder="Select length" />
                           </SelectTrigger>
                           <SelectContent className="max-h-[200px]">
-                             {Array.from({ length: 41 }, (_, i) => i + 10).map((num) => (
+                             {Array.from({ length: 6 }, (_, i) => i + 10).map((num) => (
                               <SelectItem key={num} value={num.toString()}>{num} cm</SelectItem>
                             ))}
                           </SelectContent>

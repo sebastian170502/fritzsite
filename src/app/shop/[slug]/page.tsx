@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma"
 import { ProductDisplay } from "@/components/products/product-display"
 
 interface ProductPageProps {
-  params: {
+  params: Promise<{
     slug: string
-  }
+  }>
 }
 
 export default async function ProductPage({ params }: ProductPageProps) {
@@ -33,7 +33,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
   const serializedProduct = {
     ...product,
     price: Number(product.price),
-    images
+    images,
+    stock: product.stock
   }
 
   return (

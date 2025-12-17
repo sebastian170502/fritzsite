@@ -103,9 +103,14 @@ export function CartSheet() {
                             <div className="flex flex-1 flex-col justify-between">
                                 <div className="flex justify-between">
                                     <h3 className="font-medium text-sm line-clamp-2">{item.name}</h3>
-                                    <p className="text-sm font-semibold">
-                                        {new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON' }).format(item.price * item.quantity)}
-                                    </p>
+                                    <div className="flex flex-col items-end">
+                                      <p className="text-sm font-semibold text-primary">
+                                          {new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' }).format(item.price * item.quantity)}
+                                      </p>
+                                      <p className="text-xs text-muted-foreground mr-1">
+                                          ({new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON' }).format(item.price * item.quantity * 5)})
+                                      </p>
+                                    </div>
                                 </div>
                                 <div className="flex items-center justify-between mt-2">
                                      <div className="flex items-center border rounded-md h-8">
@@ -140,11 +145,16 @@ export function CartSheet() {
             <div className="space-y-4 pr-6 pt-6">
                 <Separator />
                 <div className="space-y-1.5">
-                    <div className="flex justify-between">
+                    <div className="flex justify-between items-baseline">
                         <span className="font-medium">Total</span>
-                        <span className="font-bold text-lg">
-                             {new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON' }).format(cart.total())}
-                        </span>
+                        <div className="flex flex-col items-end">
+                            <span className="font-bold text-lg text-primary">
+                                 {new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' }).format(cart.total())}
+                            </span>
+                            <span className="text-sm text-muted-foreground">
+                                 ({new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON' }).format(cart.total() * 5)})
+                            </span>
+                        </div>
                     </div>
                 </div>
                 <Button 

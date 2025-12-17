@@ -40,15 +40,15 @@ export default function Home() {
              playsInline
              className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
            >
-             <source src="/shop-video.mp4" type="video/mp4" />
+             <source src="/IMG_6125.MOV" type="video/mp4" />
            </video>
             
             {/* Content */}
             <div className="relative z-20 flex flex-col items-center justify-center text-center p-8 gap-6 h-full w-full">
-               <h2 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tight text-white drop-shadow-md transform transition-transform duration-500 group-hover:-translate-y-2">
+               <h2 className="text-4xl md:text-6xl font-heading font-bold uppercase tracking-tight text-black drop-shadow-sm transform transition-transform duration-500 group-hover:-translate-y-2">
                  Shop
                </h2>
-               <span className="inline-block px-8 py-3 border border-white/30 rounded-full text-white hover:text-primary hover:border-primary transition-colors uppercase tracking-widest text-sm font-medium">
+               <span className="inline-block px-8 py-3 border border-black/30 rounded-full text-black hover:text-primary hover:border-primary transition-colors uppercase tracking-widest text-sm font-medium">
                  Browse Collection
                </span>
             </div>

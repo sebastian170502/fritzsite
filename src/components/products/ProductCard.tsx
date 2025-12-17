@@ -61,11 +61,11 @@ export function ProductCard({ id, name, price, imageUrl, slug }: ProductCardProp
               <CardTitle className="text-lg font-medium line-clamp-2 group-hover:text-primary transition-colors font-heading tracking-wide">
                 {name}
               </CardTitle>
-            </div>
-            <p className="font-semibold text-lg text-primary mt-auto">
+            <p className="font-semibold text-lg text-white mt-auto">
               {formatPrice(price)}
             </p>
           </div>
+        </div>
         </CardContent>
       </Card>
     </Link>

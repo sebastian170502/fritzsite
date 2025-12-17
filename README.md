@@ -88,8 +88,13 @@ A premium, international e-commerce site for handmade metalwork, featuring a rug
 
 - **Layout Overhaul**: Fixed Header and Footer (64px each) with non-scrollable Home Page.
 - **Product Page**: Added detailed view with gallery and dual currency pricing.
+- **Stock Management**: Inventory tracking with "Out of Stock" state and quantity limits.
+- **Image Optimization**: Content management for product images (JPG conversion, caching fixes).
+- **Custom Order**: Updated "Handle Length" options to 10-15cm range.
+- **Media Refinements**: Updated Shop video and refined product imagery (e.g., proper Hammer cropping).
 - **Theme**: Enforced Dark Mode with high-contrast White text.
 - **Cart**: Functional shopping cart with quantity management.
+- **Code Stability**: Cleaned up legacy code (`src/app/products`), fixed Type errors, and hardened build process.
 
 ---
 

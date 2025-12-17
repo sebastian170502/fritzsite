@@ -15,6 +15,7 @@ interface ProductDisplayProps {
     description: string
     price: number
     images: string[]
+    stock: number
   }
 }
 
@@ -31,10 +32,23 @@ export function ProductDisplay({ product }: ProductDisplayProps) {
     new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON' }).format(val * 5)
 
   const handleQuantityChange = (delta: number) => {
-    setQuantity(prev => Math.max(1, prev + delta))
+    setQuantity(prev => {
+      const uniqueNew = prev + delta
+      // Prevent going below 1
+      if (uniqueNew < 1) return 1
+      // Prevent going above stock
+      if (uniqueNew > product.stock) return product.stock
+      return uniqueNew
+    })
   }
 
   const handleAddToCart = () => {
+    // Double check stock
+    if (quantity > product.stock) {
+        toast.error("Not enough stock available")
+        return
+    }
+
     for (let i = 0; i < quantity; i++) {
         addItem({
             id: product.id,
@@ -45,6 +59,8 @@ export function ProductDisplay({ product }: ProductDisplayProps) {
     }
     toast.success(`Added ${quantity} x ${product.name} to cart`)
   }
+
+  const isOutOfStock = product.stock <= 0
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16">
@@ -58,6 +74,13 @@ export function ProductDisplay({ product }: ProductDisplayProps) {
             className="object-cover"
             priority
           />
+          {isOutOfStock && (
+            <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                <span className="text-white text-2xl font-bold uppercase tracking-widest border-2 border-white px-6 py-3">
+                    Out of Stock
+                </span>
+            </div>
+          )}
         </div>
         
         {/* Thumbnails */}
@@ -87,13 +110,21 @@ export function ProductDisplay({ product }: ProductDisplayProps) {
           <h1 className="text-4xl md:text-5xl font-heading font-bold uppercase tracking-tight text-foreground">
             {product.name}
           </h1>
-          <div className="flex items-baseline gap-4">
-            <span className="text-3xl font-bold text-primary">
+          <div className="flex items-baseline gap-4 group cursor-default">
+            <span className="text-3xl font-bold text-white">
               {formatEUR(product.price)}
             </span>
             <span className="text-xl text-muted-foreground font-light">
               ({formatRON(product.price)})
             </span>
+          </div>
+          
+          {/* Stock Status Label */}
+          <div className="flex items-center gap-2">
+             <div className={cn("w-2 h-2 rounded-full", isOutOfStock ? "bg-destructive" : "bg-green-500")} />
+             <span className={cn("text-sm font-medium uppercase tracking-wide", isOutOfStock ? "text-destructive" : "text-green-500")}>
+                {isOutOfStock ? "Out of Stock" : `${product.stock} in stock`}
+             </span>
           </div>
         </div>
 
@@ -111,20 +142,24 @@ export function ProductDisplay({ product }: ProductDisplayProps) {
                 size="icon"
                 className="h-10 w-10 rounded-full hover:bg-secondary"
                 onClick={() => handleQuantityChange(-1)}
-                disabled={quantity <= 1}
+                disabled={quantity <= 1 || isOutOfStock}
               >
                 <Minus className="h-4 w-4" />
               </Button>
-              <span className="w-8 text-center font-mono text-lg">{quantity}</span>
+              <span className="w-8 text-center font-mono text-lg">{isOutOfStock ? 0 : quantity}</span>
               <Button
                 variant="ghost"
                 size="icon"
                 className="h-10 w-10 rounded-full hover:bg-secondary"
                 onClick={() => handleQuantityChange(1)}
+                disabled={quantity >= product.stock || isOutOfStock}
               >
                 <Plus className="h-4 w-4" />
               </Button>
             </div>
+            {quantity >= product.stock && !isOutOfStock && (
+                <span className="text-xs text-amber-500 font-medium">Max Limit Reached</span>
+            )}
           </div>
 
           {/* Add to Cart */}
