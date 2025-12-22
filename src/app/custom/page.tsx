@@ -1,5 +1,12 @@
-import { prisma } from "@/lib/prisma"
-import { CustomOrderForm } from "@/components/custom-order-form"
+import { Metadata } from "next";
+import { prisma } from "@/lib/prisma";
+import { CustomOrderForm } from "@/components/custom-order-form";
+
+export const metadata: Metadata = {
+  title: "Custom Order - Design Your Perfect Tool | Fritz's Forge",
+  description:
+    "Create personalized carbon steel, stainless steel, and wrought iron tools. Start from scratch or modify existing designs.",
+};
 
 export default async function CustomOrderPage() {
   // Fetch products from database to populate the dropdown
@@ -7,12 +14,12 @@ export default async function CustomOrderPage() {
   const products = await prisma.product.findMany({
     select: {
       id: true,
-      name: true
+      name: true,
     },
     orderBy: {
-      name: 'asc'
-    }
-  })
+      name: "asc",
+    },
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -20,9 +27,9 @@ export default async function CustomOrderPage() {
       {/* Visual Header Section (Moved from Home) */}
       <section className="relative w-full bg-secondary text-secondary-foreground">
         <div className="grid grid-cols-1 md:grid-cols-2 min-h-[500px]">
-           {/* Video Section */}
-           <div className="relative min-h-[300px] md:min-h-full order-1 border-r border-border/20">
-             <video
+          {/* Video Section */}
+          <div className="relative min-h-[300px] md:min-h-full order-1 border-r border-border/20">
+            <video
               autoPlay
               loop
               muted
@@ -44,7 +51,7 @@ export default async function CustomOrderPage() {
             </p>
           </div>
         </div>
-        
+
         {/* Gradient Transition */}
         <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-background via-background/60 to-transparent pointer-events-none z-10" />
       </section>
@@ -53,5 +60,5 @@ export default async function CustomOrderPage() {
         <CustomOrderForm products={products} />
       </main>
     </div>
-  )
+  );
 }

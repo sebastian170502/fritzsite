@@ -66,15 +66,27 @@ A premium, international e-commerce site for handmade metalwork, featuring a rug
    npx prisma studio
    ```
 
-4. **Add Media**
+4. **Environment Variables**
+
+   Copy `.env.example` to `.env.local` and fill in your keys:
+
+   ```bash
+   cp .env.example .env.local
+   ```
+
+   Get your Stripe keys from [dashboard.stripe.com](https://dashboard.stripe.com/test/apikeys)
+
+5. **Add Media**
 
    - Place your video files (`hero-video.mp4`, `shop-video.mp4`) in the `/public` folder.
    - _Note: Git LFS recommended for large media files._
 
-5. **Run Development Server**
+6. **Run Development Server**
+
    ```bash
    npm run dev
    ```
+
    Open [http://localhost:3000](http://localhost:3000) to view the site.
 
 ## 📂 Project Structure
@@ -86,15 +98,24 @@ A premium, international e-commerce site for handmade metalwork, featuring a rug
 
 ## ✨ Recent Updates
 
+- **Critical Fixes Applied (Dec 2024)**:
+  - ✅ Stripe checkout API route implemented with webhook support
+  - ✅ Custom order form submission with email integration
+  - ✅ Error boundaries and 404 page added
+  - ✅ Loading states for all async pages
+  - ✅ SEO metadata with Open Graph tags
+  - ✅ Shared helper functions for currency and image parsing
+  - ✅ Stock management via Stripe webhooks
+  - ✅ Environment variable configuration
 - **Layout Overhaul**: Fixed Header and Footer (64px each) with non-scrollable Home Page.
 - **Product Page**: Added detailed view with gallery and dual currency pricing.
 - **Stock Management**: Inventory tracking with "Out of Stock" state and quantity limits.
 - **Image Optimization**: Content management for product images (JPG conversion, caching fixes).
-- **Custom Order**: Updated "Handle Length" options to 10-15cm range.
+- **Custom Order**: Functional form with validation and API integration.
 - **Media Refinements**: Updated Shop video and refined product imagery (e.g., proper Hammer cropping).
 - **Theme**: Enforced Dark Mode with high-contrast White text.
-- **Cart**: Functional shopping cart with quantity management.
-- **Code Stability**: Cleaned up legacy code (`src/app/products`), fixed Type errors, and hardened build process.
+- **Cart**: Functional shopping cart with quantity management and Stripe integration.
+- **Code Stability**: Cleaned up legacy code, fixed Type errors, and hardened build process.
 
 ---
 

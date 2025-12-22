@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
       },
     ],
     dangerouslyAllowSVG: true,
+    formats: ['image/avif', 'image/webp'],
   },
 };
 
