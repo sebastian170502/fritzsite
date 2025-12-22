@@ -47,7 +47,18 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const slug = (await params).slug;
-  const product = await prisma.product.findUnique({ where: { slug } });
+  const product = await prisma.product.findUnique({
+    where: { slug },
+    include: {
+      reviews: {
+        where: { approved: true },
+        select: {
+          id: true,
+          rating: true,
+        },
+      },
+    },
+  });
 
   if (!product) {
     notFound();
@@ -58,6 +69,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     price: Number(product.price),
     images: parseProductImages(product.images),
     stock: product.stock,
+    reviews: product.reviews,
   };
 
   return (

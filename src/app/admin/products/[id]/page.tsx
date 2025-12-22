@@ -1,155 +1,157 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { useRouter, useParams } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import { ArrowLeft } from 'lucide-react'
-import { toast } from 'sonner'
+} from "@/components/ui/select";
+import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner";
 
 const MATERIALS = [
-  { value: 'carbon-steel', label: 'Carbon Steel' },
-  { value: 'stainless-steel', label: 'Stainless Steel' },
-  { value: 'wrought-iron', label: 'Wrought Iron' },
-  { value: 'damascus-steel', label: 'Damascus Steel' },
-]
+  { value: "carbon-steel", label: "Carbon Steel" },
+  { value: "stainless-steel", label: "Stainless Steel" },
+  { value: "wrought-iron", label: "Wrought Iron" },
+  { value: "damascus-steel", label: "Damascus Steel" },
+];
 
 const CATEGORIES = [
-  { value: 'knife', label: 'Knife' },
-  { value: 'axe', label: 'Axe' },
-  { value: 'sword', label: 'Sword' },
-  { value: 'tool', label: 'Tool' },
-  { value: 'decor', label: 'Decor' },
-]
+  { value: "knife", label: "Knife" },
+  { value: "axe", label: "Axe" },
+  { value: "sword", label: "Sword" },
+  { value: "tool", label: "Tool" },
+  { value: "decor", label: "Decor" },
+];
 
 interface ProductFormData {
-  name: string
-  slug: string
-  description: string
-  price: number
-  material: string
-  category: string
-  stock: number
-  images: string[]
-  bladeLength?: string
-  bladeWidth?: string
-  handleLength?: string
-  weight?: string
+  name: string;
+  slug: string;
+  description: string;
+  price: number;
+  material: string;
+  category: string;
+  stock: number;
+  images: string[];
+  bladeLength?: string;
+  bladeWidth?: string;
+  handleLength?: string;
+  weight?: string;
 }
 
 export default function ProductFormPage() {
-  const router = useRouter()
-  const params = useParams()
-  const isEdit = !!params.id
-  const productId = params.id as string
+  const router = useRouter();
+  const params = useParams();
+  const isEdit = !!params.id;
+  const productId = params.id as string;
 
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState<ProductFormData>({
-    name: '',
-    slug: '',
-    description: '',
+    name: "",
+    slug: "",
+    description: "",
     price: 0,
-    material: '',
-    category: '',
+    material: "",
+    category: "",
     stock: 0,
     images: [],
-  })
+  });
 
   useEffect(() => {
     if (isEdit) {
-      fetchProduct()
+      fetchProduct();
     }
-  }, [isEdit, productId])
+  }, [isEdit, productId]);
 
   const fetchProduct = async () => {
     try {
-      const response = await fetch(`/api/admin/products/${productId}`)
+      const response = await fetch(`/api/admin/products/${productId}`);
       if (response.ok) {
-        const product = await response.json()
-        setFormData(product)
+        const product = await response.json();
+        setFormData(product);
       } else {
-        toast.error('Failed to load product')
-        router.push('/admin')
+        toast.error("Failed to load product");
+        router.push("/admin");
       }
     } catch (error) {
-      console.error('Failed to fetch product:', error)
-      toast.error('Failed to load product')
-      router.push('/admin')
+      console.error("Failed to fetch product:", error);
+      toast.error("Failed to load product");
+      router.push("/admin");
     }
-  }
+  };
 
   const generateSlug = (name: string) => {
     return name
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '')
-  }
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
+  };
 
   const handleNameChange = (name: string) => {
     setFormData({
       ...formData,
       name,
       slug: generateSlug(name),
-    })
-  }
+    });
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
+    e.preventDefault();
+    setLoading(true);
 
     try {
       const url = isEdit
         ? `/api/admin/products/${productId}`
-        : '/api/admin/products'
+        : "/api/admin/products";
 
       const response = await fetch(url, {
-        method: isEdit ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: isEdit ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
-      })
+      });
 
       if (response.ok) {
         toast.success(
-          isEdit ? 'Product updated successfully' : 'Product created successfully'
-        )
-        router.push('/admin')
-        router.refresh()
+          isEdit
+            ? "Product updated successfully"
+            : "Product created successfully"
+        );
+        router.push("/admin");
+        router.refresh();
       } else {
-        toast.error('Failed to save product')
+        toast.error("Failed to save product");
       }
     } catch (error) {
-      console.error('Failed to save product:', error)
-      toast.error('Failed to save product')
+      console.error("Failed to save product:", error);
+      toast.error("Failed to save product");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleImageUrlAdd = () => {
-    const url = prompt('Enter image URL:')
+    const url = prompt("Enter image URL:");
     if (url) {
       setFormData({
         ...formData,
         images: [...formData.images, url],
-      })
+      });
     }
-  }
+  };
 
   const handleImageRemove = (index: number) => {
     setFormData({
       ...formData,
       images: formData.images.filter((_, i) => i !== index),
-    })
-  }
+    });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -159,13 +161,13 @@ export default function ProductFormPage() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => router.push('/admin')}
+            onClick={() => router.push("/admin")}
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
           <h1 className="text-2xl font-heading font-bold">
-            {isEdit ? 'Edit Product' : 'Add New Product'}
+            {isEdit ? "Edit Product" : "Add New Product"}
           </h1>
         </div>
       </header>
@@ -174,7 +176,9 @@ export default function ProductFormPage() {
       <main className="container mx-auto px-4 py-8 max-w-3xl">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="bg-card border border-border rounded-lg p-6 space-y-6">
-            <h2 className="text-xl font-heading font-bold">Basic Information</h2>
+            <h2 className="text-xl font-heading font-bold">
+              Basic Information
+            </h2>
 
             <div className="space-y-2">
               <Label htmlFor="name">Product Name *</Label>
@@ -222,7 +226,10 @@ export default function ProductFormPage() {
                   step="0.01"
                   value={formData.price}
                   onChange={(e) =>
-                    setFormData({ ...formData, price: parseFloat(e.target.value) })
+                    setFormData({
+                      ...formData,
+                      price: parseFloat(e.target.value),
+                    })
                   }
                   required
                 />
@@ -235,7 +242,10 @@ export default function ProductFormPage() {
                   type="number"
                   value={formData.stock}
                   onChange={(e) =>
-                    setFormData({ ...formData, stock: parseInt(e.target.value) })
+                    setFormData({
+                      ...formData,
+                      stock: parseInt(e.target.value),
+                    })
                   }
                   required
                 />
@@ -245,7 +255,7 @@ export default function ProductFormPage() {
                 <Label htmlFor="weight">Weight (g)</Label>
                 <Input
                   id="weight"
-                  value={formData.weight || ''}
+                  value={formData.weight || ""}
                   onChange={(e) =>
                     setFormData({ ...formData, weight: e.target.value })
                   }
@@ -303,14 +313,16 @@ export default function ProductFormPage() {
 
           {/* Dimensions */}
           <div className="bg-card border border-border rounded-lg p-6 space-y-6">
-            <h2 className="text-xl font-heading font-bold">Dimensions (Optional)</h2>
+            <h2 className="text-xl font-heading font-bold">
+              Dimensions (Optional)
+            </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="bladeLength">Blade Length</Label>
                 <Input
                   id="bladeLength"
-                  value={formData.bladeLength || ''}
+                  value={formData.bladeLength || ""}
                   onChange={(e) =>
                     setFormData({ ...formData, bladeLength: e.target.value })
                   }
@@ -322,7 +334,7 @@ export default function ProductFormPage() {
                 <Label htmlFor="bladeWidth">Blade Width</Label>
                 <Input
                   id="bladeWidth"
-                  value={formData.bladeWidth || ''}
+                  value={formData.bladeWidth || ""}
                   onChange={(e) =>
                     setFormData({ ...formData, bladeWidth: e.target.value })
                   }
@@ -334,7 +346,7 @@ export default function ProductFormPage() {
                 <Label htmlFor="handleLength">Handle Length</Label>
                 <Input
                   id="handleLength"
-                  value={formData.handleLength || ''}
+                  value={formData.handleLength || ""}
                   onChange={(e) =>
                     setFormData({ ...formData, handleLength: e.target.value })
                   }
@@ -348,7 +360,11 @@ export default function ProductFormPage() {
           <div className="bg-card border border-border rounded-lg p-6 space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-heading font-bold">Product Images</h2>
-              <Button type="button" variant="outline" onClick={handleImageUrlAdd}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleImageUrlAdd}
+              >
                 Add Image URL
               </Button>
             </div>
@@ -387,16 +403,20 @@ export default function ProductFormPage() {
               type="button"
               variant="outline"
               className="flex-1"
-              onClick={() => router.push('/admin')}
+              onClick={() => router.push("/admin")}
             >
               Cancel
             </Button>
             <Button type="submit" className="flex-1" disabled={loading}>
-              {loading ? 'Saving...' : isEdit ? 'Update Product' : 'Create Product'}
+              {loading
+                ? "Saving..."
+                : isEdit
+                ? "Update Product"
+                : "Create Product"}
             </Button>
           </div>
         </form>
       </main>
     </div>
-  )
+  );
 }
