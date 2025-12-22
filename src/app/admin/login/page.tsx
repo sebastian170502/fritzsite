@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-secondary/20 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-secondary/20 p-4 pt-24">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-white/[0.02] -z-10" />
 
