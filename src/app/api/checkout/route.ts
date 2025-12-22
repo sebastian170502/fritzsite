@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
+import { logError, isValidationError } from '@/lib/error-handling'
 
 // Initialize Stripe only when needed to avoid build-time errors
 function getStripe() {
@@ -17,11 +18,29 @@ export async function POST(req: Request) {
         const stripe = getStripe()
         const { items } = await req.json()
 
+        // Validation
         if (!items || items.length === 0) {
             return NextResponse.json(
                 { error: 'No items in cart' },
                 { status: 400 }
             )
+        }
+
+        // Validate item structure
+        for (const item of items) {
+            if (!item.name || !item.price || !item.quantity) {
+                return NextResponse.json(
+                    { error: 'Invalid item format' },
+                    { status: 400 }
+                )
+            }
+            
+            if (item.quantity < 1 || item.price < 0) {
+                return NextResponse.json(
+                    { error: 'Invalid item quantity or price' },
+                    { status: 400 }
+                )
+            }
         }
 
         const lineItems = items.map((item: any) => ({
@@ -51,10 +70,34 @@ export async function POST(req: Request) {
         })
 
         return NextResponse.json({ url: session.url })
-    } catch (error) {
-        console.error('Checkout error:', error)
+    } catch (error: any) {
+        // Log error with context
+        logError({
+            error: error instanceof Error ? error : new Error(String(error)),
+            context: {
+                endpoint: '/api/checkout',
+                method: 'POST',
+            },
+            severity: 'high',
+        })
+
+        // Return appropriate error response
+        if (isValidationError(error)) {
+            return NextResponse.json(
+                { error: 'Invalid request data' },
+                { status: 400 }
+            )
+        }
+
+        if (error?.type === 'StripeInvalidRequestError') {
+            return NextResponse.json(
+                { error: 'Payment processing error. Please try again.' },
+                { status: 400 }
+            )
+        }
+
         return NextResponse.json(
-            { error: 'Error creating checkout session' },
+            { error: 'Error creating checkout session. Please try again.' },
             { status: 500 }
         )
     }

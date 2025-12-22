@@ -1,8 +1,9 @@
 "use client"
 
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { useCartStore } from "@/hooks/use-cart"
-import { toast } from "sonner"
+import { Loader2 } from "lucide-react"
 
 interface AddToCartButtonProps {
   product: {
@@ -16,28 +17,44 @@ interface AddToCartButtonProps {
 
 export function AddToCartButton({ product }: AddToCartButtonProps) {
   const { addItem } = useCartStore()
+  const [isLoading, setIsLoading] = useState(false)
 
-  const onAddToCart = () => {
-    addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      imageUrl: product.imageUrl,
-      category: product.category,
-    })
-    
-    toast.success("Added to cart", {
-      description: `${product.name} has been added to your cart.`
-    })
+  const onAddToCart = async () => {
+    try {
+      setIsLoading(true)
+      
+      // Simulate async validation (could check stock, etc.)
+      await new Promise(resolve => setTimeout(resolve, 200))
+      
+      addItem({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        category: product.category,
+      })
+    } catch (error) {
+      console.error('Error adding to cart:', error)
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
     <Button 
-      onClick={onAddToCart} 
+      onClick={onAddToCart}
+      disabled={isLoading}
       className="w-full rounded-full transition-all duration-300 opacity-90 hover:opacity-100 text-lg h-14" 
       size="lg"
     >
-      Add to Cart
+      {isLoading ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Adding...
+        </>
+      ) : (
+        'Add to Cart'
+      )}
     </Button>
   )
 }
