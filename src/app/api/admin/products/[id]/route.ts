@@ -65,8 +65,8 @@ export async function PUT(
         // Send stock notifications if product was out of stock and now in stock
         if (previousProduct && previousProduct.stock === 0 && product.stock > 0) {
             // Parse images for notification email
-            const images = typeof product.images === 'string' 
-                ? JSON.parse(product.images) 
+            const images = typeof product.images === 'string'
+                ? JSON.parse(product.images)
                 : product.images
             const imageUrl = images[0] || '/placeholder.jpg'
 
@@ -103,7 +103,7 @@ export async function DELETE(
     try {
         const { id } = await params
         const product = await prisma.product.findUnique({ where: { id } })
-        
+
         await prisma.product.delete({
             where: { id },
         })

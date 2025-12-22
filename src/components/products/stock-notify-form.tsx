@@ -1,55 +1,60 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Bell, Check, Loader2 } from "lucide-react"
-import { toast } from "sonner"
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Bell, Check, Loader2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface StockNotifyFormProps {
-  productId: string
-  productName: string
+  productId: string;
+  productName: string;
 }
 
-export function StockNotifyForm({ productId, productName }: StockNotifyFormProps) {
-  const [email, setEmail] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [isSubscribed, setIsSubscribed] = useState(false)
+export function StockNotifyForm({
+  productId,
+  productName,
+}: StockNotifyFormProps) {
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!email) {
-      toast.error("Please enter your email address")
-      return
+      toast.error("Please enter your email address");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       const response = await fetch("/api/stock-notifications", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, productId }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.error || "Failed to subscribe")
+        throw new Error(data.error || "Failed to subscribe");
       }
 
-      setIsSubscribed(true)
-      toast.success("You'll be notified when this item is back in stock!")
-      setEmail("")
+      setIsSubscribed(true);
+      toast.success("You'll be notified when this item is back in stock!");
+      setEmail("");
     } catch (error) {
-      console.error("Notification subscription error:", error)
-      toast.error(error instanceof Error ? error.message : "Failed to subscribe")
+      console.error("Notification subscription error:", error);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to subscribe"
+      );
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   if (isSubscribed) {
     return (
@@ -66,7 +71,7 @@ export function StockNotifyForm({ productId, productName }: StockNotifyFormProps
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -76,11 +81,14 @@ export function StockNotifyForm({ productId, productName }: StockNotifyFormProps
           <Bell className="w-5 h-5 text-amber-600 dark:text-amber-400" />
         </div>
         <div className="flex-1">
-          <h3 className="font-semibold text-foreground mb-1">Notify Me When Available</h3>
+          <h3 className="font-semibold text-foreground mb-1">
+            Notify Me When Available
+          </h3>
           <p className="text-sm text-muted-foreground mb-4">
-            Get an email alert when this item is back in stock. No spam, just one notification.
+            Get an email alert when this item is back in stock. No spam, just
+            one notification.
           </p>
-          
+
           <form onSubmit={handleSubmit} className="space-y-3">
             <div className="space-y-1.5">
               <Label htmlFor="notify-email" className="text-sm font-medium">
@@ -97,7 +105,7 @@ export function StockNotifyForm({ productId, productName }: StockNotifyFormProps
                 className="bg-background"
               />
             </div>
-            
+
             <Button
               type="submit"
               disabled={isLoading}
@@ -119,10 +127,11 @@ export function StockNotifyForm({ productId, productName }: StockNotifyFormProps
           </form>
 
           <p className="text-xs text-muted-foreground mt-3">
-            We'll only use your email for this stock notification. You can unsubscribe anytime.
+            We'll only use your email for this stock notification. You can
+            unsubscribe anytime.
           </p>
         </div>
       </div>
     </div>
-  )
+  );
 }

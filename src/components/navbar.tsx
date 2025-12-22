@@ -2,14 +2,16 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ShoppingCart, Menu, Info, Heart } from "lucide-react";
+import { ShoppingCart, Menu, Heart, Search } from "lucide-react";
 import { CartSheet } from "@/components/cart-sheet";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useWishlist } from "@/hooks/use-wishlist";
+import { SearchAutocomplete } from "@/components/search/search-autocomplete";
 
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [showMobileSearch, setShowMobileSearch] = React.useState(false);
   const wishlist = useWishlist();
   const wishlistCount = wishlist.items.length;
 
@@ -48,8 +50,23 @@ export function Navbar() {
           </Link>
         </nav>
 
+        {/* Desktop Search */}
+        <div className="hidden lg:block absolute left-[calc(50%+200px)] top-1/2 transform -translate-y-1/2 w-80">
+          <SearchAutocomplete placeholder="Search products..." />
+        </div>
+
         {/* Actions */}
         <div className="flex items-center space-x-2">
+          {/* Mobile Search Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden rounded-full hover:bg-secondary"
+            onClick={() => setShowMobileSearch(!showMobileSearch)}
+          >
+            <Search className="h-5 w-5" />
+          </Button>
+
           <Button
             variant="ghost"
             size="icon"
@@ -118,6 +135,16 @@ export function Navbar() {
           </Sheet>
         </div>
       </div>
+
+      {/* Mobile Search Bar */}
+      {showMobileSearch && (
+        <div className="lg:hidden px-4 pb-4 border-t border-border/40 pt-4">
+          <SearchAutocomplete
+            placeholder="Search products..."
+            onSearch={() => setShowMobileSearch(false)}
+          />
+        </div>
+      )}
     </header>
   );
 }

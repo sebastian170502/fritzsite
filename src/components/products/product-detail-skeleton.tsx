@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function ProductDetailSkeleton() {
   return (
@@ -34,5 +34,5 @@ export function ProductDetailSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
 }

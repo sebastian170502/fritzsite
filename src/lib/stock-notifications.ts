@@ -2,11 +2,11 @@ import { Resend } from 'resend'
 import { prisma } from '@/lib/prisma'
 
 interface ProductInfo {
-  id: string
-  name: string
-  slug: string
-  price: number
-  imageUrl: string
+    id: string
+    name: string
+    slug: string
+    price: number
+    imageUrl: string
 }
 
 /**
@@ -14,45 +14,45 @@ interface ProductInfo {
  * Call this function when a product's stock is updated from 0 to > 0
  */
 export async function notifyStockAvailable(product: ProductInfo) {
-  try {
-    // Skip if Resend API key is not configured
-    if (!process.env.RESEND_API_KEY) {
-      console.warn('RESEND_API_KEY not configured, skipping stock notifications')
-      return { sent: 0, failed: 0 }
-    }
+    try {
+        // Skip if Resend API key is not configured
+        if (!process.env.RESEND_API_KEY) {
+            console.warn('RESEND_API_KEY not configured, skipping stock notifications')
+            return { sent: 0, failed: 0 }
+        }
 
-    const resend = new Resend(process.env.RESEND_API_KEY)
+        const resend = new Resend(process.env.RESEND_API_KEY)
 
-    // Get all pending notifications for this product
-    const notifications = await prisma.stockNotification.findMany({
-      where: {
-        productId: product.id,
-        notified: false,
-      },
-    })
+        // Get all pending notifications for this product
+        const notifications = await prisma.stockNotification.findMany({
+            where: {
+                productId: product.id,
+                notified: false,
+            },
+        })
 
-    if (notifications.length === 0) {
-      console.log(`No pending notifications for product ${product.id}`)
-      return { sent: 0, failed: 0 }
-    }
+        if (notifications.length === 0) {
+            console.log(`No pending notifications for product ${product.id}`)
+            return { sent: 0, failed: 0 }
+        }
 
-    console.log(
-      `Sending ${notifications.length} stock notifications for ${product.name}`
-    )
+        console.log(
+            `Sending ${notifications.length} stock notifications for ${product.name}`
+        )
 
-    let sent = 0
-    let failed = 0
+        let sent = 0
+        let failed = 0
 
-    // Send emails in batches to avoid rate limits
-    for (const notification of notifications) {
-      try {
-        const productUrl = `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/shop/${product.slug}`
+        // Send emails in batches to avoid rate limits
+        for (const notification of notifications) {
+            try {
+                const productUrl = `${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/shop/${product.slug}`
 
-        await resend.emails.send({
-          from: process.env.RESEND_FROM_EMAIL || 'notifications@fritzforge.com',
-          to: notification.email,
-          subject: `${product.name} is back in stock! 🔨`,
-          html: `
+                await resend.emails.send({
+                    from: process.env.RESEND_FROM_EMAIL || 'notifications@fritzforge.com',
+                    to: notification.email,
+                    subject: `${product.name} is back in stock! 🔨`,
+                    html: `
             <!DOCTYPE html>
             <html>
               <head>
@@ -120,51 +120,51 @@ export async function notifyStockAvailable(product: ProductInfo) {
               </body>
             </html>
           `,
-        })
+                })
 
-        // Mark as notified
-        await prisma.stockNotification.update({
-          where: { id: notification.id },
-          data: {
-            notified: true,
-            notifiedAt: new Date(),
-          },
-        })
+                // Mark as notified
+                await prisma.stockNotification.update({
+                    where: { id: notification.id },
+                    data: {
+                        notified: true,
+                        notifiedAt: new Date(),
+                    },
+                })
 
-        sent++
-      } catch (emailError) {
-        console.error(
-          `Failed to send notification to ${notification.email}:`,
-          emailError
+                sent++
+            } catch (emailError) {
+                console.error(
+                    `Failed to send notification to ${notification.email}:`,
+                    emailError
+                )
+                failed++
+            }
+
+            // Small delay to avoid rate limits
+            await new Promise((resolve) => setTimeout(resolve, 100))
+        }
+
+        console.log(
+            `Stock notifications complete: ${sent} sent, ${failed} failed`
         )
-        failed++
-      }
 
-      // Small delay to avoid rate limits
-      await new Promise((resolve) => setTimeout(resolve, 100))
+        return { sent, failed }
+    } catch (error) {
+        console.error('Error in notifyStockAvailable:', error)
+        throw error
     }
-
-    console.log(
-      `Stock notifications complete: ${sent} sent, ${failed} failed`
-    )
-
-    return { sent, failed }
-  } catch (error) {
-    console.error('Error in notifyStockAvailable:', error)
-    throw error
-  }
 }
 
 /**
  * Get count of pending notifications for a product
  */
 export async function getPendingNotificationCount(
-  productId: string
+    productId: string
 ): Promise<number> {
-  return await prisma.stockNotification.count({
-    where: {
-      productId,
-      notified: false,
-    },
-  })
+    return await prisma.stockNotification.count({
+        where: {
+            productId,
+            notified: false,
+        },
+    })
 }
