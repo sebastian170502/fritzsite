@@ -4,22 +4,28 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Plus, 
-  Package, 
-  LogOut, 
-  Star, 
-  ShoppingCart, 
-  TrendingUp, 
+import {
+  Plus,
+  Package,
+  LogOut,
+  Star,
+  ShoppingCart,
+  TrendingUp,
   DollarSign,
   Users,
   Eye,
   AlertCircle,
   ArrowUpRight,
   BarChart3,
-  Activity
+  Activity,
 } from "lucide-react";
 import { toast } from "sonner";
 import AdminReviewsPage from "./reviews/page";
@@ -70,19 +76,23 @@ export default function AdminDashboard() {
     try {
       const [productsRes, ordersRes] = await Promise.all([
         fetch("/api/admin/products"),
-        fetch("/api/admin/orders")
+        fetch("/api/admin/orders"),
       ]);
 
       if (productsRes.ok) {
         const productsData = await productsRes.json();
         setProducts(productsData);
-        
+
         // Calculate product stats
         const inStock = productsData.filter((p: Product) => p.stock > 5).length;
-        const lowStock = productsData.filter((p: Product) => p.stock > 0 && p.stock <= 5).length;
-        const outOfStock = productsData.filter((p: Product) => p.stock === 0).length;
+        const lowStock = productsData.filter(
+          (p: Product) => p.stock > 0 && p.stock <= 5
+        ).length;
+        const outOfStock = productsData.filter(
+          (p: Product) => p.stock === 0
+        ).length;
 
-        setStats(prev => ({
+        setStats((prev) => ({
           ...prev,
           totalProducts: productsData.length,
           inStock,
@@ -93,11 +103,17 @@ export default function AdminDashboard() {
 
       if (ordersRes.ok) {
         const ordersData = await ordersRes.json();
-        const pendingOrders = ordersData.filter((o: any) => o.status === 'pending' || o.status === 'processing').length;
-        const totalRevenue = ordersData.reduce((sum: number, o: any) => sum + Number(o.total), 0);
-        const avgOrderValue = ordersData.length > 0 ? totalRevenue / ordersData.length : 0;
+        const pendingOrders = ordersData.filter(
+          (o: any) => o.status === "pending" || o.status === "processing"
+        ).length;
+        const totalRevenue = ordersData.reduce(
+          (sum: number, o: any) => sum + Number(o.total),
+          0
+        );
+        const avgOrderValue =
+          ordersData.length > 0 ? totalRevenue / ordersData.length : 0;
 
-        setStats(prev => ({
+        setStats((prev) => ({
           ...prev,
           totalOrders: ordersData.length,
           pendingOrders,
@@ -157,15 +173,27 @@ export default function AdminDashboard() {
               <BarChart3 className="h-6 w-6 text-primary" />
             </div>
             <div>
-              <h1 className="text-2xl font-heading font-bold">Admin Dashboard</h1>
-              <p className="text-sm text-muted-foreground">Manage your e-commerce platform</p>
+              <h1 className="text-2xl font-heading font-bold">
+                Admin Dashboard
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Manage your e-commerce platform
+              </p>
             </div>
           </div>
 
-          <Button onClick={handleLogout} variant="outline" size="sm">
-            <LogOut className="h-4 w-4 mr-2" />
-            Logout
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/admin/analytics">
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Analytics
+              </Link>
+            </Button>
+            <Button onClick={handleLogout} variant="outline" size="sm">
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -180,11 +208,15 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Revenue
+                </CardTitle>
                 <DollarSign className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">€{stats.totalRevenue.toFixed(2)}</div>
+                <div className="text-2xl font-bold">
+                  €{stats.totalRevenue.toFixed(2)}
+                </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   From {stats.totalOrders} orders
                 </p>
@@ -193,7 +225,9 @@ export default function AdminDashboard() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pending Orders</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Pending Orders
+                </CardTitle>
                 <ShoppingCart className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -206,7 +240,9 @@ export default function AdminDashboard() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Products
+                </CardTitle>
                 <Package className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
@@ -219,14 +255,16 @@ export default function AdminDashboard() {
 
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Avg Order Value</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Avg Order Value
+                </CardTitle>
                 <TrendingUp className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">€{stats.averageOrderValue.toFixed(2)}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Per order
-                </p>
+                <div className="text-2xl font-bold">
+                  €{stats.averageOrderValue.toFixed(2)}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">Per order</p>
               </CardContent>
             </Card>
           </div>
@@ -244,7 +282,10 @@ export default function AdminDashboard() {
             <CardContent className="space-y-2">
               {stats.lowStock > 0 && (
                 <p className="text-sm">
-                  <Badge variant="outline" className="mr-2 bg-yellow-500/10 border-yellow-500/50">
+                  <Badge
+                    variant="outline"
+                    className="mr-2 bg-yellow-500/10 border-yellow-500/50"
+                  >
                     {stats.lowStock}
                   </Badge>
                   products are running low on stock (≤5 items)
@@ -252,7 +293,10 @@ export default function AdminDashboard() {
               )}
               {stats.outOfStock > 0 && (
                 <p className="text-sm">
-                  <Badge variant="outline" className="mr-2 bg-red-500/10 border-red-500/50">
+                  <Badge
+                    variant="outline"
+                    className="mr-2 bg-red-500/10 border-red-500/50"
+                  >
                     {stats.outOfStock}
                   </Badge>
                   products are out of stock
@@ -302,12 +346,18 @@ export default function AdminDashboard() {
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="p-4 bg-muted/50 rounded-lg">
-                    <p className="text-sm text-muted-foreground">Total Orders</p>
-                    <p className="text-2xl font-bold mt-1">{stats.totalOrders}</p>
+                    <p className="text-sm text-muted-foreground">
+                      Total Orders
+                    </p>
+                    <p className="text-2xl font-bold mt-1">
+                      {stats.totalOrders}
+                    </p>
                   </div>
                   <div className="p-4 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
                     <p className="text-sm text-muted-foreground">Pending</p>
-                    <p className="text-2xl font-bold mt-1 text-yellow-600">{stats.pendingOrders}</p>
+                    <p className="text-2xl font-bold mt-1 text-yellow-600">
+                      {stats.pendingOrders}
+                    </p>
                   </div>
                   <div className="p-4 bg-green-500/10 rounded-lg border border-green-500/20">
                     <p className="text-sm text-muted-foreground">Completed</p>
@@ -325,26 +375,38 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium">In Stock</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    In Stock
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-green-600">{stats.inStock}</div>
+                  <div className="text-3xl font-bold text-green-600">
+                    {stats.inStock}
+                  </div>
                 </CardContent>
               </Card>
               <Card className="border-yellow-500/50">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium">Low Stock</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    Low Stock
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-yellow-600">{stats.lowStock}</div>
+                  <div className="text-3xl font-bold text-yellow-600">
+                    {stats.lowStock}
+                  </div>
                 </CardContent>
               </Card>
               <Card className="border-red-500/50">
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-sm font-medium">Out of Stock</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    Out of Stock
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-3xl font-bold text-red-600">{stats.outOfStock}</div>
+                  <div className="text-3xl font-bold text-red-600">
+                    {stats.outOfStock}
+                  </div>
                 </CardContent>
               </Card>
             </div>
@@ -380,11 +442,21 @@ export default function AdminDashboard() {
                       <thead>
                         <tr className="border-b border-border bg-muted/50">
                           <th className="text-left p-4 font-semibold">Name</th>
-                          <th className="text-left p-4 font-semibold">Category</th>
-                          <th className="text-left p-4 font-semibold">Material</th>
-                          <th className="text-right p-4 font-semibold">Price</th>
-                          <th className="text-right p-4 font-semibold">Stock</th>
-                          <th className="text-right p-4 font-semibold">Actions</th>
+                          <th className="text-left p-4 font-semibold">
+                            Category
+                          </th>
+                          <th className="text-left p-4 font-semibold">
+                            Material
+                          </th>
+                          <th className="text-right p-4 font-semibold">
+                            Price
+                          </th>
+                          <th className="text-right p-4 font-semibold">
+                            Stock
+                          </th>
+                          <th className="text-right p-4 font-semibold">
+                            Actions
+                          </th>
                         </tr>
                       </thead>
                       <tbody>
@@ -402,7 +474,9 @@ export default function AdminDashboard() {
                                     className="w-12 h-12 object-cover rounded"
                                   />
                                 )}
-                                <span className="font-medium">{product.name}</span>
+                                <span className="font-medium">
+                                  {product.name}
+                                </span>
                               </div>
                             </td>
                             <td className="p-4 capitalize">
