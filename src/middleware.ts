@@ -35,6 +35,26 @@ export function middleware(request: NextRequest) {
         }
     }
 
+    // Customer auth check
+    if (request.nextUrl.pathname.startsWith('/customer') &&
+        !request.nextUrl.pathname.startsWith('/customer/login')) {
+        // Check for customer session cookie
+        const customerSession = request.cookies.get('customer_session')
+
+        // If not logged in, redirect to customer login
+        if (!customerSession) {
+            return NextResponse.redirect(new URL('/customer/login', request.url))
+        }
+    }
+
+    // Redirect from customer login if already logged in
+    if (request.nextUrl.pathname === '/customer/login') {
+        const customerSession = request.cookies.get('customer_session')
+        if (customerSession) {
+            return NextResponse.redirect(new URL('/customer', request.url))
+        }
+    }
+
     // Rate limiting for API routes
     if (request.nextUrl.pathname.startsWith('/api/')) {
         const ip = getClientIp(request)
@@ -83,6 +103,7 @@ export function middleware(request: NextRequest) {
 export const config = {
     matcher: [
         '/admin/:path*',
+        '/customer/:path*',
         '/api/:path*',
     ],
 }

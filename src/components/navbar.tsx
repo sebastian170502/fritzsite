@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import Link from "next/link";
-import { ShoppingCart, Menu, Heart, Search } from "lucide-react";
+import { ShoppingCart, Menu, Heart, Search, User } from "lucide-react";
 import { CartSheet } from "@/components/cart-sheet";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -67,6 +67,18 @@ export function Navbar() {
             <Search className="h-5 w-5" />
           </Button>
 
+          {/* Customer Account Button */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full hover:bg-secondary"
+            asChild
+          >
+            <Link href="/customer" aria-label="My Account">
+              <User className="h-5 w-5" />
+            </Link>
+          </Button>
+
           <Button
             variant="ghost"
             size="icon"
@@ -122,6 +134,13 @@ export function Navbar() {
                   className="text-2xl font-bold uppercase tracking-tight hover:text-primary"
                 >
                   Custom Orders
+                </Link>
+                <Link
+                  href="/customer"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="text-2xl font-bold uppercase tracking-tight hover:text-primary"
+                >
+                  My Account
                 </Link>
                 <Link
                   href="/wishlist"
