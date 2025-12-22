@@ -45,6 +45,9 @@ export async function generateMetadata({
   };
 }
 
+// Enable ISR with 60 second revalidation
+export const revalidate = 60;
+
 export default async function ProductPage({ params }: ProductPageProps) {
   const slug = (await params).slug;
   const product = await prisma.product.findUnique({

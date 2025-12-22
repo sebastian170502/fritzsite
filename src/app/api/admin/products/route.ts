@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { revalidateShop } from '@/lib/revalidate'
 
 export async function GET() {
     try {

@@ -85,8 +85,10 @@ export function ProductDisplay({ product }: ProductDisplayProps) {
             src={selectedImage}
             alt={product.name}
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
             priority
+            quality={90}
           />
           {isOutOfStock && (
             <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
@@ -115,7 +117,9 @@ export function ProductDisplay({ product }: ProductDisplayProps) {
                   src={img}
                   alt="thumbnail"
                   fill
+                  sizes="80px"
                   className="object-cover"
+                  loading="lazy"
                 />
               </button>
             ))}

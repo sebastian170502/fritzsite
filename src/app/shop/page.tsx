@@ -10,6 +10,9 @@ export const metadata: Metadata = {
     "Browse our collection of hand-forged artifacts. Premium metalwork crafted with traditional blacksmithing techniques.",
 };
 
+// Enable ISR with 300 second (5 min) revalidation for shop page
+export const revalidate = 300;
+
 export default async function ShopPage() {
   const products = await prisma.product.findMany({
     orderBy: {

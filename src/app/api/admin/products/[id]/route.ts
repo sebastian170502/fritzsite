@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { revalidateProduct, revalidateShop } from '@/lib/revalidate'
 
 export async function GET(
     req: Request,
@@ -54,6 +55,10 @@ export async function PUT(
             data: productData,
         })
 
+        // Revalidate product page and shop page
+        await revalidateProduct(product.slug)
+        await revalidateShop()
+
         return NextResponse.json(product)
     } catch (error) {
         console.error('Failed to update product:', error)
@@ -70,9 +75,17 @@ export async function DELETE(
 ) {
     try {
         const { id } = await params
+        const product = await prisma.product.findUnique({ where: { id } })
+        
         await prisma.product.delete({
             where: { id },
         })
+
+        // Revalidate shop page after deletion
+        if (product) {
+            await revalidateProduct(product.slug)
+            await revalidateShop()
+        }
 
         return NextResponse.json({ success: true })
     } catch (error) {
