@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { ShoppingCart, Trash2, Plus, Minus } from "lucide-react";
 
 import {
@@ -18,6 +19,7 @@ import { Separator } from "@/components/ui/separator";
 import { useCartStore } from "@/hooks/use-cart";
 
 export function CartSheet() {
+  const router = useRouter();
   const [isMounted, setIsMounted] = React.useState(false);
   const cart = useCartStore();
   const [loading, setLoading] = React.useState(false);
@@ -35,25 +37,8 @@ export function CartSheet() {
     );
   }
 
-  const handleCheckout = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ items: cart.items }),
-      });
-      const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
-      }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      setLoading(false);
-    }
+  const handleCheckout = () => {
+    router.push("/checkout");
   };
 
   const itemCount = cart.items.reduce((acc, item) => acc + item.quantity, 0);
