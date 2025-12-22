@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { toast } from 'sonner'
+import { trackAddToCart, trackRemoveFromCart } from '@/lib/analytics'
 
 export interface CartItem {
   id: string
@@ -48,6 +49,15 @@ export const useCartStore = create<CartStore>()(
             toast.success("Item added to cart", {
               description: `${data.name} has been added to your cart.`
             })
+
+            // Track add to cart
+            trackAddToCart({
+              id: data.id,
+              name: data.name,
+              category: data.category,
+              price: data.price,
+              quantity: 1,
+            })
           }
         } catch (error) {
           console.error('Error adding item to cart:', error)
@@ -58,10 +68,23 @@ export const useCartStore = create<CartStore>()(
       },
       removeItem: (id) => {
         try {
+          const itemToRemove = get().items.find((item) => item.id === id)
+
           set({
             items: get().items.filter((item) => item.id !== id),
           })
           toast.info("Item removed from cart")
+
+          // Track remove from cart
+          if (itemToRemove) {
+            trackRemoveFromCart({
+              id: itemToRemove.id,
+              name: itemToRemove.name,
+              category: itemToRemove.category,
+              price: itemToRemove.price,
+              quantity: itemToRemove.quantity,
+            })
+          }
         } catch (error) {
           console.error('Error removing item:', error)
           toast.error("Failed to remove item")
@@ -73,9 +96,9 @@ export const useCartStore = create<CartStore>()(
           // but let's stick to just updating or doing nothing if < 1.
           // Or simple logic:
           if (quantity < 1) return;
-          
+
           set({
-            items: get().items.map(item => 
+            items: get().items.map(item =>
               item.id === id ? { ...item, quantity } : item
             )
           })

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ProductDisplay } from "@/components/products/product-display";
 import { parseProductImages, formatEUR } from "@/lib/helpers";
 import { JsonLd } from "@/components/seo/json-ld";
+import { ProductAnalytics } from "@/components/analytics/product-analytics";
 import {
   generateProductJsonLd,
   generateBreadcrumbJsonLd,
@@ -110,6 +111,14 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <>
       <JsonLd data={productJsonLd} />
       <JsonLd data={breadcrumbJsonLd} />
+      <ProductAnalytics
+        product={{
+          id: product.id,
+          name: product.name,
+          category: product.category,
+          price: Number(product.price),
+        }}
+      />
       <div className="min-h-screen bg-background pt-32 pb-32">
         <div className="container mx-auto px-4">
           <ProductDisplay product={serializedProduct} />

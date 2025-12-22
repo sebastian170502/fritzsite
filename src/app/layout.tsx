@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/sonner";
 import { JsonLd } from "@/components/seo/json-ld";
 import { siteConfig, generateOrganizationJsonLd } from "@/lib/metadata";
+import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({
@@ -63,6 +64,9 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <JsonLd data={generateOrganizationJsonLd()} />
+        <GoogleAnalytics
+          measurementId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || ""}
+        />
       </head>
       <body
         className={`${inter.variable} ${playfair.variable} font-body bg-background text-foreground antialiased`}

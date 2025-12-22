@@ -16,6 +16,7 @@ import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { trackBeginCheckout } from "@/lib/analytics";
 
 export default function CheckoutPage() {
   const router = useRouter();
@@ -33,8 +34,20 @@ export default function CheckoutPage() {
   useEffect(() => {
     if (items.length === 0) {
       router.push("/shop");
+    } else {
+      // Track begin checkout
+      trackBeginCheckout(
+        items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          category: item.category,
+          price: item.price,
+          quantity: item.quantity,
+        })),
+        total()
+      );
     }
-  }, [items, router]);
+  }, [items, router, total]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

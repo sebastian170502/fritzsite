@@ -34,7 +34,7 @@ export async function POST(req: Request) {
                     { status: 400 }
                 )
             }
-            
+
             if (item.quantity < 1 || item.price < 0) {
                 return NextResponse.json(
                     { error: 'Invalid item quantity or price' },

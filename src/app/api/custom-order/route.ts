@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import { sendCustomOrderEmail, sendCustomerConfirmationEmail } from '@/lib/email'
-import { 
-  sanitizeString, 
-  sanitizeHtml, 
-  isValidEmail, 
-  isValidPhone, 
-  validateContentLength 
+import {
+    sanitizeString,
+    sanitizeHtml,
+    isValidEmail,
+    isValidPhone,
+    validateContentLength
 } from '@/lib/security'
 import { logError } from '@/lib/error-handling'
 
