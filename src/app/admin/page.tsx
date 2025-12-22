@@ -4,7 +4,23 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Package, LogOut, Star, ShoppingCart } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { 
+  Plus, 
+  Package, 
+  LogOut, 
+  Star, 
+  ShoppingCart, 
+  TrendingUp, 
+  DollarSign,
+  Users,
+  Eye,
+  AlertCircle,
+  ArrowUpRight,
+  BarChart3,
+  Activity
+} from "lucide-react";
 import { toast } from "sonner";
 import AdminReviewsPage from "./reviews/page";
 import Link from "next/link";
@@ -20,25 +36,78 @@ interface Product {
   images: string[];
 }
 
+interface DashboardStats {
+  totalProducts: number;
+  inStock: number;
+  lowStock: number;
+  outOfStock: number;
+  totalOrders: number;
+  pendingOrders: number;
+  totalRevenue: number;
+  averageOrderValue: number;
+}
+
 export default function AdminDashboard() {
   const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalProducts: 0,
+    inStock: 0,
+    lowStock: 0,
+    outOfStock: 0,
+    totalOrders: 0,
+    pendingOrders: 0,
+    totalRevenue: 0,
+    averageOrderValue: 0,
+  });
 
   useEffect(() => {
-    fetchProducts();
+    fetchDashboardData();
   }, []);
 
-  const fetchProducts = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const response = await fetch("/api/admin/products");
-      if (response.ok) {
-        const data = await response.json();
-        setProducts(data);
+      const [productsRes, ordersRes] = await Promise.all([
+        fetch("/api/admin/products"),
+        fetch("/api/admin/orders")
+      ]);
+
+      if (productsRes.ok) {
+        const productsData = await productsRes.json();
+        setProducts(productsData);
+        
+        // Calculate product stats
+        const inStock = productsData.filter((p: Product) => p.stock > 5).length;
+        const lowStock = productsData.filter((p: Product) => p.stock > 0 && p.stock <= 5).length;
+        const outOfStock = productsData.filter((p: Product) => p.stock === 0).length;
+
+        setStats(prev => ({
+          ...prev,
+          totalProducts: productsData.length,
+          inStock,
+          lowStock,
+          outOfStock,
+        }));
+      }
+
+      if (ordersRes.ok) {
+        const ordersData = await ordersRes.json();
+        const pendingOrders = ordersData.filter((o: any) => o.status === 'pending' || o.status === 'processing').length;
+        const totalRevenue = ordersData.reduce((sum: number, o: any) => sum + Number(o.total), 0);
+        const avgOrderValue = ordersData.length > 0 ? totalRevenue / ordersData.length : 0;
+
+        setStats(prev => ({
+          ...prev,
+          totalOrders: ordersData.length,
+          pendingOrders,
+          totalRevenue,
+          averageOrderValue: avgOrderValue,
+        }));
       }
     } catch (error) {
-      console.error("Failed to fetch products:", error);
-      toast.error("Failed to load products");
+      console.error("Failed to fetch dashboard data:", error);
+      toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
@@ -68,7 +137,7 @@ export default function AdminDashboard() {
 
       if (response.ok) {
         toast.success("Product deleted successfully");
-        fetchProducts();
+        fetchDashboardData();
       } else {
         toast.error("Failed to delete product");
       }
@@ -83,9 +152,14 @@ export default function AdminDashboard() {
       {/* Header */}
       <header className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <Package className="h-6 w-6" />
-            <h1 className="text-2xl font-heading font-bold">Admin Dashboard</h1>
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-primary/10 rounded-lg">
+              <BarChart3 className="h-6 w-6 text-primary" />
+            </div>
+            <div>
+              <h1 className="text-2xl font-heading font-bold">Admin Dashboard</h1>
+              <p className="text-sm text-muted-foreground">Manage your e-commerce platform</p>
+            </div>
           </div>
 
           <Button onClick={handleLogout} variant="outline" size="sm">
@@ -97,171 +171,296 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
+        {/* Overview Stats */}
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Activity className="h-5 w-5" />
+            Overview
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Revenue</CardTitle>
+                <DollarSign className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">€{stats.totalRevenue.toFixed(2)}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  From {stats.totalOrders} orders
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Pending Orders</CardTitle>
+                <ShoppingCart className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.pendingOrders}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Requires attention
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Products</CardTitle>
+                <Package className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{stats.totalProducts}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {stats.inStock} in stock
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Avg Order Value</CardTitle>
+                <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">€{stats.averageOrderValue.toFixed(2)}</div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Per order
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* Inventory Alerts */}
+        {(stats.lowStock > 0 || stats.outOfStock > 0) && (
+          <Card className="mb-8 border-yellow-500/50 bg-yellow-500/5">
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <AlertCircle className="h-5 w-5 text-yellow-500" />
+                Inventory Alerts
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {stats.lowStock > 0 && (
+                <p className="text-sm">
+                  <Badge variant="outline" className="mr-2 bg-yellow-500/10 border-yellow-500/50">
+                    {stats.lowStock}
+                  </Badge>
+                  products are running low on stock (≤5 items)
+                </p>
+              )}
+              {stats.outOfStock > 0 && (
+                <p className="text-sm">
+                  <Badge variant="outline" className="mr-2 bg-red-500/10 border-red-500/50">
+                    {stats.outOfStock}
+                  </Badge>
+                  products are out of stock
+                </p>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         <Tabs defaultValue="products" className="w-full">
           <TabsList className="grid w-full max-w-2xl grid-cols-3">
-            <TabsTrigger value="products">
-              <Package className="h-4 w-4 mr-2" />
+            <TabsTrigger value="products" className="gap-2">
+              <Package className="h-4 w-4" />
               Products
             </TabsTrigger>
-            <TabsTrigger value="orders">
-              <ShoppingCart className="h-4 w-4 mr-2" />
+            <TabsTrigger value="orders" className="gap-2">
+              <ShoppingCart className="h-4 w-4" />
               Orders
             </TabsTrigger>
-            <TabsTrigger value="reviews">
-              <Star className="h-4 w-4 mr-2" />
+            <TabsTrigger value="reviews" className="gap-2">
+              <Star className="h-4 w-4" />
               Reviews
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="orders" className="mt-6">
-            <div className="bg-card border border-border rounded-lg p-8 text-center">
-              <ShoppingCart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <h3 className="text-xl font-semibold mb-2">Order Management</h3>
-              <p className="text-muted-foreground mb-6">
-                View and manage all customer orders in one place
-              </p>
-              <Button asChild size="lg">
-                <Link href="/admin/orders">
-                  <ShoppingCart className="mr-2 h-4 w-4" />
-                  Go to Orders
-                </Link>
-              </Button>
-            </div>
+            <Card>
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <ShoppingCart className="h-5 w-5" />
+                      Order Management
+                    </CardTitle>
+                    <CardDescription className="mt-1">
+                      View and manage all customer orders in one place
+                    </CardDescription>
+                  </div>
+                  <Button asChild>
+                    <Link href="/admin/orders">
+                      View All Orders
+                      <ArrowUpRight className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 bg-muted/50 rounded-lg">
+                    <p className="text-sm text-muted-foreground">Total Orders</p>
+                    <p className="text-2xl font-bold mt-1">{stats.totalOrders}</p>
+                  </div>
+                  <div className="p-4 bg-yellow-500/10 rounded-lg border border-yellow-500/20">
+                    <p className="text-sm text-muted-foreground">Pending</p>
+                    <p className="text-2xl font-bold mt-1 text-yellow-600">{stats.pendingOrders}</p>
+                  </div>
+                  <div className="p-4 bg-green-500/10 rounded-lg border border-green-500/20">
+                    <p className="text-sm text-muted-foreground">Completed</p>
+                    <p className="text-2xl font-bold mt-1 text-green-600">
+                      {stats.totalOrders - stats.pendingOrders}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="products" className="mt-6">
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              <div className="bg-card border border-border rounded-lg p-6">
-                <p className="text-sm text-muted-foreground">Total Products</p>
-                <p className="text-3xl font-bold">{products.length}</p>
-              </div>
-              <div className="bg-card border border-border rounded-lg p-6">
-                <p className="text-sm text-muted-foreground">In Stock</p>
-                <p className="text-3xl font-bold">
-                  {products.filter((p) => p.stock > 0).length}
-                </p>
-              </div>
-              <div className="bg-card border border-border rounded-lg p-6">
-                <p className="text-sm text-muted-foreground">Out of Stock</p>
-                <p className="text-3xl font-bold">
-                  {products.filter((p) => p.stock === 0).length}
-                </p>
-              </div>
+            {/* Product Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              <Card>
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium">In Stock</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-green-600">{stats.inStock}</div>
+                </CardContent>
+              </Card>
+              <Card className="border-yellow-500/50">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium">Low Stock</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-yellow-600">{stats.lowStock}</div>
+                </CardContent>
+              </Card>
+              <Card className="border-red-500/50">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-sm font-medium">Out of Stock</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-3xl font-bold text-red-600">{stats.outOfStock}</div>
+                </CardContent>
+              </Card>
             </div>
-            {/* Products Section */}
-            <div className="bg-card border border-border rounded-lg">
-              <div className="p-6 border-b border-border flex justify-between items-center">
-                <h2 className="text-xl font-heading font-bold">Products</h2>
-                <Button onClick={() => router.push("/admin/products/new")}>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Product
-                </Button>
-              </div>
 
-              {loading ? (
-                <div className="p-8 text-center text-muted-foreground">
-                  Loading products...
+            {/* Products Section */}
+            <Card>
+              <CardHeader>
+                <div className="flex justify-between items-center">
+                  <div>
+                    <CardTitle>Products</CardTitle>
+                    <CardDescription className="mt-1">
+                      Manage your product inventory
+                    </CardDescription>
+                  </div>
+                  <Button onClick={() => router.push("/admin/products/new")}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Product
+                  </Button>
                 </div>
-              ) : products.length === 0 ? (
-                <div className="p-8 text-center text-muted-foreground">
-                  No products found. Add your first product!
-                </div>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border bg-muted/50">
-                        <th className="text-left p-4 font-semibold">Name</th>
-                        <th className="text-left p-4 font-semibold">
-                          Category
-                        </th>
-                        <th className="text-left p-4 font-semibold">
-                          Material
-                        </th>
-                        <th className="text-right p-4 font-semibold">Price</th>
-                        <th className="text-right p-4 font-semibold">Stock</th>
-                        <th className="text-right p-4 font-semibold">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {products.map((product) => (
-                        <tr
-                          key={product.id}
-                          className="border-b border-border hover:bg-muted/50"
-                        >
-                          <td className="p-4">
-                            <div className="flex items-center gap-3">
-                              {product.images[0] && (
-                                <img
-                                  src={product.images[0]}
-                                  alt={product.name}
-                                  className="w-12 h-12 object-cover rounded"
-                                />
-                              )}
-                              <span className="font-medium">
-                                {product.name}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="p-4 capitalize">
-                            {product.category.replace("-", " ")}
-                          </td>
-                          <td className="p-4 capitalize">
-                            {product.material.replace("-", " ")}
-                          </td>
-                          <td className="p-4 text-right">
-                            {new Intl.NumberFormat("ro-RO", {
-                              style: "currency",
-                              currency: "RON",
-                            }).format(product.price)}
-                          </td>
-                          <td className="p-4 text-right">
-                            <span
-                              className={
-                                product.stock === 0
-                                  ? "text-destructive font-semibold"
-                                  : product.stock < 5
-                                  ? "text-yellow-500 font-semibold"
-                                  : ""
-                              }
-                            >
-                              {product.stock}
-                            </span>
-                          </td>
-                          <td className="p-4 text-right space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() =>
-                                router.push(`/admin/products/${product.id}`)
-                              }
-                            >
-                              Edit
-                            </Button>
-                            <Button
-                              variant="destructive"
-                              size="sm"
-                              onClick={() => handleDeleteProduct(product.id)}
-                            >
-                              Delete
-                            </Button>
-                          </td>
+              </CardHeader>
+              <CardContent>
+                {loading ? (
+                  <div className="p-8 text-center text-muted-foreground">
+                    Loading products...
+                  </div>
+                ) : products.length === 0 ? (
+                  <div className="p-8 text-center text-muted-foreground">
+                    No products found. Add your first product!
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead>
+                        <tr className="border-b border-border bg-muted/50">
+                          <th className="text-left p-4 font-semibold">Name</th>
+                          <th className="text-left p-4 font-semibold">Category</th>
+                          <th className="text-left p-4 font-semibold">Material</th>
+                          <th className="text-right p-4 font-semibold">Price</th>
+                          <th className="text-right p-4 font-semibold">Stock</th>
+                          <th className="text-right p-4 font-semibold">Actions</th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </div>{" "}
+                      </thead>
+                      <tbody>
+                        {products.map((product) => (
+                          <tr
+                            key={product.id}
+                            className="border-b border-border hover:bg-muted/50"
+                          >
+                            <td className="p-4">
+                              <div className="flex items-center gap-3">
+                                {product.images[0] && (
+                                  <img
+                                    src={product.images[0]}
+                                    alt={product.name}
+                                    className="w-12 h-12 object-cover rounded"
+                                  />
+                                )}
+                                <span className="font-medium">{product.name}</span>
+                              </div>
+                            </td>
+                            <td className="p-4 capitalize">
+                              {product.category.replace("-", " ")}
+                            </td>
+                            <td className="p-4 capitalize">
+                              {product.material.replace("-", " ")}
+                            </td>
+                            <td className="p-4 text-right">
+                              €{product.price.toFixed(2)}
+                            </td>
+                            <td className="p-4 text-right">
+                              <Badge
+                                variant="outline"
+                                className={
+                                  product.stock === 0
+                                    ? "bg-red-500/10 border-red-500/50 text-red-600"
+                                    : product.stock < 5
+                                    ? "bg-yellow-500/10 border-yellow-500/50 text-yellow-600"
+                                    : "bg-green-500/10 border-green-500/50 text-green-600"
+                                }
+                              >
+                                {product.stock}
+                              </Badge>
+                            </td>
+                            <td className="p-4 text-right space-x-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() =>
+                                  router.push(`/admin/products/${product.id}`)
+                                }
+                              >
+                                <Eye className="h-4 w-4 mr-1" />
+                                Edit
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleDeleteProduct(product.id)}
+                              >
+                                Delete
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="reviews" className="mt-6">
             <AdminReviewsPage />
           </TabsContent>
-        </Tabs>{" "}
+        </Tabs>
       </main>
     </div>
   );
