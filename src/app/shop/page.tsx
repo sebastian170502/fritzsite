@@ -3,12 +3,14 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { ShopClient } from "@/components/shop-client";
 import { getFirstProductImage } from "@/lib/helpers";
+import { createMetadata } from "@/lib/metadata";
 
-export const metadata: Metadata = {
-  title: "Shop - Hand-Forged Metalwork | Fritz's Forge",
+export const metadata: Metadata = createMetadata({
+  title: "Shop - Hand-Forged Metalwork",
   description:
-    "Browse our collection of hand-forged artifacts. Premium metalwork crafted with traditional blacksmithing techniques.",
-};
+    "Browse our collection of hand-forged artifacts. Premium metalwork crafted with traditional blacksmithing techniques. Knives, tools, jewelry, and custom hardware.",
+  path: "/shop",
+});
 
 // Enable ISR with 300 second (5 min) revalidation for shop page
 export const revalidate = 300;
@@ -21,7 +23,7 @@ export default async function ShopPage() {
   });
 
   // Serialize products for client component
-  const serializedProducts = products.map((product) => ({
+  const serializedProducts = products.map((product: any) => ({
     id: product.id,
     name: product.name,
     slug: product.slug,

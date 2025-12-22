@@ -55,7 +55,8 @@ class SimpleCache {
      */
     invalidatePattern(pattern: RegExp) {
         let count = 0
-        for (const key of this.cache.keys()) {
+        const keys = Array.from(this.cache.keys())
+        for (const key of keys) {
             if (pattern.test(key)) {
                 this.cache.delete(key)
                 count++

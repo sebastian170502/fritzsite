@@ -39,7 +39,7 @@ export async function GET(req: Request) {
         })
 
         // Parse images and format results
-        const suggestions = products.map((product) => {
+        const suggestions = products.map((product: any) => {
             const images = typeof product.images === 'string'
                 ? JSON.parse(product.images)
                 : product.images

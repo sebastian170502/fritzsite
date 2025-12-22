@@ -168,7 +168,8 @@ export async function bulkUpdateStock(updates: { id: string; stock: number }[]) 
  * Transaction helper for complex operations
  */
 export async function createOrderTransaction(items: { id: string; quantity: number }[]) {
-    return prisma.$transaction(async (tx) => {
+    // @ts-ignore - Prisma transaction with extended client
+    return await prisma.$transaction(async (tx) => {
         // Verify stock availability
         const products = await tx.product.findMany({
             where: { id: { in: items.map((i) => i.id) } },
@@ -177,7 +178,7 @@ export async function createOrderTransaction(items: { id: string; quantity: numb
 
         // Check if all items are in stock
         for (const item of items) {
-            const product = products.find((p) => p.id === item.id)
+            const product = products.find((p: any) => p.id === item.id)
             if (!product || product.stock < item.quantity) {
                 throw new Error(`Product ${product?.name || item.id} is out of stock`)
             }

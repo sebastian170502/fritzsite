@@ -9,7 +9,7 @@ export async function GET() {
         })
 
         // Parse images from JSON string if stored as string in SQLite
-        const productsWithImages = products.map((product) => ({
+        const productsWithImages = products.map((product: any) => ({
             ...product,
             images:
                 typeof product.images === 'string'
