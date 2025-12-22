@@ -16,12 +16,19 @@ function getStripe() {
 export async function POST(req: Request) {
     try {
         const stripe = getStripe()
-        const { items } = await req.json()
+        const { items, customerInfo } = await req.json()
 
         // Validation
         if (!items || items.length === 0) {
             return NextResponse.json(
                 { error: 'No items in cart' },
+                { status: 400 }
+            )
+        }
+
+        if (!customerInfo || !customerInfo.email || !customerInfo.name) {
+            return NextResponse.json(
+                { error: 'Customer information is required' },
                 { status: 400 }
             )
         }
@@ -45,12 +52,12 @@ export async function POST(req: Request) {
 
         const lineItems = items.map((item: any) => ({
             price_data: {
-                currency: 'ron',
+                currency: 'eur',
                 product_data: {
                     name: item.name,
                     images: item.imageUrl ? [item.imageUrl] : [],
                 },
-                unit_amount: Math.round(item.price * 100), // RON in cents
+                unit_amount: Math.round(item.price * 100), // EUR in cents
             },
             quantity: item.quantity,
         }))
@@ -60,16 +67,27 @@ export async function POST(req: Request) {
             line_items: lineItems,
             mode: 'payment',
             success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.NEXT_PUBLIC_URL}/shop`,
+            cancel_url: `${process.env.NEXT_PUBLIC_URL}/checkout`,
+            customer_email: customerInfo.email,
             metadata: {
+                customerName: customerInfo.name,
+                customerEmail: customerInfo.email,
+                customerPhone: customerInfo.phone || '',
+                shippingAddress: JSON.stringify({
+                    address: customerInfo.address,
+                    city: customerInfo.city,
+                    postalCode: customerInfo.postalCode,
+                }),
                 orderItems: JSON.stringify(items.map((item: any) => ({
                     id: item.id,
+                    name: item.name,
+                    price: item.price,
                     quantity: item.quantity
                 })))
             }
         })
 
-        return NextResponse.json({ url: session.url })
+        return NextResponse.json({ url: session.url, sessionId: session.id })
     } catch (error: any) {
         // Log error with context
         logError({

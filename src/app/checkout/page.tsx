@@ -78,8 +78,23 @@ export default function CheckoutPage() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            items,
-            customerInfo: formData,
+            items: items.map((item) => ({
+              id: item.id,
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+            })),
+            customerInfo: {
+              name: formData.name,
+              email: formData.email,
+              phone: formData.phone,
+              shippingAddress: {
+                address: formData.address,
+                city: formData.city,
+                postalCode: formData.postalCode,
+                country: "Romania",
+              },
+            },
           }),
         });
 
@@ -257,7 +272,7 @@ export default function CheckoutPage() {
                       </p>
                     </div>
                     <div className="text-sm font-medium">
-                      {(item.price * item.quantity).toFixed(2)} RON
+                      €{(item.price * item.quantity).toFixed(2)}
                     </div>
                   </div>
                 ))}
@@ -267,7 +282,7 @@ export default function CheckoutPage() {
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>{total().toFixed(2)} RON</span>
+                    <span>€{total().toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Shipping</span>
@@ -276,7 +291,7 @@ export default function CheckoutPage() {
                   <Separator />
                   <div className="flex justify-between text-base font-bold">
                     <span>Total</span>
-                    <span>{total().toFixed(2)} RON</span>
+                    <span>€{total().toFixed(2)}</span>
                   </div>
                 </div>
               </CardContent>

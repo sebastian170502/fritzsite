@@ -11,32 +11,29 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
         }
 
-        // For now, return mock orders
-        // In production, fetch from database with proper relations
-        const orders = [
-            {
-                id: "1",
-                orderNumber: "ORD-2024-001",
-                date: new Date().toISOString(),
-                total: 299.99,
-                status: "delivered" as const,
-                items: [
-                    { name: "Damascus Steel Knife", quantity: 1, price: 299.99 },
-                ],
-            },
-            {
-                id: "2",
-                orderNumber: "ORD-2024-002",
-                date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(),
-                total: 149.99,
-                status: "shipped" as const,
-                items: [
-                    { name: "Hand Forged Axe", quantity: 1, price: 149.99 },
-                ],
-            },
-        ];
+        const customerData = JSON.parse(sessionCookie.value);
 
-        return NextResponse.json(orders);
+        // Fetch real orders from database
+        const orders = await prisma.order.findMany({
+            where: {
+                customerEmail: customerData.email
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+
+        // Format orders for frontend
+        const formattedOrders = orders.map((order: any) => ({
+            id: order.id,
+            orderNumber: order.orderNumber,
+            date: order.createdAt.toISOString(),
+            total: Number(order.total),
+            status: order.status,
+            items: JSON.parse(order.items)
+        }));
+
+        return NextResponse.json(formattedOrders);
     } catch (error) {
         console.error("Orders fetch error:", error);
         return NextResponse.json(

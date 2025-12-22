@@ -4,9 +4,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, Package, LogOut, Star } from "lucide-react";
+import { Plus, Package, LogOut, Star, ShoppingCart } from "lucide-react";
 import { toast } from "sonner";
 import AdminReviewsPage from "./reviews/page";
+import Link from "next/link";
 
 interface Product {
   id: string;
@@ -97,16 +98,36 @@ export default function AdminDashboard() {
       {/* Main Content */}
       <main className="container mx-auto px-4 py-8">
         <Tabs defaultValue="products" className="w-full">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
+          <TabsList className="grid w-full max-w-2xl grid-cols-3">
             <TabsTrigger value="products">
               <Package className="h-4 w-4 mr-2" />
               Products
+            </TabsTrigger>
+            <TabsTrigger value="orders">
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              Orders
             </TabsTrigger>
             <TabsTrigger value="reviews">
               <Star className="h-4 w-4 mr-2" />
               Reviews
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="orders" className="mt-6">
+            <div className="bg-card border border-border rounded-lg p-8 text-center">
+              <ShoppingCart className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+              <h3 className="text-xl font-semibold mb-2">Order Management</h3>
+              <p className="text-muted-foreground mb-6">
+                View and manage all customer orders in one place
+              </p>
+              <Button asChild size="lg">
+                <Link href="/admin/orders">
+                  <ShoppingCart className="mr-2 h-4 w-4" />
+                  Go to Orders
+                </Link>
+              </Button>
+            </div>
+          </TabsContent>
 
           <TabsContent value="products" className="mt-6">
             {/* Stats */}
