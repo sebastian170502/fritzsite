@@ -209,8 +209,10 @@ export default function CustomerDashboard() {
                               </div>
                             ))}
                           </div>
-                          <Button variant="outline" className="w-full mt-4">
-                            Track Order
+                          <Button variant="outline" className="w-full mt-4" asChild>
+                            <Link href={`/customer/orders/${order.id}`}>
+                              View Details
+                            </Link>
                           </Button>
                         </CardContent>
                       </Card>
