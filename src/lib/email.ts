@@ -1,4 +1,10 @@
 import { Resend } from 'resend'
+import {
+    orderConfirmationTemplate,
+    orderConfirmationText,
+    shippingNotificationTemplate,
+    reviewRequestTemplate,
+} from './email-templates'
 
 // Lazy initialization to avoid build-time errors when API key is not available
 let resendClient: Resend | null = null
@@ -255,4 +261,146 @@ function generateConfirmationEmailHTML(orderId: string, orderType: string): stri
       </body>
     </html>
   `
+}
+
+/**
+ * Send order confirmation email to customer
+ */
+export async function sendOrderConfirmationEmail(order: {
+    orderId: string
+    customerName: string
+    customerEmail: string
+    items: Array<{
+        name: string
+        quantity: number
+        price: number
+        imageUrl?: string
+    }>
+    total: number
+    shippingAddress?: {
+        address: string
+        city: string
+        postalCode: string
+    }
+}) {
+    const resend = getResendClient()
+
+    if (!resend) {
+        console.warn('Email service not configured - skipping order confirmation')
+        return { success: false, error: 'Email service not configured' }
+    }
+
+    try {
+        const orderDate = new Date().toLocaleDateString('ro-RO', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        })
+
+        const { data, error } = await resend.emails.send({
+            from: 'Fritz\'s Forge <orders@fritzforge.com>',
+            to: order.customerEmail,
+            subject: `Confirmare Comandă #${order.orderId} - Fritz's Forge`,
+            html: orderConfirmationTemplate({
+                ...order,
+                orderDate
+            }),
+            text: orderConfirmationText({
+                ...order,
+                orderDate
+            })
+        })
+
+        if (error) {
+            console.error('Failed to send order confirmation:', error)
+            return { success: false, error }
+        }
+
+        return { success: true, data }
+    } catch (error) {
+        console.error('Email service error:', error)
+        return { success: false, error }
+    }
+}
+
+/**
+ * Send shipping notification email to customer
+ */
+export async function sendShippingNotification(data: {
+    orderId: string
+    customerName: string
+    customerEmail: string
+    trackingNumber?: string
+    estimatedDelivery?: string
+    items: Array<{
+        name: string
+        quantity: number
+        price: number
+    }>
+}) {
+    const resend = getResendClient()
+
+    if (!resend) {
+        console.warn('Email service not configured - skipping shipping notification')
+        return { success: false, error: 'Email service not configured' }
+    }
+
+    try {
+        const { data: emailData, error } = await resend.emails.send({
+            from: 'Fritz\'s Forge <orders@fritzforge.com>',
+            to: data.customerEmail,
+            subject: `📦 Comanda Ta #${data.orderId} A Fost Expediată!`,
+            html: shippingNotificationTemplate(data)
+        })
+
+        if (error) {
+            console.error('Failed to send shipping notification:', error)
+            return { success: false, error }
+        }
+
+        return { success: true, data: emailData }
+    } catch (error) {
+        console.error('Email service error:', error)
+        return { success: false, error }
+    }
+}
+
+/**
+ * Send review request email to customer
+ */
+export async function sendReviewRequestEmail(data: {
+    orderId: string
+    customerName: string
+    customerEmail: string
+    items: Array<{
+        name: string
+        quantity: number
+        price: number
+    }>
+}) {
+    const resend = getResendClient()
+
+    if (!resend) {
+        console.warn('Email service not configured - skipping review request')
+        return { success: false, error: 'Email service not configured' }
+    }
+
+    try {
+        const { data: emailData, error } = await resend.emails.send({
+            from: 'Fritz\'s Forge <orders@fritzforge.com>',
+            to: data.customerEmail,
+            subject: '⭐ Cum a fost experiența ta cu Fritz\'s Forge?',
+            html: reviewRequestTemplate(data)
+        })
+
+        if (error) {
+            console.error('Failed to send review request:', error)
+            return { success: false, error }
+        }
+
+        return { success: true, data: emailData }
+    } catch (error) {
+        console.error('Email service error:', error)
+        return { success: false, error }
+    }
 }
