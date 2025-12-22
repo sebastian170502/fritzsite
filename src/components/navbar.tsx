@@ -51,7 +51,7 @@ export function Navbar() {
         </nav>
 
         {/* Desktop Search */}
-        <div className="hidden lg:block absolute left-[calc(50%+200px)] top-1/2 transform -translate-y-1/2 w-80">
+        <div className="hidden xl:block absolute left-[calc(50%+200px)] top-1/2 transform -translate-y-1/2 w-80 z-40">
           <SearchAutocomplete placeholder="Search products..." />
         </div>
 

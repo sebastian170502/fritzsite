@@ -51,11 +51,11 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-secondary/20 p-4 pt-24">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-secondary/20 py-24 px-4">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-grid-white/[0.02] -z-10" />
 
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md mx-auto">
         {/* Logo/Brand Section */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 mb-4">
