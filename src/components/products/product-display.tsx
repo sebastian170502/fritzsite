@@ -13,6 +13,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ReviewForm } from "@/components/products/review-form";
 import { ReviewList } from "@/components/products/review-list";
 import { ProductRating } from "@/components/products/product-rating";
+import { StockNotifyForm } from "@/components/products/stock-notify-form";
 
 interface ProductDisplayProps {
   product: {

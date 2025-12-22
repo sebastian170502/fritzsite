@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { revalidateProduct, revalidateShop } from '@/lib/revalidate'
+import { notifyStockAvailable } from '@/lib/stock-notifications'
 
 export async function GET(
     req: Request,
@@ -44,6 +45,12 @@ export async function PUT(
         const { id } = await params
         const data = await req.json()
 
+        // Get previous stock level to check if it was out of stock
+        const previousProduct = await prisma.product.findUnique({
+            where: { id },
+            select: { stock: true, slug: true },
+        })
+
         // Convert images array to JSON string for SQLite
         const productData = {
             ...data,
@@ -54,6 +61,26 @@ export async function PUT(
             where: { id },
             data: productData,
         })
+
+        // Send stock notifications if product was out of stock and now in stock
+        if (previousProduct && previousProduct.stock === 0 && product.stock > 0) {
+            // Parse images for notification email
+            const images = typeof product.images === 'string' 
+                ? JSON.parse(product.images) 
+                : product.images
+            const imageUrl = images[0] || '/placeholder.jpg'
+
+            // Send notifications asynchronously (don't wait)
+            notifyStockAvailable({
+                id: product.id,
+                name: product.name,
+                slug: product.slug,
+                price: Number(product.price),
+                imageUrl,
+            }).catch(error => {
+                console.error('Failed to send stock notifications:', error)
+            })
+        }
 
         // Revalidate product page and shop page
         await revalidateProduct(product.slug)
