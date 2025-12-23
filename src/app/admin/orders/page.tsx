@@ -102,6 +102,7 @@ export default function AdminOrdersPage() {
 
     setFilteredOrders(filtered);
   };
+
   const exportToCSV = () => {
     if (filteredOrders.length === 0) {
       toast.error("No orders to export");
@@ -174,6 +175,7 @@ export default function AdminOrdersPage() {
       setSelectedOrders(filteredOrders.map((o) => o.id));
     }
   };
+
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
       const response = await fetch(`/api/admin/orders/${orderId}`, {
@@ -468,11 +470,12 @@ export default function AdminOrdersPage() {
                       })}
                     </CardDescription>
                   </div>
-                  <div className="flex gap-2">
-                    {getStatusBadge(order.status)}
-                    {getPaymentStatusBadge(order.paymentStatus)}
-                  </div>
                 </div>
+                <div className="flex gap-2">
+                  {getStatusBadge(order.status)}
+                  {getPaymentStatusBadge(order.paymentStatus)}
+                </div>
+              </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Customer Info */}
