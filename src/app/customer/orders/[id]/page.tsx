@@ -256,12 +256,12 @@ export default function CustomerOrderDetailsPage({
                       Quantity: {item.quantity}
                     </p>
                     <p className="text-sm font-medium mt-1">
-                      €{item.price.toFixed(2)} each
+                      €{Number(item.price).toFixed(2)} each
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="font-bold">
-                      €{(item.price * item.quantity).toFixed(2)}
+                      €{(Number(item.price) * item.quantity).toFixed(2)}
                     </p>
                   </div>
                 </div>
@@ -276,26 +276,26 @@ export default function CustomerOrderDetailsPage({
             <div className="space-y-2">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Subtotal</span>
-                <span>€{order.subtotal.toFixed(2)}</span>
+                <span>€{Number(order.subtotal).toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Shipping</span>
                 <span>
-                  {order.shipping === 0 ? (
+                  {Number(order.shipping) === 0 ? (
                     <span className="text-green-600">FREE</span>
                   ) : (
-                    `€${order.shipping.toFixed(2)}`
+                    `€${Number(order.shipping).toFixed(2)}`
                   )}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Tax</span>
-                <span>€{order.tax.toFixed(2)}</span>
+                <span>€{Number(order.tax).toFixed(2)}</span>
               </div>
               <Separator />
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
-                <span>€{order.total.toFixed(2)}</span>
+                <span>€{Number(order.total).toFixed(2)}</span>
               </div>
             </div>
           </CardContent>

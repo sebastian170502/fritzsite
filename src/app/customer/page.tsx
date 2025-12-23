@@ -167,7 +167,10 @@ export default function CustomerDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  €{orders.reduce((sum, o) => sum + o.total, 0).toFixed(2)}
+                  €
+                  {orders
+                    .reduce((sum, o) => sum + Number(o.total), 0)
+                    .toFixed(2)}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   Lifetime value

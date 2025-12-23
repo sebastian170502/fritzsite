@@ -228,7 +228,7 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  €{stats.totalRevenue.toFixed(2)}
+                  €{Number(stats.totalRevenue).toFixed(2)}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">
                   From {stats.totalOrders} orders
@@ -275,7 +275,7 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  €{stats.averageOrderValue.toFixed(2)}
+                  €{Number(stats.averageOrderValue).toFixed(2)}
                 </div>
                 <p className="text-xs text-muted-foreground mt-1">Per order</p>
               </CardContent>

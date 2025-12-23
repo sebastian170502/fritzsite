@@ -205,7 +205,7 @@ export function SearchAutocomplete({
                       {suggestion.name}
                     </div>
                     <div className="text-xs text-muted-foreground flex items-center gap-2">
-                      <span>€{suggestion.price.toFixed(2)}</span>
+                      <span>€{Number(suggestion.price).toFixed(2)}</span>
                       {suggestion.category && (
                         <>
                           <span>•</span>

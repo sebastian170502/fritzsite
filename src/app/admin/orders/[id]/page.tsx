@@ -212,20 +212,20 @@ export default function OrderDetailsPage({
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Subtotal</span>
-                    <span>€{order.subtotal.toFixed(2)}</span>
+                    <span>€{Number(order.subtotal).toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Shipping</span>
-                    <span>€{order.shipping.toFixed(2)}</span>
+                    <span>€{Number(order.shipping).toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Tax</span>
-                    <span>€{order.tax.toFixed(2)}</span>
+                    <span>€{Number(order.tax).toFixed(2)}</span>
                   </div>
                   <Separator />
-                  <div className="flex justify-between text-lg font-bold">
+                  <div className="flex justify-between font-semibold text-lg">
                     <span>Total</span>
-                    <span>€{order.total.toFixed(2)}</span>
+                    <span>€{Number(order.total).toFixed(2)}</span>
                   </div>
                 </div>
               </CardContent>

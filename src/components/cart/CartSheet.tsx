@@ -99,7 +99,7 @@ export function CartSheet() {
                           </button>
                         </div>
                         <p className="font-medium text-right">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          ${(Number(item.price) * item.quantity).toFixed(2)}
                         </p>
                       </div>
                     </div>
@@ -115,7 +115,7 @@ export function CartSheet() {
             <div className="flex justify-between mb-4">
               <span className="font-medium">Subtotal</span>
               <span className="font-semibold text-lg">
-                ${total().toFixed(2)}
+                ${Number(total()).toFixed(2)}
               </span>
             </div>
             <Button
