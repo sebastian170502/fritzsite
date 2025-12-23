@@ -28,6 +28,8 @@ import {
   Search,
   Eye,
   Mail,
+  Download,
+  RefreshCw,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -52,6 +54,7 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [selectedOrders, setSelectedOrders] = useState<string[]>([]);
 
   useEffect(() => {
     fetchOrders();
@@ -99,7 +102,78 @@ export default function AdminOrdersPage() {
 
     setFilteredOrders(filtered);
   };
+  const exportToCSV = () => {
+    if (filteredOrders.length === 0) {
+      toast.error("No orders to export");
+      return;
+    }
 
+    const csvData = filteredOrders.map((order) => ({
+      "Order Number": order.orderNumber,
+      "Customer Name": order.customerName,
+      "Customer Email": order.customerEmail,
+      "Customer Phone": order.customerPhone || "",
+      Total: order.total,
+      Status: order.status,
+      "Payment Status": order.paymentStatus,
+      "Tracking Number": order.trackingNumber || "",
+      Date: new Date(order.createdAt).toLocaleDateString(),
+    }));
+
+    const headers = Object.keys(csvData[0]).join(",");
+    const rows = csvData.map((row) =>
+      Object.values(row)
+        .map((val) => `"${val}"`)
+        .join(",")
+    );
+    const csv = [headers, ...rows].join("\n");
+
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `orders-${new Date().toISOString().split("T")[0]}.csv`;
+    link.click();
+    toast.success("Orders exported successfully");
+  };
+
+  const handleBulkStatusUpdate = async (newStatus: string) => {
+    if (selectedOrders.length === 0) {
+      toast.error("Please select orders to update");
+      return;
+    }
+
+    try {
+      await Promise.all(
+        selectedOrders.map((id) =>
+          fetch(`/api/admin/orders/${id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ status: newStatus }),
+          })
+        )
+      );
+      toast.success(`Updated ${selectedOrders.length} orders`);
+      setSelectedOrders([]);
+      fetchOrders();
+    } catch (error) {
+      toast.error("Failed to update orders");
+    }
+  };
+
+  const toggleSelectOrder = (id: string) => {
+    setSelectedOrders((prev) =>
+      prev.includes(id) ? prev.filter((oid) => oid !== id) : [...prev, id]
+    );
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedOrders.length === filteredOrders.length) {
+      setSelectedOrders([]);
+    } else {
+      setSelectedOrders(filteredOrders.map((o) => o.id));
+    }
+  };
   const updateOrderStatus = async (orderId: string, newStatus: string) => {
     try {
       const response = await fetch(`/api/admin/orders/${orderId}`, {
@@ -210,9 +284,15 @@ export default function AdminOrdersPage() {
             Manage and track all customer orders
           </p>
         </div>
-        <Button asChild variant="outline">
-          <Link href="/admin">Back to Dashboard</Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button onClick={exportToCSV} variant="outline">
+            <Download className="mr-2 h-4 w-4" />
+            Export CSV
+          </Button>
+          <Button asChild variant="outline">
+            <Link href="/admin">Back to Dashboard</Link>
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -272,35 +352,85 @@ export default function AdminOrdersPage() {
       {/* Filters */}
       <Card className="mb-6">
         <CardContent className="pt-6">
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search by order number, customer name, or email..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10"
-              />
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by order number, customer name, or email..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-full md:w-[200px]">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Orders</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="processing">Processing</SelectItem>
+                  <SelectItem value="shipped">Shipped</SelectItem>
+                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full md:w-[200px]">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Orders</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="processing">Processing</SelectItem>
-                <SelectItem value="shipped">Shipped</SelectItem>
-                <SelectItem value="delivered">Delivered</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
-              </SelectContent>
-            </Select>
+
+            {/* Bulk Actions */}
+            {selectedOrders.length > 0 && (
+              <div className="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-md">
+                <span className="text-sm font-medium">
+                  {selectedOrders.length} order
+                  {selectedOrders.length !== 1 ? "s" : ""} selected
+                </span>
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleBulkStatusUpdate("processing")}
+                  >
+                    Mark Processing
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleBulkStatusUpdate("shipped")}
+                  >
+                    Mark Shipped
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setSelectedOrders([])}
+                  >
+                    Clear Selection
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
 
       {/* Orders List */}
       <div className="space-y-4">
+        {filteredOrders.length > 0 && (
+          <div className="flex items-center mb-4">
+            <input
+              type="checkbox"
+              checked={
+                selectedOrders.length === filteredOrders.length &&
+                filteredOrders.length > 0
+              }
+              onChange={toggleSelectAll}
+              className="mr-2"
+            />
+            <span className="text-sm text-gray-600">Select All</span>
+          </div>
+        )}
+
         {filteredOrders.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
@@ -317,12 +447,19 @@ export default function AdminOrdersPage() {
             <Card key={order.id}>
               <CardHeader>
                 <div className="flex items-start justify-between">
-                  <div className="space-y-1">
-                    <CardTitle className="text-lg">
-                      Order #{order.orderNumber}
-                    </CardTitle>
-                    <CardDescription>
-                      {new Date(order.createdAt).toLocaleDateString("en-US", {
+                  <div className="flex items-start gap-3">
+                    <input
+                      type="checkbox"
+                      checked={selectedOrders.includes(order.id)}
+                      onChange={() => toggleSelectOrder(order.id)}
+                      className="mt-1"
+                    />
+                    <div className="space-y-1">
+                      <CardTitle className="text-lg">
+                        Order #{order.orderNumber}
+                      </CardTitle>
+                      <CardDescription>
+                        {new Date(order.createdAt).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "long",
                         day: "numeric",

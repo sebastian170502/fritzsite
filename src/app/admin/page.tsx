@@ -26,6 +26,7 @@ import {
   ArrowUpRight,
   BarChart3,
   Activity,
+  Settings,
 } from "lucide-react";
 import { toast } from "sonner";
 import AdminReviewsPage from "./reviews/page";
@@ -189,6 +190,18 @@ export default function AdminDashboard() {
                 Analytics
               </Link>
             </Button>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/admin/customers">
+                <Users className="h-4 w-4 mr-2" />
+                Customers
+              </Link>
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/admin/settings">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </Link>
+            </Button>
             <Button onClick={handleLogout} variant="outline" size="sm">
               <LogOut className="h-4 w-4 mr-2" />
               Logout
@@ -267,6 +280,65 @@ export default function AdminDashboard() {
                 <p className="text-xs text-muted-foreground mt-1">Per order</p>
               </CardContent>
             </Card>
+          </div>
+        </div>
+
+        {/* Quick Access Cards */}
+        <div className="mb-8">
+          <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+            <Activity className="h-5 w-5" />
+            Quick Access
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            <Link href="/admin/orders">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                <CardContent className="pt-6 text-center">
+                  <ShoppingCart className="h-8 w-8 mx-auto mb-2 text-blue-600" />
+                  <h3 className="font-semibold">Orders</h3>
+                  <p className="text-xs text-gray-600 mt-1">Manage orders</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/admin/customers">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                <CardContent className="pt-6 text-center">
+                  <Users className="h-8 w-8 mx-auto mb-2 text-purple-600" />
+                  <h3 className="font-semibold">Customers</h3>
+                  <p className="text-xs text-gray-600 mt-1">View customers</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/admin/reviews">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                <CardContent className="pt-6 text-center">
+                  <Star className="h-8 w-8 mx-auto mb-2 text-yellow-600" />
+                  <h3 className="font-semibold">Reviews</h3>
+                  <p className="text-xs text-gray-600 mt-1">Moderate reviews</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/admin/users">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                <CardContent className="pt-6 text-center">
+                  <Users className="h-8 w-8 mx-auto mb-2 text-red-600" />
+                  <h3 className="font-semibold">Admin Users</h3>
+                  <p className="text-xs text-gray-600 mt-1">Manage admins</p>
+                </CardContent>
+              </Card>
+            </Link>
+
+            <Link href="/admin/logs">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                <CardContent className="pt-6 text-center">
+                  <Activity className="h-8 w-8 mx-auto mb-2 text-green-600" />
+                  <h3 className="font-semibold">Activity Logs</h3>
+                  <p className="text-xs text-gray-600 mt-1">View activity</p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
 
