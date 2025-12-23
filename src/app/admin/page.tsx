@@ -558,7 +558,7 @@ export default function AdminDashboard() {
                               {product.material.replace("-", " ")}
                             </td>
                             <td className="p-4 text-right">
-                              €{product.price.toFixed(2)}
+                              €{Number(product.price).toFixed(2)}
                             </td>
                             <td className="p-4 text-right">
                               <Badge

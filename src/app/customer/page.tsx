@@ -325,7 +325,7 @@ export default function CustomerDashboard() {
                                 Total Amount
                               </p>
                               <p className="text-2xl font-bold">
-                                €{order.total.toFixed(2)}
+                                €{Number(order.total).toFixed(2)}
                               </p>
                             </div>
                           </div>
@@ -344,7 +344,7 @@ export default function CustomerDashboard() {
                                   <p className="font-medium">{item.name}</p>
                                   <p className="text-sm text-muted-foreground">
                                     Quantity: {item.quantity} × €
-                                    {item.price.toFixed(2)}
+                                    {Number(item.price).toFixed(2)}
                                   </p>
                                 </div>
                                 <p className="font-semibold">

@@ -192,7 +192,7 @@ export default function OrderDetailsPage({
                           Quantity: {item.quantity}
                         </p>
                         <p className="text-sm font-medium mt-1">
-                          €{item.price.toFixed(2)} each
+                          €{Number(item.price).toFixed(2)} each
                         </p>
                       </div>
                       <div className="text-right">

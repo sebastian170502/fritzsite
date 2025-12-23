@@ -494,7 +494,7 @@ export default function AdminOrdersPage() {
                   <div>
                     <h4 className="text-sm font-medium mb-1">Order Total</h4>
                     <p className="text-2xl font-bold">
-                      €{order.total.toFixed(2)}
+                      €{Number(order.total).toFixed(2)}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {order.items.length} item(s)

@@ -3,31 +3,31 @@
  */
 
 interface OrderItem {
-    name: string
-    quantity: number
-    price: number
-    imageUrl?: string
+  name: string
+  quantity: number
+  price: number
+  imageUrl?: string
 }
 
 interface OrderDetails {
-    orderId: string
-    customerName: string
-    customerEmail: string
-    items: OrderItem[]
-    total: number
-    shippingAddress?: {
-        address: string
-        city: string
-        postalCode: string
-    }
-    orderDate: string
+  orderId: string
+  customerName: string
+  customerEmail: string
+  items: OrderItem[]
+  total: number
+  shippingAddress?: {
+    address: string
+    city: string
+    postalCode: string
+  }
+  orderDate: string
 }
 
 /**
  * Base email template wrapper
  */
 function emailWrapper(content: string): string {
-    return `
+  return `
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -146,19 +146,19 @@ function emailWrapper(content: string): string {
  * Order confirmation email template
  */
 export function orderConfirmationTemplate(order: OrderDetails): string {
-    const itemsHtml = order.items.map(item => `
+  const itemsHtml = order.items.map(item => `
     <div class="order-item">
       <div class="item-details">
         <div class="item-name">${item.name}</div>
-        <div class="item-price">Cantitate: ${item.quantity} × ${item.price.toFixed(2)} RON</div>
+        <div class="item-price">Cantitate: ${item.quantity} × ${Number(item.price).toFixed(2)} RON</div>
       </div>
       <div style="font-weight: 600; color: #1e293b;">
-        ${(item.quantity * item.price).toFixed(2)} RON
+        ${(item.quantity * Number(item.price)).toFixed(2)} RON
       </div>
     </div>
   `).join('')
 
-    const shippingHtml = order.shippingAddress ? `
+  const shippingHtml = order.shippingAddress ? `
     <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
       <h3 style="color: #1e293b; margin-top: 0;">Adresa de Livrare</h3>
       <p style="color: #64748b; margin: 5px 0;">${order.shippingAddress.address}</p>
@@ -166,7 +166,7 @@ export function orderConfirmationTemplate(order: OrderDetails): string {
     </div>
   ` : ''
 
-    const content = `
+  const content = `
     <div class="content">
       <h2 style="color: #1e293b; margin-top: 0;">Mulțumim pentru Comandă!</h2>
       <p style="color: #64748b; font-size: 16px; line-height: 1.6;">
@@ -191,7 +191,7 @@ export function orderConfirmationTemplate(order: OrderDetails): string {
           ${itemsHtml}
           <div class="total-row">
             <span>Total</span>
-            <span>${order.total.toFixed(2)} RON</span>
+            <span>${Number(order.total).toFixed(2)} RON</span>
           </div>
         </div>
 
@@ -210,20 +210,20 @@ export function orderConfirmationTemplate(order: OrderDetails): string {
     </div>
   `
 
-    return emailWrapper(content)
+  return emailWrapper(content)
 }
 
 /**
  * Shipping notification email template
  */
 export function shippingNotificationTemplate(order: {
-    orderId: string
-    customerName: string
-    trackingNumber?: string
-    estimatedDelivery?: string
-    items: OrderItem[]
+  orderId: string
+  customerName: string
+  trackingNumber?: string
+  estimatedDelivery?: string
+  items: OrderItem[]
 }): string {
-    const trackingHtml = order.trackingNumber ? `
+  const trackingHtml = order.trackingNumber ? `
     <div style="background-color: #f0fdf4; border: 2px solid #86efac; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
       <p style="color: #166534; margin: 0 0 10px 0; font-weight: 600;">Număr de Urmărire</p>
       <p style="color: #166534; font-size: 20px; font-weight: 700; margin: 0; letter-spacing: 1px;">
@@ -232,17 +232,17 @@ export function shippingNotificationTemplate(order: {
     </div>
   ` : ''
 
-    const deliveryHtml = order.estimatedDelivery ? `
+  const deliveryHtml = order.estimatedDelivery ? `
     <p style="color: #64748b; font-size: 16px; line-height: 1.6;">
       <strong>Livrare Estimată:</strong> ${order.estimatedDelivery}
     </p>
   ` : ''
 
-    const itemsList = order.items.map(item =>
-        `<li style="color: #64748b; margin: 5px 0;">${item.name} (x${item.quantity})</li>`
-    ).join('')
+  const itemsList = order.items.map(item =>
+    `<li style="color: #64748b; margin: 5px 0;">${item.name} (x${item.quantity})</li>`
+  ).join('')
 
-    const content = `
+  const content = `
     <div class="content">
       <h2 style="color: #1e293b; margin-top: 0;">📦 Comanda Ta A Fost Expediată!</h2>
       <p style="color: #64748b; font-size: 16px; line-height: 1.6;">
@@ -266,18 +266,18 @@ export function shippingNotificationTemplate(order: {
     </div>
   `
 
-    return emailWrapper(content)
+  return emailWrapper(content)
 }
 
 /**
  * Review request email template
  */
 export function reviewRequestTemplate(order: {
-    orderId: string
-    customerName: string
-    items: OrderItem[]
+  orderId: string
+  customerName: string
+  items: OrderItem[]
 }): string {
-    const itemsList = order.items.map(item => `
+  const itemsList = order.items.map(item => `
     <div style="background-color: #f8fafc; border-radius: 8px; padding: 15px; margin: 10px 0;">
       <div style="font-weight: 600; color: #1e293b; margin-bottom: 10px;">${item.name}</div>
       <a href="${process.env.NEXT_PUBLIC_URL}/shop?review=${item.name}" 
@@ -288,7 +288,7 @@ export function reviewRequestTemplate(order: {
     </div>
   `).join('')
 
-    const content = `
+  const content = `
     <div class="content">
       <h2 style="color: #1e293b; margin-top: 0;">⭐ Cum a fost Experiența Ta?</h2>
       <p style="color: #64748b; font-size: 16px; line-height: 1.6;">
@@ -312,24 +312,24 @@ export function reviewRequestTemplate(order: {
     </div>
   `
 
-    return emailWrapper(content)
+  return emailWrapper(content)
 }
 
 /**
  * Plain text version of order confirmation
  */
 export function orderConfirmationText(order: OrderDetails): string {
-    const items = order.items.map(item =>
-        `${item.name} - Cantitate: ${item.quantity} × ${item.price.toFixed(2)} RON = ${(item.quantity * item.price).toFixed(2)} RON`
-    ).join('\n')
+  const items = order.items.map(item =>
+    `${item.name} - Cantitate: ${item.quantity} × ${Number(item.price).toFixed(2)} RON = ${(item.quantity * Number(item.price)).toFixed(2)} RON`
+  ).join('\n')
 
-    const shipping = order.shippingAddress ? `
+  const shipping = order.shippingAddress ? `
 Adresa de Livrare:
 ${order.shippingAddress.address}
 ${order.shippingAddress.city}, ${order.shippingAddress.postalCode}
 ` : ''
 
-    return `
+  return `
 Fritz's Forge - Confirmare Comandă
 
 Bună ${order.customerName},
@@ -342,7 +342,7 @@ Data Comandă: ${order.orderDate}
 Produse Comandate:
 ${items}
 
-Total: ${order.total.toFixed(2)} RON
+Total: ${Number(order.total).toFixed(2)} RON
 
 ${shipping}
 

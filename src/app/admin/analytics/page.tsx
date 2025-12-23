@@ -265,7 +265,7 @@ export default function AdminAnalytics() {
                   </CardHeader>
                   <CardContent>
                     <div className="text-2xl font-bold">
-                      €{analytics.revenue.total.toFixed(2)}
+                      €{Number(analytics.revenue.total).toFixed(2)}
                     </div>
                     <div className="flex items-center gap-1 mt-1">
                       {analytics.revenue.percentageChange >= 0 ? (
