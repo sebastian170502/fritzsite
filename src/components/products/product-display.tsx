@@ -9,6 +9,11 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { formatEUR, formatRON } from "@/lib/helpers";
 import { WishlistButton } from "@/components/wishlist-button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ReviewForm } from "@/components/products/review-form";
+import { ReviewList } from "@/components/products/review-list";
+import { ProductRating } from "@/components/products/product-rating";
+import { StockNotifyForm } from "@/components/products/stock-notify-form";
 
 interface ProductDisplayProps {
   product: {
@@ -18,6 +23,10 @@ interface ProductDisplayProps {
     price: number;
     images: string[];
     stock: number;
+    reviews?: Array<{
+      id: string;
+      rating: number;
+    }>;
   };
 }
 
@@ -26,7 +35,16 @@ export function ProductDisplay({ product }: ProductDisplayProps) {
     product.images[0] || "/placeholder.jpg"
   );
   const [quantity, setQuantity] = React.useState(1);
+  const [refreshReviews, setRefreshReviews] = React.useState(0);
   const { addItem } = useCartStore();
+
+  // Calculate average rating
+  const averageRating =
+    product.reviews && product.reviews.length > 0
+      ? product.reviews.reduce((sum, r) => sum + r.rating, 0) /
+        product.reviews.length
+      : 0;
+  const reviewCount = product.reviews?.length || 0;
 
   const handleQuantityChange = (delta: number) => {
     setQuantity((prev) => {
@@ -68,8 +86,10 @@ export function ProductDisplay({ product }: ProductDisplayProps) {
             src={selectedImage}
             alt={product.name}
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
             priority
+            quality={90}
           />
           {isOutOfStock && (
             <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
@@ -98,7 +118,9 @@ export function ProductDisplay({ product }: ProductDisplayProps) {
                   src={img}
                   alt="thumbnail"
                   fill
+                  sizes="80px"
                   className="object-cover"
+                  loading="lazy"
                 />
               </button>
             ))}
@@ -203,6 +225,39 @@ export function ProductDisplay({ product }: ProductDisplayProps) {
             />
           </div>
         </div>
+      </div>
+
+      {/* Reviews Section */}
+      <div className="container mx-auto px-4 mt-16">
+        <Tabs defaultValue="reviews" className="w-full">
+          <TabsList className="grid w-full max-w-md grid-cols-2">
+            <TabsTrigger value="reviews">Reviews ({reviewCount})</TabsTrigger>
+            <TabsTrigger value="write">Write a Review</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="reviews" className="mt-6">
+            <div className="max-w-4xl">
+              <ReviewList productId={product.id} key={refreshReviews} />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="write" className="mt-6">
+            <div className="max-w-2xl">
+              <h3 className="text-2xl font-heading font-bold mb-6">
+                Write a Review
+              </h3>
+              <ReviewForm
+                productId={product.id}
+                onSuccess={() => {
+                  toast.success(
+                    "Review submitted! It will appear after approval."
+                  );
+                  setRefreshReviews((prev) => prev + 1);
+                }}
+              />
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

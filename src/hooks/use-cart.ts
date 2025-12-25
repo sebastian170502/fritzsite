@@ -1,6 +1,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import { toast } from 'sonner'
+import { trackAddToCart, trackRemoveFromCart } from '@/lib/analytics'
 
 export interface CartItem {
   id: string
@@ -26,46 +27,85 @@ export const useCartStore = create<CartStore>()(
     (set, get) => ({
       items: [],
       addItem: (data) => {
-        const currentItems = get().items
-        const existingItem = currentItems.find((item) => item.id === data.id)
+        try {
+          const currentItems = get().items
+          const existingItem = currentItems.find((item) => item.id === data.id)
 
-        if (existingItem) {
-          set({
-            items: currentItems.map((item) =>
-              item.id === data.id
-                ? { ...item, quantity: item.quantity + 1 }
-                : item
-            ),
-          })
-          toast.success("Item quantity updated", {
-            description: `${data.name} quantity increased.`
-          })
-        } else {
-          set({
-            items: [...currentItems, { ...data, quantity: 1 }],
-          })
-          toast.success("Item added to cart", {
-            description: `${data.name} has been added to your cart.`
+          if (existingItem) {
+            set({
+              items: currentItems.map((item) =>
+                item.id === data.id
+                  ? { ...item, quantity: item.quantity + 1 }
+                  : item
+              ),
+            })
+            toast.success("Item quantity updated", {
+              description: `${data.name} quantity increased.`
+            })
+          } else {
+            set({
+              items: [...currentItems, { ...data, quantity: 1 }],
+            })
+            toast.success("Item added to cart", {
+              description: `${data.name} has been added to your cart.`
+            })
+
+            // Track add to cart
+            trackAddToCart({
+              id: data.id,
+              name: data.name,
+              category: data.category,
+              price: data.price,
+              quantity: 1,
+            })
+          }
+        } catch (error) {
+          console.error('Error adding item to cart:', error)
+          toast.error("Failed to add item", {
+            description: "Please try again"
           })
         }
       },
       removeItem: (id) => {
-        set({
-          items: get().items.filter((item) => item.id !== id),
-        })
-        toast.info("Item removed from cart")
+        try {
+          const itemToRemove = get().items.find((item) => item.id === id)
+
+          set({
+            items: get().items.filter((item) => item.id !== id),
+          })
+          toast.info("Item removed from cart")
+
+          // Track remove from cart
+          if (itemToRemove) {
+            trackRemoveFromCart({
+              id: itemToRemove.id,
+              name: itemToRemove.name,
+              category: itemToRemove.category,
+              price: itemToRemove.price,
+              quantity: itemToRemove.quantity,
+            })
+          }
+        } catch (error) {
+          console.error('Error removing item:', error)
+          toast.error("Failed to remove item")
+        }
       },
       updateQuantity: (id: string, quantity: number) => {
-         // If quantity is effectively 0 or less, we typically might remove it, 
-         // but let's stick to just updating or doing nothing if < 1.
-         // Or simple logic:
-         if (quantity < 1) return;
-         
-         set({
-            items: get().items.map(item => 
-                item.id === id ? { ...item, quantity } : item
+        try {
+          // If quantity is effectively 0 or less, we typically might remove it, 
+          // but let's stick to just updating or doing nothing if < 1.
+          // Or simple logic:
+          if (quantity < 1) return;
+
+          set({
+            items: get().items.map(item =>
+              item.id === id ? { ...item, quantity } : item
             )
-         })
+          })
+        } catch (error) {
+          console.error('Error updating quantity:', error)
+          toast.error("Failed to update quantity")
+        }
       },
       clearCart: () => set({ items: [] }),
       total: () => {
