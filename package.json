@@ -20,6 +20,8 @@
     "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "jspdf": "^3.0.4",
+    "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.468.0",
     "next": "15.0.3",
     "react": "19.0.0-rc-66855b96-20241106",
@@ -33,6 +35,8 @@
     "zustand": "^5.0.9"
   },
   "devDependencies": {
+    "@sentry/nextjs": "^10.32.1",
+    "@sentry/webpack-plugin": "^4.6.1",
     "@types/canvas-confetti": "^1.9.0",
     "@types/node": "^20",
     "@types/react": "^18.2.0",

@@ -17,6 +17,7 @@ import {
   CheckCircle,
   XCircle,
   Loader2,
+  Download,
 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
@@ -155,10 +156,19 @@ export default function OrderDetailsPage({
               <p className="text-muted-foreground">{order.orderNumber}</p>
             </div>
           </div>
-          <Badge className={getStatusColor(order.status)} variant="outline">
-            {getStatusIcon(order.status)}
-            <span className="ml-2">{order.status.toUpperCase()}</span>
-          </Badge>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={() => window.open(`/api/invoices/${order.id}`, '_blank')}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Download Invoice
+            </Button>
+            <Badge className={getStatusColor(order.status)} variant="outline">
+              {getStatusIcon(order.status)}
+              <span className="ml-2">{order.status.toUpperCase()}</span>
+            </Badge>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

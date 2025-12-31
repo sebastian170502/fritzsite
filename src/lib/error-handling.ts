@@ -29,10 +29,21 @@ export function logError({ error, context, severity = 'medium', userId }: ErrorL
         console.error('Error logged:', errorData)
     }
 
-    // In production, send to error tracking service (Sentry, etc.)
+    // In production, send to error tracking service
     if (process.env.NODE_ENV === 'production') {
-        // TODO: Send to Sentry, LogRocket, or other error tracking service
-        // Example: Sentry.captureException(error, { extra: errorData })
+        try {
+            const Sentry = await import('@sentry/nextjs');
+            Sentry.captureException(error, {
+                level: 'error',
+                extra: errorData,
+                tags: {
+                    errorType: errorData.type,
+                    source: errorData.source,
+                }
+            });
+        } catch (sentryError) {
+            console.error('Failed to send error to Sentry:', sentryError);
+        }
     }
 
     return errorData
