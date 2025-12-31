@@ -159,7 +159,7 @@ export default function OrderDetailsPage({
           <div className="flex items-center gap-3">
             <Button
               variant="outline"
-              onClick={() => window.open(`/api/invoices/${order.id}`, '_blank')}
+              onClick={() => window.open(`/api/invoices/${order.id}`, "_blank")}
             >
               <Download className="h-4 w-4 mr-2" />
               Download Invoice

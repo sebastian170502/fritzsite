@@ -5,6 +5,7 @@ import { ProductDisplay } from "@/components/products/product-display";
 import { parseProductImages, formatEUR } from "@/lib/helpers";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ProductAnalytics } from "@/components/analytics/product-analytics";
+import { ProductRecommendations } from "@/components/products/product-recommendations";
 import {
   generateProductJsonLd,
   generateBreadcrumbJsonLd,
@@ -122,6 +123,15 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <div className="min-h-screen bg-background pt-32 pb-32">
         <div className="container mx-auto px-4">
           <ProductDisplay product={serializedProduct} />
+
+          {/* Product Recommendations */}
+          <div className="mt-16">
+            <ProductRecommendations
+              productId={product.id}
+              type="collaborative"
+              limit={4}
+            />
+          </div>
         </div>
       </div>
     </>

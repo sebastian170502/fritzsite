@@ -7,6 +7,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { JsonLd } from "@/components/seo/json-ld";
 import { siteConfig, generateOrganizationJsonLd } from "@/lib/metadata";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { TawkToChat } from "@/components/chat/tawk-to-chat";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const playfair = Playfair_Display({
@@ -77,6 +78,7 @@ export default function RootLayout({
         </div>
         <Footer />
         <Toaster />
+        {process.env.NEXT_PUBLIC_TAWK_PROPERTY_ID && <TawkToChat />}
       </body>
     </html>
   );
