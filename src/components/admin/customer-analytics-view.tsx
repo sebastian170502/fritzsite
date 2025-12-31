@@ -292,8 +292,8 @@ export function CustomerAnalyticsView({
                   />
                   <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip
-                    formatter={(value: number) => [
-                      `€${value.toFixed(2)}`,
+                    formatter={(value) => [
+                      `€${Number(value).toFixed(2)}`,
                       "Order Total",
                     ]}
                     labelStyle={{ color: "#000" }}
@@ -328,7 +328,7 @@ export function CustomerAnalyticsView({
                       cx="50%"
                       cy="50%"
                       labelLine={false}
-                      label={({ category, count }) => `${category} (${count})`}
+                      label={(props: any) => `${props.category} (${props.count})`}
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="count"

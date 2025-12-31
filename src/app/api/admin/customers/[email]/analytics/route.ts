@@ -34,7 +34,7 @@ export async function GET(
 
         // Calculate metrics
         const totalOrders = orders.length;
-        const totalSpent = orders.reduce((sum, order) => sum + Number(order.total), 0);
+        const totalSpent = orders.reduce((sum: number, order: any) => sum + Number(order.total), 0);
         const averageOrderValue = totalSpent / totalOrders;
         const lifetimeValue = totalSpent;
 
@@ -78,7 +78,7 @@ export async function GET(
         // Analyze category preferences
         const categoryStats: Record<string, { count: number; totalSpent: number }> = {};
 
-        orders.forEach(order => {
+        orders.forEach((order: any) => {
             try {
                 const items = JSON.parse(order.items as string);
                 items.forEach((item: any) => {
@@ -104,7 +104,7 @@ export async function GET(
             .slice(0, 5);
 
         // Format order history for timeline
-        const orderHistory = orders.map(order => {
+        const orderHistory = orders.map((order: any) => {
             let itemCount = 0;
             try {
                 const items = JSON.parse(order.items as string);

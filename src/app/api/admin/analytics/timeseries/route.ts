@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         }
 
         // Aggregate order data
-        orders.forEach(order => {
+        orders.forEach((order: any) => {
             const dateStr = order.createdAt.toISOString().split('T')[0];
 
             if (dataByDate[dateStr]) {

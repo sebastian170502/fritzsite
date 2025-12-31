@@ -5,7 +5,7 @@ import { ProductDisplay } from "@/components/products/product-display";
 import { parseProductImages, formatEUR } from "@/lib/helpers";
 import { JsonLd } from "@/components/seo/json-ld";
 import { ProductAnalytics } from "@/components/analytics/product-analytics";
-import { ProductRecommendations } from "@/components/products/product-recommendations";
+import ProductRecommendations from "@/components/products/product-recommendations";
 import {
   generateProductJsonLd,
   generateBreadcrumbJsonLd,

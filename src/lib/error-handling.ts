@@ -31,19 +31,21 @@ export function logError({ error, context, severity = 'medium', userId }: ErrorL
 
     // In production, send to error tracking service
     if (process.env.NODE_ENV === 'production') {
-        try {
-            const Sentry = await import('@sentry/nextjs');
-            Sentry.captureException(error, {
-                level: 'error',
-                extra: errorData,
-                tags: {
-                    errorType: errorData.type,
-                    source: errorData.source,
-                }
+        // Use dynamic import without await (fire and forget)
+        import('@sentry/nextjs')
+            .then((Sentry) => {
+                Sentry.captureException(error, {
+                    level: 'error',
+                    extra: errorData,
+                    tags: {
+                        severity: errorData.severity,
+                        userId: errorData.userId || 'anonymous',
+                    }
+                });
+            })
+            .catch((sentryError) => {
+                console.error('Failed to send error to Sentry:', sentryError);
             });
-        } catch (sentryError) {
-            console.error('Failed to send error to Sentry:', sentryError);
-        }
     }
 
     return errorData

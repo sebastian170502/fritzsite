@@ -1,4 +1,4 @@
-import prisma from './prisma';
+import { prisma } from './prisma';
 
 interface ForecastResult {
     productId: string;
@@ -49,7 +49,7 @@ export async function calculateInventoryForecast(
         let totalSold = 0;
         const dailySales: Record<string, number> = {};
 
-        orders.forEach(order => {
+        orders.forEach((order: any) => {
             try {
                 const items = JSON.parse(order.items as string);
                 const orderDate = order.createdAt.toISOString().split('T')[0];

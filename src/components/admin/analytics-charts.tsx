@@ -205,8 +205,8 @@ export function AnalyticsCharts() {
                     tickFormatter={(value) => `€${value}`}
                   />
                   <Tooltip
-                    formatter={(value: number) => [
-                      `€${value.toFixed(2)}`,
+                    formatter={(value) => [
+                      `€${Number(value).toFixed(2)}`,
                       "Revenue",
                     ]}
                     labelStyle={{ color: "#000" }}
@@ -245,7 +245,7 @@ export function AnalyticsCharts() {
                   />
                   <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip
-                    formatter={(value: number) => [value, "Orders"]}
+                    formatter={(value) => [value, "Orders"]}
                     labelStyle={{ color: "#000" }}
                   />
                   <Legend />
@@ -280,7 +280,7 @@ export function AnalyticsCharts() {
                   />
                   <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip
-                    formatter={(value: number) => [value, "Products"]}
+                    formatter={(value) => [value, "Products"]}
                     labelStyle={{ color: "#000" }}
                   />
                   <Legend />

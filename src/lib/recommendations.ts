@@ -1,4 +1,4 @@
-import prisma from './prisma';
+import { prisma } from './prisma';
 
 interface Product {
     id: string;
@@ -35,7 +35,7 @@ export async function getCollaborativeRecommendations(
         // Count frequency of other products bought together
         const productFrequency: Record<string, number> = {};
 
-        ordersWithProduct.forEach(order => {
+        ordersWithProduct.forEach((order: any) => {
             try {
                 const items = JSON.parse(order.items as string);
                 items.forEach((item: any) => {
@@ -133,7 +133,7 @@ export async function getTrendingProducts(limit: number = 4): Promise<Product[]>
         // Count product frequency
         const productFrequency: Record<string, number> = {};
 
-        recentOrders.forEach(order => {
+        recentOrders.forEach((order: any) => {
             try {
                 const items = JSON.parse(order.items as string);
                 items.forEach((item: any) => {
