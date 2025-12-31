@@ -72,6 +72,7 @@ model Customer {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   orders    Order[]
+  customOrders CustomOrder[]
 
   @@index([email])
 }
@@ -103,4 +104,29 @@ model Order {
   @@index([customerEmail])
   @@index([status])
   @@index([createdAt])
+}
+
+model CustomOrder {
+  id          String   @id @default(uuid())
+  orderId     String   @unique // The friendly ID (e.g. CO-123456)
+  customerId  String?
+  customer    Customer? @relation(fields: [customerId], references: [id])
+  email       String
+  name        String?
+  phone       String?
+  orderType   String   // scratch, modify
+  details     String   // JSON string with form data (dimensions, material, notes)
+  images      String   // JSON string array of URLs
+  price       Decimal? // Quoted price
+  currency    String   @default("RON")
+  shippingAddress String? // JSON string
+  stripeSessionId String?
+  
+  status      String   @default("pending_quote") // pending_quote, awaiting_payment, paid, fulfilled, cancelled
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([email])
+  @@index([customerId])
+  @@index([status])
 }

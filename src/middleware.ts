@@ -68,7 +68,7 @@ export function middleware(request: NextRequest) {
         } else if (pathname.includes('/api/admin')) {
             config = { windowMs: 60000, maxRequests: 20 } // 20 req/min for admin
         } else if (pathname.includes('/api/custom-order')) {
-            config = { windowMs: 300000, maxRequests: 3 } // 3 req/5min for custom orders
+            config = { windowMs: 300000, maxRequests: 20 } // 20 req/5min for custom orders
         }
 
         const rateLimitResult = rateLimit(`${ip}:${pathname}`, config)

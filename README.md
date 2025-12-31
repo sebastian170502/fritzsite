@@ -5,20 +5,24 @@ A complete, production-ready e-commerce platform for handmade metalwork, featuri
 ## ✨ Complete Feature Set
 
 ### 🛒 E-commerce Core
+
 - **Product Catalog** - Dynamic product listings with images and details
 - **Product Pages** - Gallery, descriptions, pricing in EUR & RON
 - **Shopping Cart** - Persistent cart with Zustand state management
+- **Wishlist** - Save favorite items for later (Local Storage persisted)
 - **Checkout System** - Complete checkout flow with Stripe integration
 - **Custom Orders** - Interactive design studio for custom metalwork
 - **Order Management** - Admin panel for order tracking
 
 ### 📊 Analytics & Tracking
+
 - **Google Analytics 4** - Full e-commerce event tracking
 - **Conversion Tracking** - Product views → cart → checkout → purchase
 - **Custom Events** - Searches, filters, custom orders, errors
 - **Revenue Tracking** - Transaction data with item details
 
 ### 📧 Professional Email System
+
 - **Order Confirmations** - Itemized receipts with shipping details
 - **Shipping Notifications** - Tracking numbers and delivery estimates
 - **Review Requests** - Automated feedback collection
@@ -26,6 +30,7 @@ A complete, production-ready e-commerce platform for handmade metalwork, featuri
 - **Responsive Templates** - Mobile-friendly HTML emails in Romanian
 
 ### 🔍 SEO & Discoverability
+
 - **Structured Data** - JSON-LD for products, organization, breadcrumbs
 - **Meta Tags** - Open Graph and Twitter cards
 - **Dynamic Sitemap** - Auto-generated from products (`/sitemap.xml`)
@@ -33,6 +38,7 @@ A complete, production-ready e-commerce platform for handmade metalwork, featuri
 - **Rich Snippets** - Product ratings, prices, availability
 
 ### 🔒 Security Features
+
 - **Rate Limiting** - Per-endpoint protection (checkout: 5/min, admin: 20/min, general: 60/min)
 - **Security Headers** - HSTS, CSP, X-Frame-Options, XSS protection
 - **Input Validation** - Email, phone, URL, content sanitization
@@ -41,6 +47,7 @@ A complete, production-ready e-commerce platform for handmade metalwork, featuri
 - **Admin Authentication** - Secure cookie-based auth
 
 ### ⚠️ Error Handling
+
 - **Error Boundaries** - Global and page-level error catching
 - **Custom Error Pages** - User-friendly 404 and 500 pages
 - **Error Logging** - Comprehensive logging (Sentry-ready)
@@ -48,6 +55,7 @@ A complete, production-ready e-commerce platform for handmade metalwork, featuri
 - **Loading States** - Skeleton loaders and progress indicators
 
 ### ⚡ Performance Optimizations
+
 - **Database Indexes** - 2-3x faster queries on key fields
 - **Query Caching** - 5-10min in-memory cache (50-80% DB load reduction)
 - **Slow Query Detection** - Automatic performance monitoring
@@ -55,6 +63,7 @@ A complete, production-ready e-commerce platform for handmade metalwork, featuri
 - **Code Splitting** - Optimized bundle sizes
 
 ### 👨‍💼 Admin Dashboard
+
 - **Product Management** - Full CRUD operations
 - **Review Moderation** - Approve/reject customer reviews
 - **Order Overview** - Track and manage orders
@@ -63,28 +72,33 @@ A complete, production-ready e-commerce platform for handmade metalwork, featuri
 ## 🚀 Quick Start
 
 ### Prerequisites
+
 - Node.js 18+ and npm
 - Git
 
 ### Installation
 
 1. **Clone the repository**
+
 ```bash
 git clone https://github.com/sebastian170502/fritzsite.git
 cd fritzsite
 ```
 
 2. **Install dependencies**
+
 ```bash
 npm install
 ```
 
 3. **Set up environment variables**
+
 ```bash
 cp .env.example .env.local
 ```
 
 Edit `.env.local` with your configuration:
+
 ```env
 DATABASE_URL="file:./dev.db"
 NEXT_PUBLIC_URL="http://localhost:3000"
@@ -105,6 +119,7 @@ ADMIN_EMAIL="admin@fritzforge.com"
 ```
 
 4. **Set up the database**
+
 ```bash
 npx prisma generate
 npx prisma db push
@@ -112,6 +127,7 @@ npx tsx prisma/seed.ts
 ```
 
 5. **Run the development server**
+
 ```bash
 npm run dev
 ```
@@ -170,6 +186,7 @@ fritzsite/
 ## 📊 Key Features
 
 ### Analytics Events Tracked
+
 - Product views
 - Add to cart / Remove from cart
 - Begin checkout
@@ -180,12 +197,14 @@ fritzsite/
 - Error exceptions
 
 ### Email Templates
+
 - **Order Confirmation** - Itemized receipt with shipping
 - **Shipping Notification** - Tracking number and delivery date
 - **Review Request** - Request feedback on purchased items
 - All emails: Romanian language, mobile responsive, plain text versions
 
 ### Security Measures
+
 - Rate limiting on all API endpoints
 - Security headers (HSTS, CSP, X-Frame-Options)
 - Input validation and sanitization
@@ -194,6 +213,7 @@ fritzsite/
 - Admin authentication
 
 ### Performance Features
+
 - Database connection pooling
 - Query result caching (5-10 min TTL)
 - Indexed database queries
@@ -203,6 +223,7 @@ fritzsite/
 ## 🚀 Deployment
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment guide including:
+
 - Vercel deployment steps
 - Database setup (PostgreSQL)
 - Environment configuration
@@ -215,6 +236,7 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment guide including:
 ## 📝 Environment Variables
 
 ### Required
+
 - `DATABASE_URL` - Database connection
 - `NEXT_PUBLIC_URL` - Site URL
 - `ADMIN_USERNAME` - Admin login
@@ -222,6 +244,7 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment guide including:
 - `REVALIDATION_SECRET` - API secret
 
 ### Optional
+
 - `STRIPE_SECRET_KEY` - Stripe payments
 - `NEXT_PUBLIC_STRIPE_ENABLED` - Enable Stripe
 - `NEXT_PUBLIC_GA_MEASUREMENT_ID` - Google Analytics
@@ -249,6 +272,7 @@ npm start
 ## ✨ Recent Updates
 
 ### December 2024 - Complete Production Platform
+
 - ✅ **Checkout System** - Full Stripe integration with webhook support
 - ✅ **Prisma Optimizations** - Database indexes, query caching, performance monitoring
 - ✅ **SEO & Metadata** - Structured data, sitemap, robots.txt, social sharing
@@ -258,6 +282,7 @@ npm start
 - ✅ **Email System** - Professional transactional emails (orders, shipping, reviews) with Romanian language
 
 ### Previous Updates
+
 - ✅ Product catalog with image galleries
 - ✅ Shopping cart with persistent state
 - ✅ Custom order design studio
@@ -281,6 +306,7 @@ This project is licensed under the MIT License.
 ## 📞 Support
 
 For issues or questions:
+
 - GitHub Issues: [repository]/issues
 - Email: support@fritzforge.com
 
@@ -288,4 +314,4 @@ For issues or questions:
 
 **Built with ❤️ and 🔨 by Fritz's Forge**
 
-*Handcrafted with code, just like our metalwork.*
+_Handcrafted with code, just like our metalwork._

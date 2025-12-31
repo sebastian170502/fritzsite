@@ -8,9 +8,10 @@ export const metadata: Metadata = {
     "Create personalized carbon steel, stainless steel, and wrought iron tools. Start from scratch or modify existing designs.",
 };
 
+import { cookies } from "next/headers";
+
 export default async function CustomOrderPage() {
   // Fetch products from database to populate the dropdown
-  // We only need ID and Name for the selection list
   const products = await prisma.product.findMany({
     select: {
       id: true,
@@ -21,9 +22,25 @@ export default async function CustomOrderPage() {
     },
   });
 
+  // Fetch current customer session
+  const cookieStore = await cookies();
+  const sessionCookie = cookieStore.get("customer_session");
+  let customer = null;
+
+  if (sessionCookie) {
+    customer = await prisma.customer.findUnique({
+      where: { id: sessionCookie.value },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+      },
+    });
+  }
+
   return (
     <div className="min-h-screen bg-background">
-      {/* Visual Header Section (Moved from Home) */}
       {/* Visual Header Section (Moved from Home) */}
       <section className="relative w-full bg-secondary text-secondary-foreground">
         <div className="grid grid-cols-1 md:grid-cols-2 min-h-[500px]">
@@ -57,7 +74,7 @@ export default async function CustomOrderPage() {
       </section>
 
       <main className="container mx-auto px-4 pb-32 -mt-10 relative z-20">
-        <CustomOrderForm products={products} />
+        <CustomOrderForm products={products} customer={customer} />
       </main>
     </div>
   );

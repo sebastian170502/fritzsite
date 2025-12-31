@@ -47,8 +47,8 @@ export async function sendCustomOrderEmail(orderData: CustomOrderEmail) {
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Fritz\'s Forge <orders@fritzforge.com>',
-            to: process.env.ADMIN_EMAIL || 'admin@fritzforge.com',
+            from: 'Fritz\'s Forge <orders@fritzsforge.com>',
+            to: 'fritzsforge@gmail.com', // Always notify admin
             replyTo: orderData.email,
             subject: `New Custom Order Request - ${orderData.orderType === 'scratch' ? 'From Scratch' : 'Modify Existing'}`,
             html: generateOrderEmailHTML(orderData),
@@ -80,7 +80,8 @@ export async function sendCustomerConfirmationEmail(
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Fritz\'s Forge <orders@fritzforge.com>',
+            from: 'Fritz\'s Forge <orders@fritzsforge.com>',
+            replyTo: 'fritzsforge@gmail.com',
             to: customerEmail,
             subject: 'Custom Order Request Received - Fritz\'s Forge',
             html: generateConfirmationEmailHTML(orderId, orderType),
@@ -251,7 +252,7 @@ function generateConfirmationEmailHTML(orderId: string, orderType: string): stri
             <p style="margin-top: 30px;">
               <strong>The Fritz's Forge Team</strong><br>
               Master Blacksmiths<br>
-              <a href="mailto:orders@fritzforge.com">orders@fritzforge.com</a>
+              <a href="mailto:orders@fritzsforge.com">orders@fritzsforge.com</a>
             </p>
           </div>
           <div class="footer">
@@ -298,7 +299,8 @@ export async function sendOrderConfirmationEmail(order: {
         })
 
         const { data, error } = await resend.emails.send({
-            from: 'Fritz\'s Forge <orders@fritzforge.com>',
+            from: 'Fritz\'s Forge <orders@fritzsforge.com>',
+            replyTo: 'fritzsforge@gmail.com',
             to: order.customerEmail,
             subject: `Confirmare Comandă #${order.orderId} - Fritz's Forge`,
             html: orderConfirmationTemplate({
@@ -347,7 +349,8 @@ export async function sendShippingNotification(data: {
 
     try {
         const { data: emailData, error } = await resend.emails.send({
-            from: 'Fritz\'s Forge <orders@fritzforge.com>',
+            from: 'Fritz\'s Forge <orders@fritzsforge.com>',
+            replyTo: 'fritzsforge@gmail.com',
             to: data.customerEmail,
             subject: `📦 Comanda Ta #${data.orderId} A Fost Expediată!`,
             html: shippingNotificationTemplate(data)
@@ -387,7 +390,8 @@ export async function sendReviewRequestEmail(data: {
 
     try {
         const { data: emailData, error } = await resend.emails.send({
-            from: 'Fritz\'s Forge <orders@fritzforge.com>',
+            from: 'Fritz\'s Forge <orders@fritzsforge.com>',
+            replyTo: 'fritzsforge@gmail.com',
             to: data.customerEmail,
             subject: '⭐ Cum a fost experiența ta cu Fritz\'s Forge?',
             html: reviewRequestTemplate(data)
@@ -401,6 +405,96 @@ export async function sendReviewRequestEmail(data: {
         return { success: true, data: emailData }
     } catch (error) {
         console.error('Email service error:', error)
+        return { success: false, error }
+    }
+}
+
+/**
+ * Send admin notification for standard new order
+ */
+export async function sendAdminOrderNotification(order: {
+    orderId: string
+    customerName: string
+    customerEmail: string
+    items: Array<{
+        name: string
+        quantity: number
+        price: number
+    }>
+    total: number
+}) {
+    const resend = getResendClient()
+
+    if (!resend) {
+        console.warn('Email service not configured - skipping admin notification')
+        return { success: false, error: 'Email service not configured' }
+    }
+
+    try {
+        const { data, error } = await resend.emails.send({
+            from: 'Fritz\'s Forge <orders@fritzsforge.com>',
+            to: 'fritzsforge@gmail.com', // Always notify admin
+            subject: `New Standard Order #${order.orderId}`,
+            html: `
+                <h1>New Order Received #${order.orderId}</h1>
+                <p><strong>Customer:</strong> ${order.customerName} (${order.customerEmail})</p>
+                <p><strong>Total:</strong> ${order.total} RON</p>
+                <h3>Items:</h3>
+                <ul>
+                    ${order.items.map(item => `<li>${item.quantity}x ${item.name} - ${item.price} RON</li>`).join('')}
+                </ul>
+            `
+        })
+
+        if (error) {
+            console.error('Failed to send admin notification:', error)
+            return { success: false, error }
+        }
+
+        return { success: true, data }
+    } catch (error) {
+        console.error('Email service error:', error)
+        return { success: false, error }
+    }
+}
+
+export async function sendCustomOrderPaidEmail(orderId: string, email: string, amount: string, itemsDescription: string) {
+    const resend = getResendClient()
+    if (!resend) return { success: false, error: 'Email service not configured' }
+
+    try {
+        // Notify Customer
+        await resend.emails.send({
+            from: 'Fritz\'s Forge <orders@fritzsforge.com>',
+            replyTo: 'fritzsforge@gmail.com',
+            to: email,
+            subject: `Payment Received - Custom Order #${orderId}`,
+            html: `
+                <h1>Payment Confirmed!</h1>
+                <p>Thank you for your payment of <strong>${amount}</strong>.</p>
+                <p>We are now starting work on your custom piece: ${itemsDescription}.</p>
+                <p>We will notify you when it ships!</p>
+                <br/>
+                <p>Best regards,<br/>Fritz's Forge Team</p>
+            `
+        });
+
+        // Notify Admin
+        await resend.emails.send({
+            from: 'Fritz\'s Forge <orders@fritzsforge.com>',
+            to: 'fritzsforge@gmail.com',
+            subject: `💰 Payment Received: Custom Order #${orderId}`,
+            html: `
+                <h1>Payment Received!</h1>
+                <p>Custom Order <strong>#${orderId}</strong> is now PAID.</p>
+                <p>Amount: ${amount}</p>
+                <p>Action: Start production / Check shipping details in Admin Panel.</p>
+            `
+        });
+
+        return { success: true }
+    } catch (error) {
+        console.error('Failed to send payment emails:', error)
         return { success: false, error }
     }
 }

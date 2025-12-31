@@ -1,5 +1,8 @@
 "use client";
 
+import { useWishlist } from "@/hooks/use-wishlist";
+import { X } from "lucide-react";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -49,6 +52,9 @@ export default function CustomerDashboard() {
   const [customer, setCustomer] = useState<any>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // Wishlist hook
+  const { items: wishlistItems, removeItem: removeFromWishlist } = useWishlist();
 
   useEffect(() => {
     checkAuth();
@@ -484,24 +490,67 @@ export default function CustomerDashboard() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="text-center py-16">
-                  <div className="p-4 bg-red-500/10 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
-                    <Heart className="h-10 w-10 text-red-500" />
+                {wishlistItems.length === 0 ? (
+                  <div className="text-center py-16">
+                    <div className="p-4 bg-red-500/10 rounded-full w-20 h-20 mx-auto mb-4 flex items-center justify-center">
+                      <Heart className="h-10 w-10 text-red-500" />
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">
+                      Your wishlist is empty
+                    </h3>
+                    <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                      Save your favorite items by clicking the heart icon on
+                      product pages
+                    </p>
+                    <Button asChild size="lg">
+                      <Link href="/shop">
+                        <ShoppingBag className="mr-2 h-4 w-4" />
+                        Explore Products
+                      </Link>
+                    </Button>
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">
-                    Your wishlist is empty
-                  </h3>
-                  <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-                    Save your favorite items by clicking the heart icon on
-                    product pages
-                  </p>
-                  <Button asChild size="lg">
-                    <Link href="/shop">
-                      <ShoppingBag className="mr-2 h-4 w-4" />
-                      Explore Products
-                    </Link>
-                  </Button>
-                </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {wishlistItems.map((item) => (
+                      <div key={item.id} className="group relative bg-card border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+                        {/* Remove Button */}
+                        <button 
+                          onClick={(e) => {
+                            e.preventDefault();
+                            removeFromWishlist(item.id);
+                            toast.success("Removed from wishlist");
+                          }}
+                          className="absolute top-2 right-2 z-10 p-2 bg-black/50 hover:bg-black/70 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+
+                        {/* Image Link */}
+                        <Link href={`/shop/${item.slug}`} className="block relative aspect-square bg-secondary/10">
+                           <Image
+                             src={item.imageUrl}
+                             alt={item.name}
+                             fill
+                             className="object-cover"
+                           />
+                        </Link>
+                        
+                        {/* Info */}
+                        <div className="p-4">
+                          <Link href={`/shop/${item.slug}`} className="block">
+                            <h3 className="font-semibold truncate group-hover:text-primary transition-colors">{item.name}</h3>
+                          </Link>
+                          <div className="flex items-center justify-between mt-2">
+                             <p className="font-bold">€{item.price.toFixed(2)}</p>
+                             <Button size="sm" variant="outline" asChild>
+                               <Link href={`/shop/${item.slug}`}>View</Link>
+                             </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

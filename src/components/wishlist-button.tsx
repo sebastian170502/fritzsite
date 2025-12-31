@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useWishlist } from "@/hooks/use-wishlist";
@@ -23,8 +24,19 @@ export function WishlistButton({
   variant = "default",
   className,
 }: WishlistButtonProps) {
-  const wishlist = useWishlist();
-  const isInWishlist = wishlist.isInWishlist(product.id);
+  const [isMounted, setIsMounted] = React.useState(false);
+  
+  // Use selector to subscribe to state updates safely
+  const isInWishlist = useWishlist((state) => 
+    state.items.some((item) => item.id === product.id)
+  );
+
+  const wishlist = useWishlist(); // Still need full store for actions
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  const showActive = isMounted && isInWishlist;
 
   const handleToggle = (e: React.MouseEvent) => {
     e.preventDefault(); // Prevent navigation if inside a link
@@ -43,17 +55,18 @@ export function WishlistButton({
     return (
       <button
         onClick={handleToggle}
+        suppressHydrationWarning
         className={cn(
           "absolute top-3 right-3 z-10 p-2 rounded-full bg-background/80 backdrop-blur-sm border border-border/40 transition-all hover:scale-110 hover:bg-background",
-          isInWishlist && "bg-primary/10 border-primary/40",
+          showActive && "bg-primary/10 border-primary/40",
           className
         )}
-        aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+        aria-label={showActive ? "Remove from wishlist" : "Add to wishlist"}
       >
         <Heart
           className={cn(
             "h-4 w-4 transition-colors",
-            isInWishlist ? "fill-primary text-primary" : "text-muted-foreground"
+            showActive ? "fill-primary text-primary" : "text-muted-foreground"
           )}
         />
       </button>
@@ -63,17 +76,18 @@ export function WishlistButton({
   return (
     <Button
       onClick={handleToggle}
-      variant={isInWishlist ? "default" : "outline"}
+      suppressHydrationWarning
+      variant={showActive ? "default" : "outline"}
       className={cn("gap-2", className)}
-      aria-label={isInWishlist ? "Remove from wishlist" : "Add to wishlist"}
+      aria-label={showActive ? "Remove from wishlist" : "Add to wishlist"}
     >
       <Heart
         className={cn(
           "h-4 w-4 transition-colors",
-          isInWishlist && "fill-current"
+          showActive && "fill-current"
         )}
       />
-      {isInWishlist ? "In Wishlist" : "Add to Wishlist"}
+      {showActive ? "In Wishlist" : "Add to Wishlist"}
     </Button>
   );
 }

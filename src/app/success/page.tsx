@@ -76,29 +76,48 @@ function SuccessContent() {
 
   return (
     <div className="flex min-h-[80vh] items-center justify-center p-4">
-      <Card className="w-full max-w-md border-none shadow-xl bg-card/50 backdrop-blur-sm text-center">
-        <CardHeader className="flex flex-col items-center space-y-4 pb-2">
-          <div className="rounded-full bg-green-100 p-3 dark:bg-green-900/20">
-            <CheckCircle2 className="h-12 w-12 text-green-600 dark:text-green-500" />
-          </div>
-          <CardTitle className="text-3xl font-bold tracking-tight text-foreground">
-            Comandă Plasată!
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4 text-center">
-          <p className="text-muted-foreground">
-            Îți mulțumim pentru comandă! Plata a fost procesată cu succes.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Vei primi un email de confirmare cu detaliile comenzii în scurt
-            timp.
-          </p>
+      <Card className="w-full max-w-md border-none shadow-xl bg-card/50 backdrop-blur-sm">
+        <CardContent className="pt-8 pb-8 px-6">
+            <div className="flex flex-col items-center">
+                {/* Icon Circle */}
+                <div className="mx-auto bg-green-100 p-3 rounded-full mb-6 dark:bg-green-900/30">
+                    <span className="text-3xl">🎉</span>
+                </div>
+                
+                {/* Title */}
+                <h2 className="text-center text-2xl font-semibold mb-4 text-foreground">
+                    Comandă Plasată!
+                </h2>
+
+                {/* Description */}
+                <div className="text-center space-y-4 text-base text-muted-foreground">
+                    <p>
+                        Îți mulțumim pentru comandă! Am primit detaliile tale și ne apucăm de treabă.
+                    </p>
+                    <p>
+                        Vei primi un email de confirmare în scurt timp.
+                    </p>
+                    
+                    {/* Secondary Info Box */}
+                    <div className="bg-secondary/30 p-4 rounded-lg text-sm border border-border/50 mt-6 relative overflow-hidden">
+                        <p className="font-medium mb-1 text-foreground">Ai întrebări despre comandă?</p>
+                        <p className="mb-2">
+                             Dacă ai uitat să adaugi ceva sau ai nelămuriri, scrie-ne direct la:
+                        </p>
+                        <a href="mailto:fritzsforge@gmail.com" className="text-primary font-bold hover:underline block">
+                            fritzsforge@gmail.com
+                        </a>
+                    </div>
+                </div>
+
+                {/* Action Button */}
+                <div className="w-full mt-8">
+                     <Button asChild className="w-full rounded-full h-12 text-lg font-medium shadow-md hover:shadow-lg transition-all">
+                        <Link href="/">Înapoi la Magazin</Link>
+                    </Button>
+                </div>
+            </div>
         </CardContent>
-        <CardFooter className="flex justify-center pt-4">
-          <Button asChild className="w-full rounded-full h-12 text-lg">
-            <Link href="/">Înapoi la Magazin</Link>
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );

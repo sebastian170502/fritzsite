@@ -23,6 +23,7 @@ export function CartSheet() {
   const [isMounted, setIsMounted] = React.useState(false);
   const cart = useCartStore();
   const [loading, setLoading] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
 
   // Prevent hydration error
   React.useEffect(() => {
@@ -38,13 +39,14 @@ export function CartSheet() {
   }
 
   const handleCheckout = () => {
+    setOpen(false);
     router.push("/checkout");
   };
 
   const itemCount = cart.items.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <Sheet>
+    <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
         <Button
           variant="outline"
