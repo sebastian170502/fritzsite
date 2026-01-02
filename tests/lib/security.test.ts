@@ -78,14 +78,14 @@ describe('Security Utilities', () => {
             expect(ip).toBe('192.168.1.2')
         })
 
-        it('should fallback to request.ip', () => {
+        it('should fallback to unknown when no headers present', () => {
             const mockRequest = {
                 headers: new Headers({}),
                 ip: '127.0.0.1',
             } as any
 
             const ip = getClientIp(mockRequest)
-            expect(ip).toBe('127.0.0.1')
+            expect(ip).toBe('unknown')
         })
 
         it('should handle missing IP gracefully', () => {

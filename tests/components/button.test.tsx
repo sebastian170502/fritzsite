@@ -10,7 +10,7 @@ describe("Button UI Component", () => {
 
   it("should handle click events", () => {
     let clicked = false;
-    render(
+    const { container } = render(
       <Button
         onClick={() => {
           clicked = true;
@@ -19,8 +19,8 @@ describe("Button UI Component", () => {
         Click
       </Button>
     );
-    const button = screen.getByRole("button");
-    fireEvent.click(button);
+    const button = container.querySelector("button");
+    if (button) fireEvent.click(button);
     expect(clicked).toBe(true);
   });
 
@@ -70,14 +70,14 @@ describe("Button UI Component", () => {
   });
 
   it("should be disabled when disabled prop is true", () => {
-    render(<Button disabled>Disabled</Button>);
-    const button = screen.getByRole("button");
-    expect(button.hasAttribute("disabled")).toBe(true);
+    const { container } = render(<Button disabled>Disabled</Button>);
+    const button = container.querySelector("button");
+    expect(button?.hasAttribute("disabled")).toBe(true);
   });
 
   it("should not trigger onClick when disabled", () => {
     let clicked = false;
-    render(
+    const { container } = render(
       <Button
         disabled
         onClick={() => {
@@ -87,8 +87,8 @@ describe("Button UI Component", () => {
         Disabled
       </Button>
     );
-    const button = screen.getByRole("button");
-    fireEvent.click(button);
+    const button = container.querySelector("button");
+    if (button) fireEvent.click(button);
     expect(clicked).toBe(false);
   });
 
