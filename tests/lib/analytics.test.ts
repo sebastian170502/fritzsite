@@ -1,26 +1,43 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { trackPageView, trackAddToCart, trackPurchase, trackCustomEvent } from '@/lib/analytics'
 
+// Mock window.gtag
+const mockGtag = vi.fn()
+
 describe('Analytics Tracking', () => {
+    beforeEach(() => {
+        mockGtag.mockClear()
+        // @ts-ignore
+        global.window = { gtag: mockGtag }
+    })
+
     describe('Page View Tracking', () => {
         it('should track page view with path', () => {
-            const result = trackPageView('/shop')
-            expect(result).toBeDefined()
+            trackPageView('/shop')
+            expect(mockGtag).toHaveBeenCalledWith('event', 'page_view', {
+                page_path: '/shop',
+                page_title: undefined,
+            })
         })
 
         it('should track page view with title', () => {
-            const result = trackPageView('/shop', 'Shop Page')
-            expect(result).toBeDefined()
+            trackPageView('/shop', 'Shop Page')
+            expect(mockGtag).toHaveBeenCalledWith('event', 'page_view', {
+                page_path: '/shop',
+                page_title: 'Shop Page',
+            })
         })
 
         it('should handle root path', () => {
-            const result = trackPageView('/')
-            expect(result).toBeDefined()
+            trackPageView('/')
+            expect(mockGtag).toHaveBeenCalledWith('event', 'page_view', expect.objectContaining({
+                page_path: '/',
+            }))
         })
 
         it('should handle dynamic routes', () => {
-            const result = trackPageView('/shop/product-slug')
-            expect(result).toBeDefined()
+            trackPageView('/shop/product-slug')
+            expect(mockGtag).toHaveBeenCalled()
         })
     })
 
