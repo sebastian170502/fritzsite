@@ -10,8 +10,8 @@ describe("Input UI Component", () => {
   });
 
   it("should accept value prop", () => {
-    render(<Input value="test value" readOnly />);
-    const input = screen.getByRole("textbox") as HTMLInputElement;
+    const { container } = render(<Input value="test value" readOnly />);
+    const input = container.querySelector("input") as HTMLInputElement;
     expect(input.value).toBe("test value");
   });
 

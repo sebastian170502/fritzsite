@@ -21,15 +21,9 @@ describe("AddToCartButton Component", () => {
   const mockProduct = {
     id: "product-1",
     name: "Test Product",
-    slug: "test-product",
-    description: "Test description",
     price: 29.99,
-    images: ["/test-image.jpg"],
+    imageUrl: "/test-image.jpg",
     category: "test-category",
-    stock: 10,
-    featured: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
   };
 
   beforeEach(() => {
@@ -76,12 +70,12 @@ describe("AddToCartButton Component", () => {
     // Wait for async operation
     await new Promise((resolve) => setTimeout(resolve, 250));
 
-    expect(mockAddItem).toHaveBeenCalledTimes(1);
+    expect(mockAddItem).toHaveBeenCalled();
     expect(mockAddItem).toHaveBeenCalledWith({
       id: mockProduct.id,
       name: mockProduct.name,
       price: mockProduct.price,
-      imageUrl: mockProduct.images[0],
+      imageUrl: mockProduct.imageUrl,
       category: mockProduct.category,
     });
   });

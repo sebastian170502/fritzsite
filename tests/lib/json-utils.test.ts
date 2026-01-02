@@ -70,7 +70,7 @@ describe('JSON Utilities', () => {
 
         it('should handle undefined with fallback', () => {
             const result = safeJSONStringify(undefined, '{}')
-            expect(result).toBeDefined()
+            expect(result).toBe('{}')
         })
 
         it('should stringify arrays', () => {

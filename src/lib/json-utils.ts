@@ -23,7 +23,8 @@ export function safeJSONParse<T>(jsonString: string | null | undefined, fallback
  */
 export function safeJSONStringify(value: any, fallback: string = '{}'): string {
     try {
-        return JSON.stringify(value);
+        const result = JSON.stringify(value);
+        return result === undefined ? fallback : result;
     } catch (error) {
         console.error('JSON stringify error:', error);
         return fallback;
