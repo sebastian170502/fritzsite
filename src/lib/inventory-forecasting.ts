@@ -69,9 +69,15 @@ export async function calculateInventoryForecast(
         const averageDailySales = totalSold / daysToAnalyze;
 
         // Calculate days until stockout
-        const daysUntilStockout = averageDailySales > 0
-            ? Math.floor(product.stock / averageDailySales)
-            : Infinity;
+        // Handle edge case: if no sales or zero stock
+        let daysUntilStockout: number;
+        if (product.stock === 0) {
+            daysUntilStockout = 0;
+        } else if (averageDailySales === 0 || !isFinite(averageDailySales)) {
+            daysUntilStockout = 999; // Use large number instead of Infinity for calculations
+        } else {
+            daysUntilStockout = Math.floor(product.stock / averageDailySales);
+        }
 
         // Determine trend (compare first half vs second half)
         const midpoint = daysToAnalyze / 2;
@@ -195,7 +201,10 @@ export async function getInventoryHealthSummary() {
             ).length,
             averageDaysToStockout: forecasts.length > 0
                 ? Math.round(
-                    forecasts.reduce((sum, f) => sum + f.daysUntilStockout, 0) / forecasts.length
+                    forecasts
+                        .filter(f => f.daysUntilStockout < 365) // Exclude products with very high/no risk
+                        .reduce((sum, f) => sum + f.daysUntilStockout, 0) /
+                    Math.max(1, forecasts.filter(f => f.daysUntilStockout < 365).length)
                 )
                 : 0,
         };
