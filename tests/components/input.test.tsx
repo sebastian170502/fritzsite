@@ -17,15 +17,15 @@ describe("Input UI Component", () => {
 
   it("should handle onChange events", () => {
     let value = "";
-    render(
+    const { container } = render(
       <Input
         onChange={(e) => {
           value = e.target.value;
         }}
       />
     );
-    const input = screen.getByRole("textbox");
-    fireEvent.change(input, { target: { value: "new value" } });
+    const input = container.querySelector("input");
+    if (input) fireEvent.change(input, { target: { value: "new value" } });
     expect(value).toBe("new value");
   });
 
@@ -35,15 +35,15 @@ describe("Input UI Component", () => {
   });
 
   it("should be disabled when disabled prop is true", () => {
-    render(<Input disabled />);
-    const input = screen.getByRole("textbox");
-    expect(input.hasAttribute("disabled")).toBe(true);
+    const { container } = render(<Input disabled />);
+    const input = container.querySelector("input");
+    expect(input?.hasAttribute("disabled")).toBe(true);
   });
 
   it("should accept different input types", () => {
-    render(<Input type="email" />);
-    const input = screen.getByRole("textbox");
-    expect(input.getAttribute("type")).toBe("email");
+    const { container } = render(<Input type="email" />);
+    const input = container.querySelector("input");
+    expect(input?.getAttribute("type")).toBe("email");
   });
 
   it("should accept custom className", () => {

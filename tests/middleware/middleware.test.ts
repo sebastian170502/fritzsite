@@ -57,14 +57,14 @@ describe('Middleware Functionality', () => {
         it('should reject missing header token', () => {
             const headerToken = null
             const cookieToken = 'token123'
-            const isValid = headerToken && headerToken === cookieToken
+            const isValid = !!(headerToken && headerToken === cookieToken)
             expect(isValid).toBe(false)
         })
 
         it('should reject missing cookie token', () => {
             const headerToken = 'token123'
             const cookieToken = null
-            const isValid = headerToken && cookieToken && headerToken === cookieToken
+            const isValid = !!(headerToken && cookieToken && headerToken === cookieToken)
             expect(isValid).toBe(false)
         })
     })

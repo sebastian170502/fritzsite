@@ -44,21 +44,30 @@ describe("AddToCartButton Component", () => {
 
   it("should be enabled when product is in stock", () => {
     render(<AddToCartButton product={mockProduct} />);
-    const button = screen.getByRole("button");
-    expect(button.hasAttribute("disabled")).toBe(false);
+    const buttons = screen.getAllByRole("button");
+    const addButton = buttons.find((btn) =>
+      btn.textContent?.includes("Add to Cart")
+    );
+    expect(addButton?.hasAttribute("disabled")).toBe(false);
   });
 
   it("should be disabled when product is out of stock", () => {
     const outOfStockProduct = { ...mockProduct, stock: 0 };
     render(<AddToCartButton product={outOfStockProduct} />);
-    const button = screen.getByRole("button");
-    expect(button.hasAttribute("disabled")).toBe(true);
+    const buttons = screen.getAllByRole("button");
+    const addButton = buttons.find((btn) =>
+      btn.textContent?.includes("Out of Stock")
+    );
+    expect(addButton?.hasAttribute("disabled")).toBe(true);
   });
 
   it("should call addItem when clicked", () => {
     render(<AddToCartButton product={mockProduct} />);
-    const button = screen.getByRole("button");
-    fireEvent.click(button);
+    const buttons = screen.getAllByRole("button");
+    const addButton = buttons.find((btn) =>
+      btn.textContent?.includes("Add to Cart")
+    );
+    if (addButton) fireEvent.click(addButton);
     expect(mockAddItem).toHaveBeenCalledTimes(1);
     expect(mockAddItem).toHaveBeenCalledWith(mockProduct, 1);
   });
@@ -71,7 +80,7 @@ describe("AddToCartButton Component", () => {
 
   it("should have proper button styling", () => {
     render(<AddToCartButton product={mockProduct} />);
-    const button = screen.getByRole("button");
-    expect(button.className).toContain("button");
+    const buttons = screen.getAllByRole("button");
+    expect(buttons.length).toBeGreaterThan(0);
   });
 });

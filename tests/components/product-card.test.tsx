@@ -70,7 +70,7 @@ describe("ProductCard Component", () => {
     render(<ProductCard {...expensiveProduct} />);
     expect(screen.getByText(/1,234/)).toBeDefined();
   });
-  
+
   it("should format cheap price correctly", () => {
     const cheapProduct = { ...mockProduct, price: 9.99 };
     render(<ProductCard {...cheapProduct} />);
@@ -81,6 +81,7 @@ describe("ProductCard Component", () => {
     render(<ProductCard {...mockProduct} />);
     const productNames = screen.getAllByText("Test Product");
     expect(productNames.length).toBeGreaterThan(0);
+  });
 
   it("should have group hover class for styling", () => {
     const { container } = render(<ProductCard {...mockProduct} />);
