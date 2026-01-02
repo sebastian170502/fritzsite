@@ -2,6 +2,11 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { POST as checkoutHandler } from '@/app/api/checkout/route'
 import { POST as webhookHandler } from '@/app/api/webhook/route'
 
+// Set up test environment variables
+process.env.STRIPE_SECRET_KEY = 'sk_test_mock_key_for_testing'
+process.env.STRIPE_WEBHOOK_SECRET = 'whsec_mock_secret_for_testing'
+process.env.NEXT_PUBLIC_BASE_URL = 'http://localhost:3000'
+
 // Mock Stripe
 vi.mock('stripe', () => {
     return {
