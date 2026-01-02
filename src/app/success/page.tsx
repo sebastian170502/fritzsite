@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, Suspense } from "react";
+import { useEffect, Suspense, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2 } from "lucide-react";
@@ -20,26 +20,40 @@ import { trackPurchase } from "@/lib/analytics";
 function SuccessContent() {
   const searchParams = useSearchParams();
   const { items, total, clearCart } = useCartStore();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    // Track purchase
-    const sessionId = searchParams.get("session_id");
-    if (sessionId && items.length > 0) {
-      trackPurchase(
-        sessionId,
-        items.map((item) => ({
-          id: item.id,
-          name: item.name,
-          category: item.category,
-          price: item.price,
-          quantity: item.quantity,
-        })),
-        total()
-      );
-    }
+    const checkAuth = async () => {
+        try {
+            const res = await fetch("/api/customer/auth");
+            if (res.ok) setIsLoggedIn(true);
+        } catch (e) {}
+    };
+    checkAuth();
+  }, []);
 
-    // Clear the cart
-    clearCart();
+  useEffect(() => {
+    // Track purchase and clear cart
+    const sessionId = searchParams.get("session_id");
+    
+    if (items.length > 0) {
+      if (sessionId) {
+        trackPurchase(
+          sessionId,
+          items.map((item) => ({
+            id: item.id,
+            name: item.name,
+            category: item.category,
+            price: item.price,
+            quantity: item.quantity,
+          })),
+          total()
+        );
+      }
+      
+      // Clear the cart only if we have items to clear
+      clearCart();
+    }
 
     // Fire confetti
     const duration = 5 * 1000;
@@ -110,8 +124,13 @@ function SuccessContent() {
                     </div>
                 </div>
 
-                {/* Action Button */}
-                <div className="w-full mt-8">
+                {/* Action Buttons */}
+                <div className="w-full mt-8 space-y-3">
+                     {isLoggedIn && (
+                        <Button asChild variant="secondary" className="w-full rounded-full h-12 text-lg font-medium border border-border">
+                            <Link href="/customer">Go to My Orders</Link>
+                        </Button>
+                     )}
                      <Button asChild className="w-full rounded-full h-12 text-lg font-medium shadow-md hover:shadow-lg transition-all">
                         <Link href="/">Înapoi la Magazin</Link>
                     </Button>

@@ -280,6 +280,7 @@ npm start
 - ✅ **Security Features** - Rate limiting, security headers, input validation, XSS/SQL injection protection
 - ✅ **Analytics & Tracking** - Google Analytics 4 with complete e-commerce event tracking
 - ✅ **Email System** - Professional transactional emails (orders, shipping, reviews) with Romanian language
+- ✅ **Order Tracking System** - Customer tracking dashboard, admin AWB management, live status updates
 
 ### Previous Updates
 

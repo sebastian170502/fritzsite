@@ -109,7 +109,7 @@ export const useCartStore = create<CartStore>()(
       },
       clearCart: () => set({ items: [] }),
       total: () => {
-        return get().items.reduce((total, item) => total + item.price * item.quantity, 0)
+        return (get().items || []).reduce((total, item) => total + item.price * item.quantity, 0)
       },
     }),
     {
@@ -124,6 +124,11 @@ export const useCartStore = create<CartStore>()(
           removeItem: () => {},
         };
       }),
+      onRehydrateStorage: () => (state) => {
+        if (state && !Array.isArray(state.items)) {
+            state.items = [];
+        }
+      },
     }
   )
 )

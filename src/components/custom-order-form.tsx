@@ -34,6 +34,7 @@ import { Button } from "@/components/ui/button";
 import { X, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
+import Link from "next/link";
 import { isValidEmail } from "@/lib/helpers";
 
 interface Product {
@@ -713,7 +714,12 @@ export function CustomOrderForm({ products, customer }: CustomOrderFormProps) {
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="sm:justify-center">
+          <AlertDialogFooter className="sm:justify-center gap-3">
+            {customer && (
+                <Button variant="outline" asChild className="w-full sm:w-auto min-w-[120px]">
+                    <Link href="/customer">View My Orders</Link>
+                </Button>
+            )}
             <AlertDialogAction onClick={() => setShowSuccessDialog(false)} className="w-full sm:w-auto min-w-[120px]">
               Got it
             </AlertDialogAction>

@@ -359,11 +359,21 @@ export default function CustomerDashboard() {
                               </div>
                             ))}
                           </div>
-                          <Button variant="outline" className="w-full" asChild>
-                            <Link href={`/customer/orders/${order.id}`}>
-                              View Full Details
-                            </Link>
-                          </Button>
+                          <div className="space-y-2">
+                             {order.status !== 'pending' && order.status !== 'cancelled' && (
+                                <Button className="w-full" asChild>
+                                  <Link href={`/customer/orders/${order.id}/track`}>
+                                    <Truck className="mr-2 h-4 w-4" />
+                                    Track Order
+                                  </Link>
+                                </Button>
+                             )}
+                             <Button variant="outline" className="w-full" asChild>
+                               <Link href={`/customer/orders/${order.id}`}>
+                                 View Full Details
+                               </Link>
+                             </Button>
+                          </div>
                         </CardContent>
                       </Card>
                     ))}

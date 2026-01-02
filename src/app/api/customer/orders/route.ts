@@ -52,15 +52,36 @@ export async function GET(request: NextRequest) {
         console.log(`[API Orders] Found ${customOrders.length} custom orders`);
 
         // Format regular orders
-        const formattedOrders = orders.map((order: any) => ({
-            id: order.id,
-            orderNumber: order.orderNumber,
-            date: order.createdAt.toISOString(),
-            total: Number(order.total),
-            status: order.status,
-            items: JSON.parse(order.items),
-            type: 'standard'
-        }));
+        const formattedOrders = orders.map((order: any) => {
+            let shippingAddr = { address: '', city: '', postalCode: '', country: '' };
+            try {
+                if (order.shippingAddress) {
+                    shippingAddr = JSON.parse(order.shippingAddress);
+                }
+            } catch (e) {
+                console.error("Failed to parse shipping address for order", order.id);
+            }
+
+            return {
+                id: order.id,
+                orderNumber: order.orderNumber,
+                date: order.createdAt.toISOString(),
+                createdAt: order.createdAt.toISOString(),
+                total: Number(order.total),
+                subtotal: Number(order.subtotal),
+                shipping: Number(order.shipping),
+                tax: Number(order.tax),
+                status: order.status,
+                paymentStatus: order.paymentStatus,
+                items: JSON.parse(order.items),
+                type: 'standard',
+                customerName: order.customerName,
+                customerEmail: order.customerEmail,
+                customerPhone: order.customerPhone,
+                shippingAddress: shippingAddr,
+                trackingNumber: order.trackingNumber
+            };
+        });
 
         // Format custom orders to match the list structure
         const formattedCustomOrders = customOrders.map((order: any) => {
@@ -70,20 +91,39 @@ export async function GET(request: NextRequest) {
                     ? `Modified Product Request (ID: ${details.productId})`
                     : `Custom ${details.material ? details.material.replace('-', ' ') : 'Tool'} Request`;
 
+                // Try to extract address from details or use placeholder
+                const shippingAddr = { 
+                    address: order.shippingAddress || '', 
+                    city: '', 
+                    postalCode: '', 
+                    country: '' 
+                };
+
                 return {
                     id: order.id,
-                    orderNumber: order.orderId,
+                    orderNumber: order.orderId || order.id.substring(0, 8),
                     date: order.createdAt.toISOString(),
-                    total: 0, // Quote pending
-                    status: order.status, // e.g. 'pending_quote'
+                    createdAt: order.createdAt.toISOString(),
+                    total: order.price ? Number(order.price) : 0, 
+                    subtotal: order.price ? Number(order.price) : 0,
+                    shipping: 0,
+                    tax: 0,
+                    status: order.status, 
+                    paymentStatus: 'pending', // Custom orders are usually pending initially
                     items: [
                     {
                         name: itemName,
                         quantity: 1,
-                        price: 0
+                        price: order.price ? Number(order.price) : 0,
+                        imageUrl: details.images?.[0] || null
                     }
                     ],
-                    type: 'custom'
+                    type: 'custom',
+                    customerName: customer.name,
+                    customerEmail: customer.email,
+                    customerPhone: customer.phone,
+                    shippingAddress: shippingAddr,
+                    trackingNumber: null
                 };
             } catch (e) {
                 console.error(`[API Orders] Failed to parse custom order ${order.id}`, e);

@@ -34,9 +34,33 @@ export default function CheckoutPage() {
 
   const [isSuccess, setIsSuccess] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
+    
+    // Check if user is logged in and pre-fill data
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/customer/auth");
+        if (res.ok) {
+           const data = await res.json();
+           if (data.customer) {
+              setFormData(prev => ({
+                 ...prev,
+                 email: data.customer.email,
+                 name: data.customer.name || prev.name,
+                 phone: data.customer.phone || prev.phone,
+                 address: data.customer.address || prev.address // Assuming customer object has address
+              }));
+              setIsLoggedIn(true);
+           }
+        }
+      } catch (e) {
+        console.error("Auth check failed", e);
+      }
+    };
+    checkAuth();
   }, []);
 
   useEffect(() => {
@@ -198,6 +222,9 @@ export default function CheckoutPage() {
                           setFormData({ ...formData, name: e.target.value })
                         }
                         required
+                        disabled={isLoggedIn}
+                        title={isLoggedIn ? "Name is locked for logged-in users" : ""}
+                        className={isLoggedIn ? "bg-muted" : ""}
                       />
                     </div>
 
@@ -212,6 +239,9 @@ export default function CheckoutPage() {
                           setFormData({ ...formData, email: e.target.value })
                         }
                         required
+                        disabled={isLoggedIn}
+                        title={isLoggedIn ? "Email is locked for logged-in users" : ""}
+                        className={isLoggedIn ? "bg-muted" : ""}
                       />
                     </div>
                   </div>
@@ -227,6 +257,9 @@ export default function CheckoutPage() {
                         setFormData({ ...formData, phone: e.target.value })
                       }
                       required
+                      disabled={isLoggedIn}
+                      title={isLoggedIn ? "Phone is locked for logged-in users" : ""}
+                      className={isLoggedIn ? "bg-muted" : ""}
                     />
                   </div>
 

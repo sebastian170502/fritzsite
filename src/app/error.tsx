@@ -28,6 +28,16 @@ export default function Error({
         <p className="text-muted-foreground">
           {error.message || "An unexpected error occurred. Please try again."}
         </p>
+        <div className="w-full max-w-md overflow-hidden text-left bg-muted/50 p-4 rounded-md text-xs font-mono">
+           <p className="font-semibold text-destructive mb-2">Technical Details:</p>
+           <p>{error.toString()}</p>
+           <details className="mt-2 cursor-pointer">
+             <summary>Stack Trace</summary>
+             <pre className="mt-2 text-[10px] overflow-auto max-h-40 whitespace-pre-wrap">
+               {error.stack}
+             </pre>
+           </details>
+        </div>
         <div className="flex gap-4 justify-center">
           <Button onClick={() => reset()} variant="default">
             Try Again

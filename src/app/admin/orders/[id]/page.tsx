@@ -20,6 +20,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import Image from "next/image";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface OrderItem {
   id: string;
@@ -52,6 +54,8 @@ interface Order {
   paymentStatus: string;
   paymentMethod?: string;
   trackingNumber?: string;
+  courierName?: string;
+  trackingUrl?: string;
   notes?: string;
   createdAt: string;
 }
@@ -310,24 +314,63 @@ export default function OrderDetailsPage({
             </Card>
 
             {/* Tracking Information */}
-            {order.trackingNumber && (
-              <Card>
+            <Card>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Truck className="h-5 w-5" />
-                    Tracking
+                    Tracking Information
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">
-                    Tracking Number
-                  </p>
-                  <p className="font-mono font-medium">
-                    {order.trackingNumber}
-                  </p>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="courier">Courier Name</Label>
+                    <Input 
+                        id="courier" 
+                        value={order.courierName || ''} 
+                        onChange={(e) => setOrder({...order, courierName: e.target.value})}
+                        placeholder="DHL, Fan Courier..." 
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="tracking">Tracking Number</Label>
+                    <Input 
+                        id="tracking" 
+                        value={order.trackingNumber || ''} 
+                        onChange={(e) => setOrder({...order, trackingNumber: e.target.value})} 
+                        placeholder="AWB..." 
+                    />
+                  </div>
+                   <div className="space-y-2">
+                    <Label htmlFor="trackingRef">Tracking URL</Label>
+                    <Input 
+                        id="trackingRef" 
+                        value={order.trackingUrl || ''} 
+                        onChange={(e) => setOrder({...order, trackingUrl: e.target.value})} 
+                        placeholder="https://..." 
+                    />
+                  </div>
+                  <Button className="w-full" onClick={async () => {
+                      try {
+                          const res = await fetch(`/api/admin/orders/${order.id}`, {
+                              method: 'PATCH',
+                              headers: {'Content-Type': 'application/json'},
+                              body: JSON.stringify({
+                                  courierName: order.courierName,
+                                  trackingNumber: order.trackingNumber,
+                                  trackingUrl: order.trackingUrl
+                              })
+                          });
+                          if(res.ok) {
+                              toast.success('Tracking updated');
+                              // Optional: reload status if logical side effects exist
+                          }
+                          else toast.error('Failed to update');
+                      } catch(e) { toast.error('Error updating'); }
+                  }}>
+                    Save Tracking
+                  </Button>
                 </CardContent>
-              </Card>
-            )}
+            </Card>
 
             {/* Order Timeline */}
             <Card>
