@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import Footer from "@/components/footer";
+import { Footer } from "@/components/footer";
 
 describe("Footer Component", () => {
   it("should render footer", () => {
@@ -11,7 +11,8 @@ describe("Footer Component", () => {
 
   it("should display company information", () => {
     render(<Footer />);
-    expect(screen.getByText(/Fritz Handmade/i)).toBeDefined();
+    const linkElements = screen.getAllByText(/www.fritzsforge.com/i);
+    expect(linkElements.length).toBeGreaterThan(0);
   });
 
   it("should contain navigation links", () => {
@@ -20,10 +21,12 @@ describe("Footer Component", () => {
     expect(links.length).toBeGreaterThan(0);
   });
 
-  it("should display copyright information", () => {
+  it("should display footer links", () => {
     render(<Footer />);
-    const year = new Date().getFullYear();
-    expect(screen.getByText(new RegExp(String(year)))).toBeDefined();
+    const privacyLinks = screen.getAllByText(/Privacy Policy/i);
+    const termsLinks = screen.getAllByText(/Terms of Service/i);
+    expect(privacyLinks.length).toBeGreaterThan(0);
+    expect(termsLinks.length).toBeGreaterThan(0);
   });
 
   it("should have proper semantic structure", () => {

@@ -7,19 +7,19 @@ process.env.STRIPE_SECRET_KEY = 'sk_test_mock_key_for_testing'
 process.env.STRIPE_WEBHOOK_SECRET = 'whsec_mock_secret_for_testing'
 process.env.NEXT_PUBLIC_BASE_URL = 'http://localhost:3000'
 
-// Mock Stripe
+// Mock Stripe - must be at top level for Vitest hoisting
 vi.mock('stripe', () => {
     return {
-        default: vi.fn().mockImplementation(() => ({
-            checkout: {
+        default: class MockStripe {
+            checkout = {
                 sessions: {
                     create: vi.fn().mockResolvedValue({
                         id: 'cs_test_123',
                         url: 'https://checkout.stripe.com/test',
                     }),
                 },
-            },
-            webhooks: {
+            }
+            webhooks = {
                 constructEvent: vi.fn().mockImplementation((body, signature, secret) => {
                     return {
                         type: 'checkout.session.completed',
@@ -49,10 +49,16 @@ vi.mock('stripe', () => {
                         },
                     }
                 }),
-            },
-        })),
+            }
+        },
     }
 })
+
+// Mock Next.js headers
+let mockHeaders: Map<string, string> = new Map()
+vi.mock('next/headers', () => ({
+    headers: vi.fn(() => Promise.resolve(mockHeaders)),
+}))
 
 // Mock Prisma
 vi.mock('@/lib/prisma', () => ({
@@ -215,6 +221,9 @@ describe('Checkout Flow', () => {
 
     describe('Webhook Handler', () => {
         it('should process successful checkout', async () => {
+            // Set the stripe-signature header in the mock
+            mockHeaders = new Map([['stripe-signature', 'test-signature']])
+
             const request = new Request('http://localhost:3000/api/webhook', {
                 method: 'POST',
                 headers: {
@@ -240,6 +249,9 @@ describe('Checkout Flow', () => {
         })
 
         it('should reject webhook without signature', async () => {
+            // Clear the headers to simulate no signature
+            mockHeaders = new Map()
+
             const request = new Request('http://localhost:3000/api/webhook', {
                 method: 'POST',
                 body: JSON.stringify({
