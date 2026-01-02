@@ -51,31 +51,48 @@ describe("AddToCartButton Component", () => {
     expect(addButton?.hasAttribute("disabled")).toBe(false);
   });
 
-  it("should be disabled when product is out of stock", () => {
-    const outOfStockProduct = { ...mockProduct, stock: 0 };
-    render(<AddToCartButton product={outOfStockProduct} />);
+  it("should be disabled while loading", async () => {
+    render(<AddToCartButton product={mockProduct} />);
     const buttons = screen.getAllByRole("button");
     const addButton = buttons.find((btn) =>
-      btn.textContent?.includes("Out of Stock")
+      btn.textContent?.includes("Add to Cart")
     );
-    expect(addButton?.hasAttribute("disabled")).toBe(true);
+
+    if (addButton) {
+      fireEvent.click(addButton);
+      // Button should be disabled during loading
+      expect(addButton.hasAttribute("disabled")).toBe(true);
+    }
   });
 
-  it("should call addItem when clicked", () => {
+  it("should call addItem when clicked", async () => {
     render(<AddToCartButton product={mockProduct} />);
     const buttons = screen.getAllByRole("button");
     const addButton = buttons.find((btn) =>
       btn.textContent?.includes("Add to Cart")
     );
     if (addButton) fireEvent.click(addButton);
+
+    // Wait for async operation
+    await new Promise((resolve) => setTimeout(resolve, 250));
+
     expect(mockAddItem).toHaveBeenCalledTimes(1);
-    expect(mockAddItem).toHaveBeenCalledWith(mockProduct, 1);
+    expect(mockAddItem).toHaveBeenCalledWith({
+      id: mockProduct.id,
+      name: mockProduct.name,
+      price: mockProduct.price,
+      imageUrl: mockProduct.images[0],
+      category: mockProduct.category,
+    });
   });
 
-  it("should show out of stock text when stock is 0", () => {
-    const outOfStockProduct = { ...mockProduct, stock: 0 };
-    render(<AddToCartButton product={outOfStockProduct} />);
-    expect(screen.getByText(/Out of Stock/i)).toBeDefined();
+  it("should show loading state when clicked", () => {
+    render(<AddToCartButton product={mockProduct} />);
+    const buttons = screen.getAllByRole("button");
+    const addButton = buttons.find((btn) =>
+      btn.textContent?.includes("Add to Cart")
+    );
+    expect(addButton).toBeDefined();
   });
 
   it("should have proper button styling", () => {

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { trackPageView, trackAddToCart, trackPurchase, trackCustomEvent } from '@/lib/analytics'
+import { trackPageView, trackAddToCart, trackPurchase, trackEvent } from '@/lib/analytics'
 
 // Mock window.gtag
 const mockGtag = vi.fn()
@@ -49,28 +49,26 @@ describe('Analytics Tracking', () => {
                 price: 29.99,
                 category: 'Tools',
             }
-            const result = trackAddToCart(product)
-            expect(result).toBeDefined()
+            trackAddToCart(product)
+            expect(mockGtag).toHaveBeenCalled()
         })
 
         it('should track purchase event', () => {
-            const purchase = {
-                orderId: 'order-123',
-                total: 99.99,
-                items: [
-                    { id: 'product-1', name: 'Product 1', price: 49.99, quantity: 1 },
-                    { id: 'product-2', name: 'Product 2', price: 49.99, quantity: 1 },
-                ],
-            }
-            const result = trackPurchase(purchase)
-            expect(result).toBeDefined()
+            const items = [
+                { id: 'product-1', name: 'Product 1', price: 49.99, quantity: 1 },
+                { id: 'product-2', name: 'Product 2', price: 49.99, quantity: 1 },
+            ]
+            trackPurchase('order-123', items, 99.99)
+            expect(mockGtag).toHaveBeenCalled()
         })
 
         it('should track custom event', () => {
-            const result = trackCustomEvent('newsletter_signup', {
-                email: 'user@example.com',
+            trackEvent({
+                action: 'newsletter_signup',
+                category: 'engagement',
+                label: 'user@example.com',
             })
-            expect(result).toBeDefined()
+            expect(mockGtag).toHaveBeenCalled()
         })
 
         it('should handle product with no category', () => {
@@ -79,8 +77,8 @@ describe('Analytics Tracking', () => {
                 name: 'Test Product',
                 price: 29.99,
             }
-            const result = trackAddToCart(product)
-            expect(result).toBeDefined()
+            trackAddToCart(product)
+            expect(mockGtag).toHaveBeenCalled()
         })
     })
 
