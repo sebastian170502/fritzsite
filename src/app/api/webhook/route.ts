@@ -105,14 +105,41 @@ export async function POST(req: Request) {
 
                     // Decrement stock for purchased items
                     for (const item of items) {
-                        await prisma.product.update({
-                            where: { id: item.id },
-                            data: {
-                                stock: {
-                                    decrement: item.quantity
-                                }
+                        try {
+                            // Check if product exists and has enough stock
+                            const product = await prisma.product.findUnique({
+                                where: { id: item.id },
+                                select: { stock: true },
+                            });
+
+                            if (!product) {
+                                console.error(`Product not found: ${item.id}`);
+                                continue;
                             }
-                        });
+
+                            if (product.stock < item.quantity) {
+                                console.warn(
+                                    `Insufficient stock for product ${item.id}: ` +
+                                    `has ${product.stock}, needs ${item.quantity}`
+                                );
+                                // Still decrement to 0 rather than failing
+                                await prisma.product.update({
+                                    where: { id: item.id },
+                                    data: { stock: 0 },
+                                });
+                            } else {
+                                await prisma.product.update({
+                                    where: { id: item.id },
+                                    data: {
+                                        stock: {
+                                            decrement: item.quantity
+                                        }
+                                    }
+                                });
+                            }
+                        } catch (stockError) {
+                            console.error(`Error updating stock for product ${item.id}:`, stockError);
+                        }
                     }
 
                     console.log(`Stock updated for order: ${order.orderNumber}`);

@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { logError, isValidationError } from '@/lib/error-handling'
+import { handleApiError, ValidationError } from '@/lib/api-errors'
+import { checkoutFormSchema } from '@/lib/validation'
+import { DEFAULTS } from '@/lib/constants'
+import type { CartItem } from '@/types'
 
 // Initialize Stripe only when needed to avoid build-time errors
 function getStripe() {
@@ -16,48 +20,36 @@ function getStripe() {
 export async function POST(req: Request) {
     try {
         const stripe = getStripe()
-        const { items, customerInfo } = await req.json()
+        const body = await req.json()
+        const { items, customerInfo } = body
 
-        // Validation
-        if (!items || items.length === 0) {
-            return NextResponse.json(
-                { error: 'No items in cart' },
-                { status: 400 }
-            )
+        // Validate customer info using Zod schema
+        const validatedCustomer = checkoutFormSchema.parse(customerInfo)
+
+        // Validate items
+        if (!items || !Array.isArray(items) || items.length === 0) {
+            throw new ValidationError('No items in cart')
         }
 
-        if (!customerInfo || !customerInfo.email || !customerInfo.name) {
-            return NextResponse.json(
-                { error: 'Customer information is required' },
-                { status: 400 }
-            )
-        }
-
-        // Validate item structure
+        // Validate each item structure
         for (const item of items) {
-            if (!item.name || !item.price || !item.quantity) {
-                return NextResponse.json(
-                    { error: 'Invalid item format' },
-                    { status: 400 }
-                )
+            if (!item.name || typeof item.price !== 'number' || typeof item.quantity !== 'number') {
+                throw new ValidationError('Invalid item format')
             }
 
             if (item.quantity < 1 || item.price < 0) {
-                return NextResponse.json(
-                    { error: 'Invalid item quantity or price' },
-                    { status: 400 }
-                )
+                throw new ValidationError('Invalid item quantity or price')
             }
         }
 
-        const lineItems = items.map((item: any) => ({
+        const lineItems = (items as CartItem[]).map((item) => ({
             price_data: {
-                currency: 'eur',
+                currency: DEFAULTS.CURRENCY.toLowerCase(),
                 product_data: {
                     name: item.name,
                     images: item.imageUrl ? [item.imageUrl] : [],
                 },
-                unit_amount: Math.round(item.price * 100), // EUR in cents
+                unit_amount: Math.round(item.price * 100), // Convert to cents
             },
             quantity: item.quantity,
         }))
@@ -68,17 +60,17 @@ export async function POST(req: Request) {
             mode: 'payment',
             success_url: `${process.env.NEXT_PUBLIC_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.NEXT_PUBLIC_URL}/checkout`,
-            customer_email: customerInfo.email,
+            customer_email: validatedCustomer.email,
             metadata: {
-                customerName: customerInfo.name,
-                customerEmail: customerInfo.email,
-                customerPhone: customerInfo.phone || '',
+                customerName: validatedCustomer.name,
+                customerEmail: validatedCustomer.email,
+                customerPhone: validatedCustomer.phone || '',
                 shippingAddress: JSON.stringify({
-                    address: customerInfo.address,
-                    city: customerInfo.city,
-                    postalCode: customerInfo.postalCode,
+                    address: validatedCustomer.address,
+                    city: validatedCustomer.city,
+                    postalCode: validatedCustomer.postalCode,
                 }),
-                orderItems: JSON.stringify(items.map((item: any) => ({
+                orderItems: JSON.stringify(items.map((item: CartItem) => ({
                     id: item.id,
                     name: item.name,
                     price: item.price,
@@ -88,35 +80,24 @@ export async function POST(req: Request) {
         })
 
         return NextResponse.json({ url: session.url, sessionId: session.id })
-    } catch (error: any) {
+    } catch (error) {
         // Log error with context
-        logError({
-            error: error instanceof Error ? error : new Error(String(error)),
-            context: {
-                endpoint: '/api/checkout',
-                method: 'POST',
-            },
-            severity: 'high',
-        })
+        if (error instanceof Error) {
+            logError({
+                error,
+                context: {
+                    endpoint: '/api/checkout',
+                    method: 'POST',
+                },
+                severity: 'high',
+            })
+        }
+
+        // Use standardized error handling
+        return handleApiError(error)
 
         // Return appropriate error response
-        if (isValidationError(error)) {
-            return NextResponse.json(
-                { error: 'Invalid request data' },
-                { status: 400 }
-            )
-        }
-
-        if (error?.type === 'StripeInvalidRequestError') {
-            return NextResponse.json(
-                { error: 'Payment processing error. Please try again.' },
-                { status: 400 }
-            )
-        }
-
-        return NextResponse.json(
-            { error: 'Error creating checkout session. Please try again.' },
-            { status: 500 }
-        )
+        // Use standardized error handling
+        return handleApiError(error)
     }
 }

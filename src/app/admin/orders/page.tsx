@@ -462,20 +462,20 @@ export default function AdminOrdersPage() {
                       </CardTitle>
                       <CardDescription>
                         {new Date(order.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </CardDescription>
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    {getStatusBadge(order.status)}
+                    {getPaymentStatusBadge(order.paymentStatus)}
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  {getStatusBadge(order.status)}
-                  {getPaymentStatusBadge(order.paymentStatus)}
-                </div>
-              </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 {/* Customer Info */}

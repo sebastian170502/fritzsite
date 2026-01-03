@@ -100,6 +100,7 @@ export function trackAddToCart(product: {
     price: number
     quantity?: number
 }) {
+    if (!product) return
     trackEvent({
         action: 'add_to_cart',
         currency: 'RON',
@@ -176,6 +177,7 @@ export function trackPurchase(
     }>,
     totalValue: number
 ) {
+    if (!items) return
     trackEvent({
         action: 'purchase',
         transaction_id: transactionId,

@@ -52,9 +52,10 @@ export default function CustomerDashboard() {
   const [customer, setCustomer] = useState<any>(null);
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Wishlist hook
-  const { items: wishlistItems, removeItem: removeFromWishlist } = useWishlist();
+  const { items: wishlistItems, removeItem: removeFromWishlist } =
+    useWishlist();
 
   useEffect(() => {
     checkAuth();
@@ -360,19 +361,26 @@ export default function CustomerDashboard() {
                             ))}
                           </div>
                           <div className="space-y-2">
-                             {order.status !== 'pending' && order.status !== 'cancelled' && (
+                            {order.status !== "pending" &&
+                              order.status !== ("cancelled" as any) && (
                                 <Button className="w-full" asChild>
-                                  <Link href={`/customer/orders/${order.id}/track`}>
+                                  <Link
+                                    href={`/customer/orders/${order.id}/track`}
+                                  >
                                     <Truck className="mr-2 h-4 w-4" />
                                     Track Order
                                   </Link>
                                 </Button>
-                             )}
-                             <Button variant="outline" className="w-full" asChild>
-                               <Link href={`/customer/orders/${order.id}`}>
-                                 View Full Details
-                               </Link>
-                             </Button>
+                              )}
+                            <Button
+                              variant="outline"
+                              className="w-full"
+                              asChild
+                            >
+                              <Link href={`/customer/orders/${order.id}`}>
+                                View Full Details
+                              </Link>
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -522,9 +530,12 @@ export default function CustomerDashboard() {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {wishlistItems.map((item) => (
-                      <div key={item.id} className="group relative bg-card border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+                      <div
+                        key={item.id}
+                        className="group relative bg-card border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all"
+                      >
                         {/* Remove Button */}
-                        <button 
+                        <button
                           onClick={(e) => {
                             e.preventDefault();
                             removeFromWishlist(item.id);
@@ -536,25 +547,32 @@ export default function CustomerDashboard() {
                         </button>
 
                         {/* Image Link */}
-                        <Link href={`/shop/${item.slug}`} className="block relative aspect-square bg-secondary/10">
-                           <Image
-                             src={item.imageUrl}
-                             alt={item.name}
-                             fill
-                             className="object-cover"
-                           />
+                        <Link
+                          href={`/shop/${item.slug}`}
+                          className="block relative aspect-square bg-secondary/10"
+                        >
+                          <Image
+                            src={item.imageUrl}
+                            alt={item.name}
+                            fill
+                            className="object-cover"
+                          />
                         </Link>
-                        
+
                         {/* Info */}
                         <div className="p-4">
                           <Link href={`/shop/${item.slug}`} className="block">
-                            <h3 className="font-semibold truncate group-hover:text-primary transition-colors">{item.name}</h3>
+                            <h3 className="font-semibold truncate group-hover:text-primary transition-colors">
+                              {item.name}
+                            </h3>
                           </Link>
                           <div className="flex items-center justify-between mt-2">
-                             <p className="font-bold">€{item.price.toFixed(2)}</p>
-                             <Button size="sm" variant="outline" asChild>
-                               <Link href={`/shop/${item.slug}`}>View</Link>
-                             </Button>
+                            <p className="font-bold">
+                              €{item.price.toFixed(2)}
+                            </p>
+                            <Button size="sm" variant="outline" asChild>
+                              <Link href={`/shop/${item.slug}`}>View</Link>
+                            </Button>
                           </div>
                         </div>
                       </div>
