@@ -1,5 +1,6 @@
 "use client";
 
+import * as React from "react";
 import { useEffect, useState } from "react";
 import { useCartStore } from "@/hooks/use-cart";
 import { Button } from "@/components/ui/button";
@@ -31,23 +32,54 @@ export default function CheckoutPage() {
     phone: "",
   });
 
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   useEffect(() => {
-    if (items.length === 0) {
+    setIsMounted(true);
+    
+    // Check if user is logged in and pre-fill data
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/customer/auth");
+        if (res.ok) {
+           const data = await res.json();
+           if (data.customer) {
+              setFormData(prev => ({
+                 ...prev,
+                 email: data.customer.email,
+                 name: data.customer.name || prev.name,
+                 phone: data.customer.phone || prev.phone,
+                 address: data.customer.address || prev.address // Assuming customer object has address
+              }));
+              setIsLoggedIn(true);
+           }
+        }
+      } catch (e) {
+        console.error("Auth check failed", e);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    if (isMounted && items.length === 0 && !isSuccess) {
       router.push("/shop");
-    } else {
+    } else if (isMounted && items.length > 0) {
       // Track begin checkout
       trackBeginCheckout(
-        items.map((item) => ({
+          items.map((item) => ({
           id: item.id,
           name: item.name,
           category: item.category,
           price: item.price,
           quantity: item.quantity,
-        })),
-        total()
+          })),
+          total()
       );
     }
-  }, [items, router, total]);
+  }, [items, router, total, isSuccess, isMounted]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -107,14 +139,48 @@ export default function CheckoutPage() {
           throw new Error(data.error || "Checkout failed");
         }
       } else {
-        // Simulate order processing without Stripe
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        // Simulate order processing with DB save
+        const response = await fetch("/api/checkout/simulate", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              items: items.map((item) => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                imageUrl: item.imageUrl // Include image for DB
+              })),
+              customerInfo: {
+                name: formData.name,
+                email: formData.email,
+                phone: formData.phone,
+                shippingAddress: {
+                  address: formData.address,
+                  city: formData.city,
+                  postalCode: formData.postalCode,
+                  country: "Romania",
+                },
+              },
+            }),
+        });
 
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Simulation failed");
+        }
+
+        // Prevent redirect to shop by setting success
+        setIsSuccess(true);
+        
         // Clear cart
         clearCart();
 
-        // Redirect to success page
-        router.push(`/success?order_id=TEST_${Date.now()}`);
+        // Redirect to success page with session ID for tracking
+        router.push(`/success?session_id=${data.sessionId}&order_number=${data.orderId}`);
       }
     } catch (error) {
       console.error("Checkout error:", error);
@@ -124,7 +190,7 @@ export default function CheckoutPage() {
     }
   };
 
-  if (items.length === 0) {
+  if (!isMounted || items.length === 0) {
     return null;
   }
 
@@ -156,6 +222,9 @@ export default function CheckoutPage() {
                           setFormData({ ...formData, name: e.target.value })
                         }
                         required
+                        disabled={isLoggedIn}
+                        title={isLoggedIn ? "Name is locked for logged-in users" : ""}
+                        className={isLoggedIn ? "bg-muted" : ""}
                       />
                     </div>
 
@@ -170,6 +239,9 @@ export default function CheckoutPage() {
                           setFormData({ ...formData, email: e.target.value })
                         }
                         required
+                        disabled={isLoggedIn}
+                        title={isLoggedIn ? "Email is locked for logged-in users" : ""}
+                        className={isLoggedIn ? "bg-muted" : ""}
                       />
                     </div>
                   </div>
@@ -185,6 +257,9 @@ export default function CheckoutPage() {
                         setFormData({ ...formData, phone: e.target.value })
                       }
                       required
+                      disabled={isLoggedIn}
+                      title={isLoggedIn ? "Phone is locked for logged-in users" : ""}
+                      className={isLoggedIn ? "bg-muted" : ""}
                     />
                   </div>
 

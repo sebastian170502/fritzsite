@@ -339,6 +339,16 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             </Link>
+
+            <Link href="/admin/custom-orders">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer border-primary/20 bg-primary/5">
+                <CardContent className="pt-6 text-center">
+                  <DollarSign className="h-8 w-8 mx-auto mb-2 text-primary" />
+                  <h3 className="font-semibold">Custom Orders</h3>
+                  <p className="text-xs text-gray-600 mt-1">Manage quotes</p>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
 

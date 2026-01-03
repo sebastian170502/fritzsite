@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { sendOrderConfirmationEmail } from '@/lib/email'
+import { sendOrderConfirmationEmail, sendAdminOrderNotification } from '@/lib/email'
 import { trackCustomOrder } from '@/lib/analytics'
 
 /**
@@ -25,8 +25,36 @@ export async function POST(req: Request) {
         // Generate order ID
         const orderId = `ORD-${Date.now()}`
 
-        // Store order in database (future feature)
-        // await prisma.order.create({ ... })
+        // Find customer if exists
+        const customer = await prisma.customer.findUnique({
+            where: { email: customer_email }
+        })
+
+        // Store order in database
+        await prisma.order.create({
+            data: {
+                orderNumber: orderId,
+                customerEmail: customer_email,
+                customerName: customer_name || 'Valued Customer',
+                customerPhone: '', // Not always available from checkout
+                shippingAddress: JSON.stringify(shipping_address),
+                items: JSON.stringify(items),
+                subtotal: total, // Assuming total is subtotal for now as tax/shipping logic is simple
+                total: total,
+                status: 'processing',
+                paymentStatus: 'paid',
+                customerId: customer?.id // Link to customer if found
+            }
+        })
+
+        // Notify Admin
+        await sendAdminOrderNotification({
+            orderId,
+            customerName: customer_name || 'Valued Customer',
+            customerEmail: customer_email,
+            items,
+            total
+        })
 
         // Send order confirmation email
         const emailResult = await sendOrderConfirmationEmail({

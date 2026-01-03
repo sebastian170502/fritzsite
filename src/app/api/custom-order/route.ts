@@ -1,4 +1,6 @@
 import { NextResponse } from 'next/server'
+import { cookies } from "next/headers";
+import { prisma } from "@/lib/prisma";
 import { sendCustomOrderEmail, sendCustomerConfirmationEmail } from '@/lib/email'
 import {
     sanitizeString,
@@ -55,15 +57,63 @@ export async function POST(req: Request) {
             orderType: sanitizeString(formData.orderType),
         }
 
-        // Generate order ID
+        // Get customer ID from session if authenticated
+        const cookieStore = await cookies();
+        const sessionCookie = cookieStore.get("customer_session");
+        let customerId = null;
+
+        if (sessionCookie) {
+            // Verify session is valid by checking if customer exists (optional but safer)
+            // For speed we can just trust the ID if we assume the cookie is secure enough for now, 
+            // but consistency check is better.
+            customerId = sessionCookie.value;
+        }
+
+        // Validate customer ID if present
+        if (customerId) {
+            const customerExists = await prisma.customer.findUnique({
+                where: { id: customerId }
+            });
+            if (!customerExists) {
+                console.warn(`Customer ID ${customerId} from cookie not found in DB. converting to guest order.`);
+                customerId = null;
+            }
+        }
+
+        // Generate friendly order ID
         const orderId = `CO-${Date.now()}`
 
+        // Save to Database
+        const customOrder = await prisma.customOrder.create({
+            data: {
+                orderId,
+                email: sanitizedData.email,
+                name: sanitizedData.name,
+                phone: sanitizedData.phone,
+                customerId: customerId,
+                orderType: sanitizedData.orderType,
+                // Store all other form fields as JSON in 'details'
+                details: JSON.stringify({
+                    material: formData.material,
+                    bladeWidth: formData.bladeWidth,
+                    bladeLength: formData.bladeLength,
+                    handleLength: formData.handleLength,
+                    productId: formData.productId,
+                    modifications: formData.modifications,
+                    description: sanitizedData.description,
+                    additionalNotes: formData.additionalNotes
+                }),
+                // Store images array as JSON
+                images: JSON.stringify(formData.images || []),
+                status: 'pending_quote'
+            }
+        });
+
         // Log the order (backup)
-        console.log('Custom Order Received:', {
-            orderId,
-            email: sanitizedData.email,
-            type: sanitizedData.orderType,
-            timestamp: new Date().toISOString(),
+        console.log('Custom Order Saved:', {
+            id: customOrder.id,
+            orderId: customOrder.orderId,
+            email: customOrder.email
         })
 
         // Send email to admin
@@ -74,7 +124,7 @@ export async function POST(req: Request) {
 
         if (!adminEmailResult.success) {
             console.error('Failed to send admin notification:', adminEmailResult.error)
-            // Continue anyway - don't fail the request if email fails
+            // Continue anyway
         }
 
         // Send confirmation to customer
@@ -95,6 +145,7 @@ export async function POST(req: Request) {
             emailSent: adminEmailResult.success && customerEmailResult.success,
         })
     } catch (error: any) {
+        console.error('API Error detailed:', error);
         logError({
             error: error instanceof Error ? error : new Error(String(error)),
             context: {
@@ -105,7 +156,7 @@ export async function POST(req: Request) {
         })
 
         return NextResponse.json(
-            { error: 'Failed to submit custom order. Please try again.' },
+            { error: `Failed to submit custom order: ${error.message || String(error)}` },
             { status: 500 }
         )
     }

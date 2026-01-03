@@ -109,12 +109,26 @@ export const useCartStore = create<CartStore>()(
       },
       clearCart: () => set({ items: [] }),
       total: () => {
-        return get().items.reduce((total, item) => total + item.price * item.quantity, 0)
+        return (get().items || []).reduce((total, item) => total + item.price * item.quantity, 0)
       },
     }),
     {
       name: 'cart-storage',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => {
+        if (typeof window !== "undefined") {
+          return localStorage;
+        }
+        return {
+          getItem: () => null,
+          setItem: () => {},
+          removeItem: () => {},
+        };
+      }),
+      onRehydrateStorage: () => (state) => {
+        if (state && !Array.isArray(state.items)) {
+            state.items = [];
+        }
+      },
     }
   )
 )

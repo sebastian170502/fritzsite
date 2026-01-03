@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Card,
@@ -20,10 +20,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { X, Loader2 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
+import Link from "next/link";
 import { isValidEmail } from "@/lib/helpers";
 
 interface Product {
@@ -31,8 +42,16 @@ interface Product {
   name: string;
 }
 
+interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+}
+
 interface CustomOrderFormProps {
   products: Product[];
+  customer?: Customer | null;
 }
 
 interface FormData {
@@ -48,23 +67,64 @@ interface FormData {
   additionalNotes: string;
 }
 
-export function CustomOrderForm({ products }: CustomOrderFormProps) {
+export function CustomOrderForm({ products, customer }: CustomOrderFormProps) {
   const [scratchImages, setScratchImages] = useState<string[]>([]);
   const [modifyImages, setModifyImages] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  
+  // Dialog State
+  const [showPhoneDialog, setShowPhoneDialog] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [pendingPhone, setPendingPhone] = useState("");
+
   const [scratchForm, setScratchForm] = useState<Partial<FormData>>({
     orderType: "scratch",
-    email: "",
-    phone: "",
+    email: customer?.email || "",
+    phone: customer?.phone || "",
     additionalNotes: "",
   });
+  
   const [modifyForm, setModifyForm] = useState<Partial<FormData>>({
     orderType: "modify",
-    email: "",
-    phone: "",
+    email: customer?.email || "",
+    phone: customer?.phone || "",
     modifications: "",
     additionalNotes: "",
   });
+
+  // Handle Phone Blur logic
+  const handlePhoneBlur = (phone: string) => {
+    // Only trigger if:
+    // 1. User is logged in (customer exists)
+    // 2. User does NOT have a phone saved in profile
+    // 3. User entered a valid-ish phone number
+    if (customer && !customer.phone && phone.length > 5) {
+      setPendingPhone(phone);
+      setShowPhoneDialog(true);
+    }
+  };
+
+  const savePhoneToProfile = async () => {
+    try {
+      const response = await fetch("/api/customer/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone: pendingPhone }),
+      });
+
+      if (response.ok) {
+        toast.success("Phone number saved to profile!");
+        // Update local state or trigger re-fetch if needed, 
+        // but for now UI update is sufficient as form already has value
+      } else {
+        toast.error("Failed to save phone number");
+      }
+    } catch (error) {
+      toast.error("Error saving phone number");
+    } finally {
+      setShowPhoneDialog(false);
+    }
+  };
 
   const handleImageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -118,13 +178,11 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success("Custom order submitted!", {
-          description: "We'll contact you within 24 hours.",
-        });
+        setShowSuccessDialog(true);
         setScratchForm({
           orderType: "scratch",
-          email: "",
-          phone: "",
+          email: customer?.email || "",
+          phone: customer?.phone || "",
           additionalNotes: "",
         });
         setScratchImages([]);
@@ -163,13 +221,11 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
       const data = await response.json();
 
       if (response.ok) {
-        toast.success("Custom order submitted!", {
-          description: "We'll contact you within 24 hours.",
-        });
+        setShowSuccessDialog(true);
         setModifyForm({
           orderType: "modify",
-          email: "",
-          phone: "",
+          email: customer?.email || "",
+          phone: customer?.phone || "",
           modifications: "",
           additionalNotes: "",
         });
@@ -242,7 +298,7 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
 
                   <div className="relative w-full h-48 bg-secondary/20 rounded-lg overflow-hidden border border-border flex items-center justify-center">
                     <Image
-                      src="/dimensions-guide-pic.jpg"
+                      src="/dimensions-guide-v4.png"
                       alt="Dimensions Guide"
                       fill
                       className="object-cover"
@@ -252,23 +308,26 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="space-y-2">
                       <Label
-                        htmlFor="blade-width"
+                        htmlFor="handle-length"
                         className="text-xs text-muted-foreground uppercase tracking-wide"
                       >
-                        1. Blade Width (cm) *
+                        1. Handle Length (cm) *
                       </Label>
                       <Select
-                        value={scratchForm.bladeWidth}
+                        value={scratchForm.handleLength}
                         onValueChange={(value) =>
-                          setScratchForm({ ...scratchForm, bladeWidth: value })
+                          setScratchForm({
+                            ...scratchForm,
+                            handleLength: value,
+                          })
                         }
                         required
                       >
-                        <SelectTrigger id="blade-width">
-                          <SelectValue placeholder="Select width" />
+                        <SelectTrigger id="handle-length">
+                          <SelectValue placeholder="Select length" />
                         </SelectTrigger>
                         <SelectContent className="max-h-[200px]">
-                          {Array.from({ length: 7 }, (_, i) => i + 1).map(
+                          {Array.from({ length: 6 }, (_, i) => i + 10).map(
                             (num) => (
                               <SelectItem key={num} value={num.toString()}>
                                 {num} cm
@@ -310,26 +369,23 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
 
                     <div className="space-y-2">
                       <Label
-                        htmlFor="handle-length"
+                        htmlFor="blade-width"
                         className="text-xs text-muted-foreground uppercase tracking-wide"
                       >
-                        3. Handle Length (cm) *
+                        3. Blade Width (cm) *
                       </Label>
                       <Select
-                        value={scratchForm.handleLength}
+                        value={scratchForm.bladeWidth}
                         onValueChange={(value) =>
-                          setScratchForm({
-                            ...scratchForm,
-                            handleLength: value,
-                          })
+                          setScratchForm({ ...scratchForm, bladeWidth: value })
                         }
                         required
                       >
-                        <SelectTrigger id="handle-length">
-                          <SelectValue placeholder="Select length" />
+                        <SelectTrigger id="blade-width">
+                          <SelectValue placeholder="Select width" />
                         </SelectTrigger>
                         <SelectContent className="max-h-[200px]">
-                          {Array.from({ length: 6 }, (_, i) => i + 10).map(
+                          {Array.from({ length: 7 }, (_, i) => i + 1).map(
                             (num) => (
                               <SelectItem key={num} value={num.toString()}>
                                 {num} cm
@@ -419,6 +475,8 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
                       }
                       placeholder="your@email.com"
                       required
+                      disabled={!!customer?.email}
+                      className={customer?.email ? "bg-muted text-muted-foreground" : ""}
                     />
                   </div>
                   <div className="space-y-2">
@@ -433,7 +491,10 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
                           phone: e.target.value,
                         })
                       }
+                      onBlur={(e) => handlePhoneBlur(e.target.value)}
                       placeholder="+40 XXX XXX XXX"
+                      disabled={!!customer?.phone}
+                      className={customer?.phone ? "bg-muted text-muted-foreground" : ""}
                     />
                   </div>
                 </div>
@@ -575,6 +636,8 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
                       }
                       placeholder="your@email.com"
                       required
+                      disabled={!!customer?.email}
+                      className={customer?.email ? "bg-muted text-muted-foreground" : ""}
                     />
                   </div>
                   <div className="space-y-2">
@@ -586,7 +649,10 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
                       onChange={(e) =>
                         setModifyForm({ ...modifyForm, phone: e.target.value })
                       }
+                      onBlur={(e) => handlePhoneBlur(e.target.value)}
                       placeholder="+40 XXX XXX XXX"
+                      disabled={!!customer?.phone}
+                      className={customer?.phone ? "bg-muted text-muted-foreground" : ""}
                     />
                   </div>
                 </div>
@@ -606,6 +672,60 @@ export function CustomOrderForm({ products }: CustomOrderFormProps) {
           </form>
         </TabsContent>
       </Tabs>
+      
+      {/* Phone Save Dialog */}
+      <AlertDialog open={showPhoneDialog} onOpenChange={setShowPhoneDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Save Phone Number?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Would you like to save this phone number to your profile for future use?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowPhoneDialog(false)}>No, thanks</AlertDialogCancel>
+            <AlertDialogAction onClick={savePhoneToProfile}>Yes, save it</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Success Dialog */}
+      <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <div className="mx-auto bg-green-100 p-3 rounded-full mb-4">
+              <span className="text-3xl">🎉</span>
+            </div>
+            <AlertDialogTitle className="text-center text-2xl">Custom Order Submitted!</AlertDialogTitle>
+            <AlertDialogDescription asChild>
+              <div className="text-center space-y-4 pt-2 text-base text-muted-foreground">
+                <p>
+                  We have received your request and will review it shortly. You will be contacted within 24 hours with a quote or clarification questions.
+                </p>
+                <div className="bg-secondary/20 p-4 rounded-lg text-sm border border-border/50">
+                  <p className="font-medium mb-1 text-foreground">Need to add more details?</p>
+                  <p>
+                    If you have any other additional requirements for your custom order, please email us directly at:
+                  </p>
+                  <a href="mailto:fritzsforge@gmail.com" className="text-primary font-bold hover:underline mt-1 block">
+                    fritzsforge@gmail.com
+                  </a>
+                </div>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="sm:justify-center gap-3">
+            {customer && (
+                <Button variant="outline" asChild className="w-full sm:w-auto min-w-[120px]">
+                    <Link href="/customer">View My Orders</Link>
+                </Button>
+            )}
+            <AlertDialogAction onClick={() => setShowSuccessDialog(false)} className="w-full sm:w-auto min-w-[120px]">
+              Got it
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

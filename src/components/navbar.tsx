@@ -12,8 +12,14 @@ import { SearchAutocomplete } from "@/components/search/search-autocomplete";
 export function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
   const [showMobileSearch, setShowMobileSearch] = React.useState(false);
+  const [isMounted, setIsMounted] = React.useState(false);
   const wishlist = useWishlist();
-  const wishlistCount = wishlist.items.length;
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  const wishlistCount = isMounted ? wishlist.items.length : 0;
 
   return (
     <header className="fixed top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

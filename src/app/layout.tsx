@@ -77,7 +77,7 @@ export default function RootLayout({
           {children}
         </div>
         <Footer />
-        <Toaster />
+        <Toaster position="top-center" />
         {process.env.NEXT_PUBLIC_TAWK_PROPERTY_ID && <TawkToChat />}
       </body>
     </html>

@@ -63,8 +63,9 @@ export async function PATCH(
 
         if (data.status) updateData.status = data.status;
         if (data.paymentStatus) updateData.paymentStatus = data.paymentStatus;
-        if (data.trackingNumber !== undefined)
-            updateData.trackingNumber = data.trackingNumber;
+        if (data.trackingNumber !== undefined) updateData.trackingNumber = data.trackingNumber;
+        if (data.courierName !== undefined) updateData.courierName = data.courierName;
+        if (data.trackingUrl !== undefined) updateData.trackingUrl = data.trackingUrl;
         if (data.notes !== undefined) updateData.notes = data.notes;
 
         const order = await prisma.order.update({

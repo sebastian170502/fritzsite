@@ -1,5 +1,7 @@
 "use client";
 
+import * as React from "react";
+
 import { useWishlist } from "@/hooks/use-wishlist";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -48,7 +50,13 @@ export default function WishlistPage() {
     }
   };
 
-  if (wishlist.items.length === 0) {
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted || wishlist.items.length === 0) {
     return (
       <div className="min-h-screen bg-background pt-24 pb-16">
         <div className="container mx-auto px-4">
