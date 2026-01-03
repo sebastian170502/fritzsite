@@ -56,34 +56,34 @@ export const ORDER_STATUSES = {
 } as const;
 
 export const CACHE_TTL = {
-  PRODUCTS: 300, // 5 minutes
-  ORDERS: 60, // 1 minute
-  ANALYTICS: 600, // 10 minutes
-  SEARCH: 180, // 3 minutes
+    PRODUCTS: 300, // 5 minutes
+    ORDERS: 60, // 1 minute
+    ANALYTICS: 600, // 10 minutes
+    SEARCH: 180, // 3 minutes
 } as const;
 
 export const IMAGE_CONSTRAINTS = {
-  MAX_SIZE_MB: 5,
-  MAX_SIZE_BYTES: 5 * 1024 * 1024,
-  ALLOWED_TYPES: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
-  DIMENSIONS: {
-    PRODUCT: { width: 800, height: 800 },
-    THUMBNAIL: { width: 200, height: 200 },
-  },
+    MAX_SIZE_MB: 5,
+    MAX_SIZE_BYTES: 5 * 1024 * 1024,
+    ALLOWED_TYPES: ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'],
+    DIMENSIONS: {
+        PRODUCT: { width: 800, height: 800 },
+        THUMBNAIL: { width: 200, height: 200 },
+    },
 } as const;
 
 export const VALIDATION = {
-  PASSWORD_MIN_LENGTH: 8,
-  NAME_MIN_LENGTH: 2,
-  NAME_MAX_LENGTH: 100,
-  DESCRIPTION_MAX_LENGTH: 2000,
-  PHONE_REGEX: /^\+?[1-9]\d{1,14}$/,
-  POSTAL_CODE_MIN_LENGTH: 3,
+    PASSWORD_MIN_LENGTH: 8,
+    NAME_MIN_LENGTH: 2,
+    NAME_MAX_LENGTH: 100,
+    DESCRIPTION_MAX_LENGTH: 2000,
+    PHONE_REGEX: /^\+?[1-9]\d{1,14}$/,
+    POSTAL_CODE_MIN_LENGTH: 3,
 } as const;
 
 export const DEFAULTS = {
-  CURRENCY: 'EUR',
-  LOCALE: 'en-US',
-  COUNTRY: 'Romania',
-  PLACEHOLDER_IMAGE: '/placeholder.jpg',
+    CURRENCY: 'EUR',
+    LOCALE: 'en-US',
+    COUNTRY: 'Romania',
+    PLACEHOLDER_IMAGE: '/placeholder.jpg',
 } as const;
