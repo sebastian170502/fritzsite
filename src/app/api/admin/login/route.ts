@@ -44,16 +44,18 @@ export async function POST(req: Request) {
                 const cookieStore = await cookies()
                 const csrfToken = generateCSRFToken()
 
+                const isProduction = String(process.env.NODE_ENV) === 'production'
+
                 cookieStore.set('admin_session', 'authenticated', {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
+                    secure: isProduction,
                     sameSite: 'strict',
                     maxAge: 60 * 60 * 24, // 24 hours
                 })
 
                 cookieStore.set('csrf_token', csrfToken, {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
+                    secure: isProduction,
                     sameSite: 'strict',
                     maxAge: 60 * 60 * 24,
                 })
@@ -66,16 +68,18 @@ export async function POST(req: Request) {
                 const cookieStore = await cookies()
                 const csrfToken = generateCSRFToken()
 
+                const isProduction = String(process.env.NODE_ENV) === 'production'
+
                 cookieStore.set('admin_session', 'authenticated', {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
+                    secure: isProduction,
                     sameSite: 'strict',
                     maxAge: 60 * 60 * 24,
                 })
 
                 cookieStore.set('csrf_token', csrfToken, {
                     httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
+                    secure: isProduction,
                     sameSite: 'strict',
                     maxAge: 60 * 60 * 24,
                 })
