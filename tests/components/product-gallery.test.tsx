@@ -17,13 +17,17 @@ describe("ProductGallery Component", () => {
   ];
 
   it("should render gallery with images", () => {
-    const { container } = render(<ProductGallery images={mockImages} productName="Test Product" />);
+    const { container } = render(
+      <ProductGallery images={mockImages} productName="Test Product" />
+    );
     const images = container.querySelectorAll("img");
     expect(images.length).toBeGreaterThan(0);
   });
 
   it("should display main image", () => {
-    const { container } = render(<ProductGallery images={mockImages} productName="Test Product" />);
+    const { container } = render(
+      <ProductGallery images={mockImages} productName="Test Product" />
+    );
     const images = container.querySelectorAll("img");
     expect(images.length).toBeGreaterThan(0);
     expect(images[0]).toBeDefined();
@@ -38,7 +42,9 @@ describe("ProductGallery Component", () => {
   });
 
   it("should handle empty images array", () => {
-    const { container } = render(<ProductGallery images={[]} productName="Test Product" />);
+    const { container } = render(
+      <ProductGallery images={[]} productName="Test Product" />
+    );
     // Should still render component without crashing
     expect(container).toBeDefined();
   });
@@ -66,11 +72,13 @@ describe("ProductGallery Component", () => {
   });
 
   it("should display correct alt text", () => {
-    const { container } = render(<ProductGallery images={mockImages} productName="Amazing Hammer" />);
+    const { container } = render(
+      <ProductGallery images={mockImages} productName="Amazing Hammer" />
+    );
     const images = container.querySelectorAll("img");
     expect(images.length).toBeGreaterThan(0);
     // Check that at least one image has the correct alt text
-    const hasCorrectAlt = Array.from(images).some(img => 
+    const hasCorrectAlt = Array.from(images).some((img) =>
       img.getAttribute("alt")?.includes("Amazing Hammer")
     );
     expect(hasCorrectAlt).toBe(true);
