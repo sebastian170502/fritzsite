@@ -5,7 +5,7 @@ export async function GET(request: NextRequest) {
     try {
         const searchParams = request.nextUrl.searchParams;
         const daysParam = parseInt(searchParams.get('days') || '30');
-        
+
         // Validate days parameter
         if (isNaN(daysParam) || daysParam < 1 || daysParam > 365) {
             return NextResponse.json(
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
                 { status: 400 }
             );
         }
-        
+
         const days = daysParam;
 
         // Calculate start date

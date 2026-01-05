@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
         const type = searchParams.get('type') || 'collaborative';
         const customerEmail = searchParams.get('customerEmail');
         const limitParam = parseInt(searchParams.get('limit') || '4');
-        
+
         // Validate limit parameter
         if (isNaN(limitParam) || limitParam < 1 || limitParam > 50) {
             return NextResponse.json(
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
                 { status: 400 }
             );
         }
-        
+
         const limit = limitParam;
 
         let recommendations;

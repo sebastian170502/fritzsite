@@ -74,7 +74,11 @@ export default function OrderDetailsPage({
   );
 
   useEffect(() => {
-    params.then(setUnwrappedParams);
+    params.then(setUnwrappedParams).catch((error) => {
+      console.error("Error unwrapping params:", error);
+      toast.error("Failed to load order");
+      router.push("/admin/orders");
+    });
   }, [params]);
 
   useEffect(() => {
@@ -325,61 +329,71 @@ export default function OrderDetailsPage({
 
             {/* Tracking Information */}
             <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Truck className="h-5 w-5" />
-                    Tracking Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="courier">Courier Name</Label>
-                    <Input 
-                        id="courier" 
-                        value={order.courierName || ''} 
-                        onChange={(e) => setOrder({...order, courierName: e.target.value})}
-                        placeholder="DHL, Fan Courier..." 
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="tracking">Tracking Number</Label>
-                    <Input 
-                        id="tracking" 
-                        value={order.trackingNumber || ''} 
-                        onChange={(e) => setOrder({...order, trackingNumber: e.target.value})} 
-                        placeholder="AWB..." 
-                    />
-                  </div>
-                   <div className="space-y-2">
-                    <Label htmlFor="trackingRef">Tracking URL</Label>
-                    <Input 
-                        id="trackingRef" 
-                        value={order.trackingUrl || ''} 
-                        onChange={(e) => setOrder({...order, trackingUrl: e.target.value})} 
-                        placeholder="https://..." 
-                    />
-                  </div>
-                  <Button className="w-full" onClick={async () => {
-                      try {
-                          const res = await fetch(`/api/admin/orders/${order.id}`, {
-                              method: 'PATCH',
-                              headers: {'Content-Type': 'application/json'},
-                              body: JSON.stringify({
-                                  courierName: order.courierName,
-                                  trackingNumber: order.trackingNumber,
-                                  trackingUrl: order.trackingUrl
-                              })
-                          });
-                          if(res.ok) {
-                              toast.success('Tracking updated');
-                              // Optional: reload status if logical side effects exist
-                          }
-                          else toast.error('Failed to update');
-                      } catch(e) { toast.error('Error updating'); }
-                  }}>
-                    Save Tracking
-                  </Button>
-                </CardContent>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Truck className="h-5 w-5" />
+                  Tracking Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="courier">Courier Name</Label>
+                  <Input
+                    id="courier"
+                    value={order.courierName || ""}
+                    onChange={(e) =>
+                      setOrder({ ...order, courierName: e.target.value })
+                    }
+                    placeholder="DHL, Fan Courier..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="tracking">Tracking Number</Label>
+                  <Input
+                    id="tracking"
+                    value={order.trackingNumber || ""}
+                    onChange={(e) =>
+                      setOrder({ ...order, trackingNumber: e.target.value })
+                    }
+                    placeholder="AWB..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="trackingRef">Tracking URL</Label>
+                  <Input
+                    id="trackingRef"
+                    value={order.trackingUrl || ""}
+                    onChange={(e) =>
+                      setOrder({ ...order, trackingUrl: e.target.value })
+                    }
+                    placeholder="https://..."
+                  />
+                </div>
+                <Button
+                  className="w-full"
+                  onClick={async () => {
+                    try {
+                      const res = await fetch(`/api/admin/orders/${order.id}`, {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          courierName: order.courierName,
+                          trackingNumber: order.trackingNumber,
+                          trackingUrl: order.trackingUrl,
+                        }),
+                      });
+                      if (res.ok) {
+                        toast.success("Tracking updated");
+                        // Optional: reload status if logical side effects exist
+                      } else toast.error("Failed to update");
+                    } catch (e) {
+                      toast.error("Error updating");
+                    }
+                  }}
+                >
+                  Save Tracking
+                </Button>
+              </CardContent>
             </Card>
 
             {/* Order Timeline */}

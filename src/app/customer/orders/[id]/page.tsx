@@ -68,7 +68,11 @@ export default function CustomerOrderDetailsPage({
   );
 
   useEffect(() => {
-    params.then(setUnwrappedParams);
+    params.then(setUnwrappedParams).catch((error) => {
+      console.error("Error unwrapping params:", error);
+      toast.error("Failed to load order");
+      router.push("/customer");
+    });
   }, [params]);
 
   useEffect(() => {
