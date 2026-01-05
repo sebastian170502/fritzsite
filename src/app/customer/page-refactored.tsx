@@ -1,7 +1,7 @@
 /**
  * Customer Dashboard - Refactored
  * Main customer dashboard page broken down into smaller components
- * 
+ *
  * Original: 700+ lines
  * Refactored into:
  * - DashboardStats component (stats cards)
@@ -49,7 +49,8 @@ export default function CustomerDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const { items: wishlistItems, removeItem: removeFromWishlist } = useWishlist();
+  const { items: wishlistItems, removeItem: removeFromWishlist } =
+    useWishlist();
 
   useEffect(() => {
     checkAuth();
@@ -134,7 +135,10 @@ export default function CustomerDashboard() {
           </div>
 
           {/* Account Stats */}
-          <DashboardStats orders={orders} wishlistCount={wishlistItems.length} />
+          <DashboardStats
+            orders={orders}
+            wishlistCount={wishlistItems.length}
+          />
         </div>
 
         {/* Main Content */}
@@ -159,9 +163,7 @@ export default function CustomerDashboard() {
             <Card>
               <CardHeader>
                 <CardTitle>Order History</CardTitle>
-                <CardDescription>
-                  View and track your orders
-                </CardDescription>
+                <CardDescription>View and track your orders</CardDescription>
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="active" className="space-y-4">
