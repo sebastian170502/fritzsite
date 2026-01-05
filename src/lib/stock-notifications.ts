@@ -32,13 +32,8 @@ export async function notifyStockAvailable(product: ProductInfo) {
     })
 
     if (notifications.length === 0) {
-      console.log(`No pending notifications for product ${product.id}`)
       return { sent: 0, failed: 0 }
     }
-
-    console.log(
-      `Sending ${notifications.length} stock notifications for ${product.name}`
-    )
 
     let sent = 0
     let failed = 0
@@ -143,10 +138,6 @@ export async function notifyStockAvailable(product: ProductInfo) {
       // Small delay to avoid rate limits
       await new Promise((resolve) => setTimeout(resolve, 100))
     }
-
-    console.log(
-      `Stock notifications complete: ${sent} sent, ${failed} failed`
-    )
 
     return { sent, failed }
   } catch (error) {

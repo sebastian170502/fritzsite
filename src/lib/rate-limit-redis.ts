@@ -125,8 +125,8 @@ export async function applyRateLimit(
     options?: RateLimitOptions
 ): Promise<Response | null> {
     const defaultOptions = options || {
-        windowMs: RATE_LIMITS.API.WINDOW_MS,
-        maxRequests: RATE_LIMITS.API.MAX_REQUESTS,
+        windowMs: RATE_LIMITS.GENERAL.WINDOW_MS,
+        maxRequests: RATE_LIMITS.GENERAL.MAX_REQUESTS,
     }
 
     const result = await rateLimitRedis(identifier, defaultOptions)
@@ -158,7 +158,7 @@ export async function applyRateLimit(
  */
 export function cleanupInMemoryStore() {
     const now = Date.now()
-    for (const [key, record] of inMemoryStore.entries()) {
+    for (const [key, record] of Array.from(inMemoryStore.entries())) {
         if (now > record.resetTime) {
             inMemoryStore.delete(key)
         }
