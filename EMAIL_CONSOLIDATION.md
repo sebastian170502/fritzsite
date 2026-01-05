@@ -212,32 +212,32 @@ describe('Email Templates', () => {
 
 ### Layout Components
 
-| Component | Purpose | Parameters |
-|-----------|---------|------------|
+| Component      | Purpose             | Parameters        |
+| -------------- | ------------------- | ----------------- |
 | `emailWrapper` | Full HTML structure | `content: string` |
-| `emailHeader` | Brand header | None |
-| `emailFooter` | Footer with links | None |
+| `emailHeader`  | Brand header        | None              |
+| `emailFooter`  | Footer with links   | None              |
 
 ### Content Components
 
-| Component | Purpose | Parameters |
-|-----------|---------|------------|
-| `greeting` | Personalized message | `name: string, message: string` |
-| `orderItemsList` | Product list | `items: OrderItem[]` |
-| `orderTotal` | Total price | `total: number` |
-| `orderHeader` | Order info | `orderId: string, date: string` |
-| `shippingAddress` | Address display | `address: Address` |
-| `ctaButton` | Action button | `url: string, text: string` |
-| `alertBox` | Info/alert box | `message: string, type?: 'success' \| 'info'` |
-| `trackingNumber` | Tracking display | `number: string` |
-| `simpleItemsList` | Plain list | `items: OrderItem[]` |
-| `reviewCard` | Review CTA | `item: OrderItem` |
+| Component         | Purpose              | Parameters                                    |
+| ----------------- | -------------------- | --------------------------------------------- |
+| `greeting`        | Personalized message | `name: string, message: string`               |
+| `orderItemsList`  | Product list         | `items: OrderItem[]`                          |
+| `orderTotal`      | Total price          | `total: number`                               |
+| `orderHeader`     | Order info           | `orderId: string, date: string`               |
+| `shippingAddress` | Address display      | `address: Address`                            |
+| `ctaButton`       | Action button        | `url: string, text: string`                   |
+| `alertBox`        | Info/alert box       | `message: string, type?: 'success' \| 'info'` |
+| `trackingNumber`  | Tracking display     | `number: string`                              |
+| `simpleItemsList` | Plain list           | `items: OrderItem[]`                          |
+| `reviewCard`      | Review CTA           | `item: OrderItem`                             |
 
 ### Utilities
 
-| Function | Purpose | Input | Output |
-|----------|---------|-------|--------|
-| `formatPrice` | Format currency | `number` | `"149.99"` |
+| Function           | Purpose            | Input    | Output           |
+| ------------------ | ------------------ | -------- | ---------------- |
+| `formatPrice`      | Format currency    | `number` | `"149.99"`       |
 | `plainTextWrapper` | Text email wrapper | `string` | Plain text email |
 
 ## Style Customization
@@ -298,13 +298,13 @@ npm test -- --run
 
 ### Code Metrics
 
-| Metric | Before | After | Change |
-|--------|--------|-------|--------|
-| Total Lines | 357 | 380 (250 + 130) | +6% |
-| Duplication | ~60% | ~10% | -83% |
-| Template Size | 100+ lines | 40-60 lines | -50% |
-| Components | 0 | 15 | +15 |
-| Reusability | Low | High | ✅ |
+| Metric        | Before     | After           | Change |
+| ------------- | ---------- | --------------- | ------ |
+| Total Lines   | 357        | 380 (250 + 130) | +6%    |
+| Duplication   | ~60%       | ~10%            | -83%   |
+| Template Size | 100+ lines | 40-60 lines     | -50%   |
+| Components    | 0          | 15              | +15    |
+| Reusability   | Low        | High            | ✅      |
 
 ### Impact
 

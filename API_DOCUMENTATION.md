@@ -45,13 +45,13 @@ Customer endpoints use session cookies from email verification.
 
 All endpoints are rate-limited to prevent abuse:
 
-| Endpoint Type | Limit | Window |
-|--------------|-------|--------|
-| Admin Login | 5 requests | 15 minutes |
-| Product Listing | 100 requests | 1 minute |
-| Checkout | 10 requests | 1 minute |
-| Reviews | 5 requests | 1 minute |
-| Custom Orders | 3 requests | 5 minutes |
+| Endpoint Type   | Limit        | Window     |
+| --------------- | ------------ | ---------- |
+| Admin Login     | 5 requests   | 15 minutes |
+| Product Listing | 100 requests | 1 minute   |
+| Checkout        | 10 requests  | 1 minute   |
+| Reviews         | 5 requests   | 1 minute   |
+| Custom Orders   | 3 requests   | 5 minutes  |
 
 **Headers**:
 - `X-RateLimit-Limit`: Total requests allowed

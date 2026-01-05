@@ -6,27 +6,27 @@
 // ============= Types =============
 
 export interface OrderItem {
-  name: string
-  quantity: number
-  price: number
-  imageUrl?: string
+    name: string
+    quantity: number
+    price: number
+    imageUrl?: string
 }
 
 export interface Address {
-  address: string
-  city: string
-  postalCode: string
-  country?: string
+    address: string
+    city: string
+    postalCode: string
+    country?: string
 }
 
 export interface OrderDetails {
-  orderId: string
-  customerName: string
-  customerEmail: string
-  items: OrderItem[]
-  total: number
-  shippingAddress?: Address
-  orderDate: string
+    orderId: string
+    customerName: string
+    customerEmail: string
+    items: OrderItem[]
+    total: number
+    shippingAddress?: Address
+    orderDate: string
 }
 
 // ============= Constants =============
@@ -145,7 +145,7 @@ const styles = `
  * Email header component
  */
 export function emailHeader(): string {
-  return `
+    return `
     <div class="header">
       <h1>🔨 ${BRAND_NAME}</h1>
     </div>
@@ -156,7 +156,7 @@ export function emailHeader(): string {
  * Email footer component
  */
 export function emailFooter(): string {
-  return `
+    return `
     <div class="footer">
       <p>${BRAND_NAME} - ${BRAND_TAGLINE}</p>
       <p>
@@ -175,7 +175,7 @@ export function emailFooter(): string {
  * Base email wrapper with styles
  */
 export function emailWrapper(content: string): string {
-  return `
+    return `
 <!DOCTYPE html>
 <html lang="ro">
 <head>
@@ -199,7 +199,7 @@ export function emailWrapper(content: string): string {
  * Greeting component
  */
 export function greeting(name: string, message: string): string {
-  return `
+    return `
     <p style="color: #64748b; font-size: 16px; line-height: 1.6;">
       Bună ${name},<br><br>
       ${message}
@@ -211,9 +211,9 @@ export function greeting(name: string, message: string): string {
  * Order items list component
  */
 export function orderItemsList(items: OrderItem[]): string {
-  return items
-    .map(
-      item => `
+    return items
+        .map(
+            item => `
     <div class="order-item">
       <div class="item-details">
         <div class="item-name">${item.name}</div>
@@ -224,15 +224,15 @@ export function orderItemsList(items: OrderItem[]): string {
       </div>
     </div>
   `
-    )
-    .join('')
+        )
+        .join('')
 }
 
 /**
  * Order total component
  */
 export function orderTotal(total: number): string {
-  return `
+    return `
     <div class="total-row">
       <span>Total</span>
       <span>${formatPrice(total)} RON</span>
@@ -244,7 +244,7 @@ export function orderTotal(total: number): string {
  * Order header component (order number + date)
  */
 export function orderHeader(orderId: string, orderDate: string): string {
-  return `
+    return `
     <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
       <div>
         <strong style="color: #1e293b;">Număr Comandă</strong>
@@ -262,7 +262,7 @@ export function orderHeader(orderId: string, orderDate: string): string {
  * Shipping address component
  */
 export function shippingAddress(address: Address): string {
-  return `
+    return `
     <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
       <h3 style="color: #1e293b; margin-top: 0;">Adresa de Livrare</h3>
       <p style="color: #64748b; margin: 5px 0;">${address.address}</p>
@@ -275,7 +275,7 @@ export function shippingAddress(address: Address): string {
  * CTA button component
  */
 export function ctaButton(url: string, text: string): string {
-  return `
+    return `
     <div style="text-align: center;">
       <a href="${url}" class="button">
         ${text}
@@ -288,8 +288,8 @@ export function ctaButton(url: string, text: string): string {
  * Alert box component
  */
 export function alertBox(message: string, type: 'success' | 'info' = 'success'): string {
-  const className = type === 'success' ? 'alert-success' : 'alert-info'
-  return `
+    const className = type === 'success' ? 'alert-success' : 'alert-info'
+    return `
     <div class="alert ${className}">
       <p style="margin: 0; font-weight: 600;">${message}</p>
     </div>
@@ -300,7 +300,7 @@ export function alertBox(message: string, type: 'success' | 'info' = 'success'):
  * Tracking number display
  */
 export function trackingNumber(number: string): string {
-  return `
+    return `
     <div style="background-color: #f0fdf4; border: 2px solid #86efac; border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
       <p style="color: #166534; margin: 0 0 10px 0; font-weight: 600;">Număr de Urmărire</p>
       <p style="color: #166534; font-size: 20px; font-weight: 700; margin: 0; letter-spacing: 1px;">
@@ -314,7 +314,7 @@ export function trackingNumber(number: string): string {
  * Simple list of items
  */
 export function simpleItemsList(items: OrderItem[]): string {
-  return `
+    return `
     <ul style="padding-left: 20px;">
       ${items.map(item => `<li style="color: #64748b; margin: 5px 0;">${item.name} (x${item.quantity})</li>`).join('')}
     </ul>
@@ -325,7 +325,7 @@ export function simpleItemsList(items: OrderItem[]): string {
  * Review card for a product
  */
 export function reviewCard(item: OrderItem): string {
-  return `
+    return `
     <div class="card">
       <div style="font-weight: 600; color: #1e293b; margin-bottom: 10px;">${item.name}</div>
       <a href="${BASE_URL}/shop?review=${encodeURIComponent(item.name)}" 
@@ -343,14 +343,14 @@ export function reviewCard(item: OrderItem): string {
  * Format price with 2 decimals
  */
 export function formatPrice(price: number): string {
-  return Number(price).toFixed(2)
+    return Number(price).toFixed(2)
 }
 
 /**
  * Generate plain text version of email
  */
 export function plainTextWrapper(content: string): string {
-  return `
+    return `
 ${BRAND_NAME} - ${BRAND_TAGLINE}
 
 ${content}
