@@ -59,7 +59,7 @@ describe('Review System', () => {
 
         it('should accept optional comment', () => {
             const reviewWithComment = { rating: 5, comment: 'Great!' }
-            const reviewWithoutComment = { rating: 5 }
+            const reviewWithoutComment: { rating: number; comment?: string } = { rating: 5 }
 
             expect(reviewWithComment.comment).toBeDefined()
             expect(reviewWithoutComment.comment).toBeUndefined()

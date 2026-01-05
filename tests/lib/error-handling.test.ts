@@ -93,7 +93,7 @@ describe('Error Handling', () => {
         })
 
         it('should handle undefined errors', () => {
-            const error = undefined
+            const error: { message?: string } | undefined = undefined
             const message = error?.message || 'Unknown error'
             expect(message).toBe('Unknown error')
         })

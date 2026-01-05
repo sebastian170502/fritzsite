@@ -41,8 +41,8 @@ export async function POST(req: Request) {
         }
 
         // Parse JSON fields once for efficiency and safety
-        const orderDetails = safeJSONParse(order.details, {})
-        const orderImages = safeJSONParse(order.images, [])
+        const orderDetails = safeJSONParse<{ orderType?: string }>(order.details, {})
+        const orderImages = safeJSONParse<string[]>(order.images, [])
 
         // Create Stripe Session
         const session = await stripe.checkout.sessions.create({

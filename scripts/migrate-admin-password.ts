@@ -10,7 +10,7 @@
  * The script will output the bcrypt hash that should be set as ADMIN_PASSWORD_HASH in .env
  */
 
-import bcrypt from 'bcryptjs'
+import bcrypt from 'bcrypt'
 
 async function generatePasswordHash(password: string): Promise<string> {
     const saltRounds = 10

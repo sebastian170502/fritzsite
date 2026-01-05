@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { CartSheet } from "@/components/cart/CartSheet";
+import { CartSheet } from "@/components/cart-sheet";
 
 // Mock next/navigation
 vi.mock("next/navigation", () => ({
