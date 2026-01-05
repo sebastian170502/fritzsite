@@ -138,12 +138,27 @@ npm start             # Start production server
 
 ---
 
-## 📊 Latest Updates (v2.0.0 - Jan 2026)
+## 📊 Version History
 
+| Version | Date | Highlights |
+|---------|------|------------|
+| **2.0.0** | Jan 5, 2026 | Security hardening, component refactoring, API docs, **20 bugs fixed** |
+| **1.5.0** | Jan 3, 2026 | Testing infrastructure (288 tests), type safety, validation |
+| **1.0.0** | Dec 15, 2025 | Initial production release |
+
+### Latest (v2.0.0) - Full Changelog
+
+**Infrastructure**
 - ✅ **Security**: Bcrypt auth, Redis rate limiting, server-side sessions
-- ✅ **Architecture**: 8 reusable components, 63-64% size reduction
-- ✅ **API Docs**: 34 endpoints with OpenAPI 3.0 + Swagger UI
+- ✅ **Architecture**: 8 reusable components (63-64% size reduction)
+- ✅ **API Documentation**: 34 endpoints with OpenAPI 3.0 + Swagger UI
 - ✅ **Testing**: 288 tests, 100% passing
+
+**Bug Fixes** (20 total across 4 rounds)
+- ✅ **Round 1**: Build & type safety (6 bugs) - Production build fixed
+- ✅ **Round 2**: Runtime bugs (6 bugs) - Stock, JSON parsing, validation
+- ✅ **Round 3**: Async/await (4 bugs) - Race conditions eliminated
+- ✅ **Round 4**: Next.js 15 (4 bugs) - Full compatibility achieved
 
 See [CHANGELOG.md](CHANGELOG.md) for complete details.
 

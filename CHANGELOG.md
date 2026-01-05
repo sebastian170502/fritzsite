@@ -112,6 +112,54 @@ This release brings comprehensive improvements across security, architecture, te
 - **Total documentation added**: 2,325 lines
 - **Comprehensive guides**: 6
 
+### 🐛 Bug Fixes - 4 Rounds of Bug Hunting
+
+#### Round 1: Build & Type Safety Issues (6 bugs fixed)
+- **Fixed**: `api-docs/page.tsx` - Added "use client" directive for Next.js 15 compatibility
+- **Fixed**: Missing `@types/swagger-ui-react` type definitions installed
+- **Fixed**: Added type parameters to `safeJSONParse` calls in `checkout/custom/route.ts`
+- **Fixed**: Test type annotations in `reviews.test.ts` and `error-handling.test.ts`
+- **Fixed**: Import paths in `cart-sheet.test.tsx` and `migrate-admin-password.ts`
+- **Fixed**: Removed invalid `ignoreDeprecations` from `tsconfig.json`
+
+**Commit**: `08ad388` | **Impact**: Production build succeeds, all 288 tests passing
+
+#### Round 2: Critical Runtime Bugs (6 bugs fixed)
+- **Fixed**: Stock management in webhook handler - Check product existence before decrement
+- **Fixed**: Unsafe JSON parsing - Created `safeJSONParse` utility, applied to 18 locations
+- **Fixed**: Division by zero in inventory forecasting - Replaced Infinity with 999
+- **Fixed**: PayPal credentials validation - Added early validation
+- **Fixed**: Product validation - Added required field and price validation
+- **Fixed**: Average calculations - Filter outliers (>365 days) from statistics
+
+**Files Modified**: 10 files | **Impact**: Eliminated crashes, prevented data corruption
+
+#### Round 3: Async/Await & Race Conditions (4 bugs fixed)
+- **Fixed**: Missing await in `src/app/api/admin/orders/route.ts` (line 29)
+- **Fixed**: Missing await in `src/app/api/admin/orders/[id]/route.ts` (line 56)
+- **Fixed**: Missing await in `src/app/api/customer/orders/route.ts` (line 27)
+- **Fixed**: Missing await in `src/app/customer/orders/[id]/track/page.tsx` (line 19)
+
+**Files Modified**: 4 files | **Impact**: Race conditions eliminated
+
+#### Round 4: Next.js 15 Async Params (4 bugs fixed)
+- **Fixed**: Admin order detail page - Handle async params with `.then().catch()`
+- **Fixed**: Admin product edit page - Updated for async params
+- **Fixed**: Customer order detail page - Migrated to async params pattern
+- **Fixed**: Customer order tracking page - Next.js 15 compatibility
+
+**Commit**: `0b8c47a` | **Impact**: Full Next.js 15 compatibility, no deprecations
+
+#### Bug Fixes Summary
+- **Total bugs fixed**: 20 across 4 rounds
+- **Files modified**: 18 files
+- **Commits**: 2 (`08ad388`, `0b8c47a`)
+- **Quality improvement**:
+  - Build: Failed → ✅ Succeeds
+  - Data integrity: 🔴 HIGH RISK → 🟢 LOW RISK
+  - Stability: 🔴 HIGH RISK → 🟢 LOW RISK
+  - Next.js compatibility: 🟡 Warnings → 🟢 Fully compatible
+
 ### 🧪 Testing
 
 #### Status
