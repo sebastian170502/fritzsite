@@ -140,11 +140,11 @@ npm start             # Start production server
 
 ## 📊 Version History
 
-| Version | Date | Highlights |
-|---------|------|------------|
-| **2.0.0** | Jan 5, 2026 | Security hardening, component refactoring, API docs, **20 bugs fixed** |
-| **1.5.0** | Jan 3, 2026 | Testing infrastructure (288 tests), type safety, validation |
-| **1.0.0** | Dec 15, 2025 | Initial production release |
+| Version   | Date         | Highlights                                                             |
+| --------- | ------------ | ---------------------------------------------------------------------- |
+| **2.0.0** | Jan 5, 2026  | Security hardening, component refactoring, API docs, **20 bugs fixed** |
+| **1.5.0** | Jan 3, 2026  | Testing infrastructure (288 tests), type safety, validation            |
+| **1.0.0** | Dec 15, 2025 | Initial production release                                             |
 
 ### Latest (v2.0.0) - Full Changelog
 
