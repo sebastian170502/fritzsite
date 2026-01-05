@@ -1,5 +1,6 @@
 export const SESSION_CONFIG = {
-    MAX_AGE_SECONDS: 60 * 60 * 24, // 24 hours
+    MAX_AGE: 60 * 60 * 24, // 24 hours in seconds
+    INACTIVITY_LIMIT: 60 * 60 * 2, // 2 hours of inactivity
     ADMIN_COOKIE_NAME: 'admin_session',
     CUSTOMER_COOKIE_NAME: 'customer_session',
     CSRF_COOKIE_NAME: 'csrf_token',
