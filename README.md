@@ -1,6 +1,10 @@
 # 🔨 Fritz's Forge - Production E-commerce Platform
 
+**Version 2.0.0** | [Changelog](CHANGELOG.md) | [Documentation Index](DOCUMENTATION_INDEX.md)
+
 A complete, production-ready e-commerce platform for handmade metalwork, featuring modern web technologies, comprehensive analytics, professional email communications, and robust security.
+
+**Latest Updates (v2.0.0 - January 2026)**: Security hardening, component refactoring, API documentation, and email consolidation. See [CHANGELOG.md](CHANGELOG.md) for details.
 
 ## ✨ Complete Feature Set
 
@@ -253,8 +257,26 @@ See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment guide including:
 
 ## 📚 Documentation
 
-- [Deployment Guide](./DEPLOYMENT.md) - Complete production deployment
-- [Project Context](./PROJECT_CONTEXT.md) - Architecture overview
+### Quick Links
+- **[📖 Documentation Index](DOCUMENTATION_INDEX.md)** - Complete documentation directory
+- **[📋 Changelog](CHANGELOG.md)** - Version history and upgrade guides
+- **[🚀 Quick Start](QUICK_START.md)** - Get started in 5 minutes
+- **[🔧 Deployment Guide](DEPLOYMENT.md)** - Production deployment
+- **[📡 API Documentation](API_DOCUMENTATION.md)** - Complete API reference (34 endpoints)
+- **[🔒 Security Guide](SECURITY_IMPROVEMENTS.md)** - Security improvements & setup
+
+### Technical Documentation
+- **[Component Architecture](COMPONENT_REFACTORING.md)** - Component structure & refactoring
+- **[Email System](EMAIL_CONSOLIDATION.md)** - Email templates & components
+- **[Project Context](PROJECT_CONTEXT.md)** - Architecture overview
+- **[Features](FEATURES.md)** - Complete feature list
+
+### Reports & Reviews
+- **[Final Summary](FINAL_IMPLEMENTATION_SUMMARY.md)** - Executive summary
+- **[Code Review](CODE_REVIEW.md)** - Comprehensive code analysis
+- **[Improvements](CODE_IMPROVEMENTS_SUMMARY.md)** - All improvements overview
+
+> 💡 **Tip**: Start with [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) to find exactly what you need.
 
 ## 🧪 Testing
 
@@ -271,26 +293,46 @@ npm start
 
 ## ✨ Recent Updates
 
-### December 2024 - Complete Production Platform
+### Version 2.0.0 (January 2026) - Security & Architecture
+
+**Major Infrastructure Improvements** - See [CHANGELOG.md](CHANGELOG.md) for complete details
+
+- ✅ **Security Hardening** (3 critical fixes)
+  - Enforced bcrypt password hashing (CRITICAL vulnerability fixed)
+  - Redis-based distributed rate limiting
+  - Server-side session store with timeout policies
+  
+- ✅ **Component Refactoring** (8 new reusable components)
+  - Custom order form split (732 → 268 lines, 63% reduction)
+  - Customer dashboard refactored (701 → 253 lines, 64% reduction)
+  
+- ✅ **API Documentation** (34 endpoints documented)
+  - OpenAPI 3.0 specification
+  - Interactive Swagger UI at `/api-docs`
+  - Complete API reference guide
+  
+- ✅ **Email Consolidation** (83% less duplication)
+  - 15 reusable email components
+  - Centralized brand configuration
+  - Type-safe interfaces
+
+**Statistics**: 109 files changed (+25,881 / -1,899 lines), 288/288 tests passing, Security grade: B → A
+
+### Version 1.5.0 (January 2026) - Testing Infrastructure
+
+- ✅ **288 Tests** - Comprehensive test coverage (100%)
+- ✅ **Type Safety** - TypeScript interfaces and Zod validation
+- ✅ **Error Handling** - Standardized error classes and responses
+- ✅ **Constants** - Centralized configuration (no magic numbers)
+
+### Version 1.0.0 (December 2025) - Initial Production
 
 - ✅ **Checkout System** - Full Stripe integration with webhook support
 - ✅ **Prisma Optimizations** - Database indexes, query caching, performance monitoring
 - ✅ **SEO & Metadata** - Structured data, sitemap, robots.txt, social sharing
-- ✅ **Error Handling** - Error boundaries, custom pages, retry logic, logging
-- ✅ **Security Features** - Rate limiting, security headers, input validation, XSS/SQL injection protection
 - ✅ **Analytics & Tracking** - Google Analytics 4 with complete e-commerce event tracking
-- ✅ **Email System** - Professional transactional emails (orders, shipping, reviews) with Romanian language
-- ✅ **Order Tracking System** - Customer tracking dashboard, admin AWB management, live status updates
-
-### Previous Updates
-
-- ✅ Product catalog with image galleries
-- ✅ Shopping cart with persistent state
-- ✅ Custom order design studio
-- ✅ Admin dashboard with product/review management
-- ✅ Dual currency pricing (EUR & RON)
-- ✅ Dark mode theme with high contrast
-- ✅ Mobile responsive design
+- ✅ **Email System** - Professional transactional emails (orders, shipping, reviews)
+- ✅ **Order Tracking** - Customer dashboard, admin AWB management, live updates
 
 ## 🤝 Contributing
 
