@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { revalidateShop } from '@/lib/revalidate'
+import { safeJSONParse } from '@/lib/json-utils'
 
 export async function GET() {
     try {
@@ -13,7 +14,7 @@ export async function GET() {
             ...product,
             images:
                 typeof product.images === 'string'
-                    ? JSON.parse(product.images)
+                    ? safeJSONParse(product.images, [])
                     : product.images,
         }))
 
@@ -30,6 +31,21 @@ export async function GET() {
 export async function POST(req: Request) {
     try {
         const data = await req.json()
+
+        // Validate required fields
+        if (!data.name || !data.slug || data.price === undefined) {
+            return NextResponse.json(
+                { error: 'Missing required fields: name, slug, price' },
+                { status: 400 }
+            )
+        }
+
+        if (data.price < 0) {
+            return NextResponse.json(
+                { error: 'Price must be a positive number' },
+                { status: 400 }
+            )
+        }
 
         // Convert images array to JSON string for SQLite
         const productData = {

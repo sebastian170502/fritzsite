@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
+import { safeJSONParse } from "@/lib/json-utils";
 
 export async function GET(request: NextRequest) {
     try {
@@ -15,11 +16,11 @@ export async function GET(request: NextRequest) {
             orderBy: { createdAt: "desc" },
         });
 
-        // Parse JSON strings in items and shippingAddress
+        // Parse JSON strings in items and shippingAddress with safe parsing
         const formattedOrders = orders.map((order: any) => ({
             ...order,
-            items: JSON.parse(order.items),
-            shippingAddress: JSON.parse(order.shippingAddress),
+            items: safeJSONParse(order.items, []),
+            shippingAddress: safeJSONParse(order.shippingAddress, {}),
             total: Number(order.total),
             subtotal: Number(order.subtotal),
             shipping: Number(order.shipping),

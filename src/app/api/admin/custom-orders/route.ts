@@ -1,6 +1,7 @@
 
 import { NextResponse } from 'next/server'
 import { prisma } from "@/lib/prisma";
+import { safeJSONParse } from '@/lib/json-utils';
 
 export async function GET() {
     try {
@@ -20,10 +21,8 @@ export async function GET() {
 
         const formattedOrders = customOrders.map((order: any) => ({
             ...order,
-            details: JSON.parse(order.details),
-            // images is already a string but let's parse it if needed or send as is.
-            // In schema, images is String (JSON). Frontend expects array.
-            images: JSON.parse(order.images) 
+            details: safeJSONParse(order.details, {}),
+            images: safeJSONParse(order.images, [])
         }));
 
         return NextResponse.json(formattedOrders);

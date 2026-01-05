@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 
 export const dynamic = 'force-dynamic';
 import { prisma } from "@/lib/prisma";
+import { safeJSONParse } from "@/lib/json-utils";
 
 export async function GET(request: NextRequest) {
     try {
@@ -17,14 +18,14 @@ export async function GET(request: NextRequest) {
 
         // Fetch customer details to get email
         const customer = await prisma.customer.findUnique({
-             where: { id: customerId }
+            where: { id: customerId }
         });
 
         if (!customer) {
-             return NextResponse.json(
-                 { error: "Customer not found" },
-                 { status: 401 }
-             );
+            return NextResponse.json(
+                { error: "Customer not found" },
+                { status: 401 }
+            );
         }
 
         console.log(`[API Orders] Fetching for: ${customer.email}`);
@@ -73,7 +74,7 @@ export async function GET(request: NextRequest) {
                 tax: Number(order.tax),
                 status: order.status,
                 paymentStatus: order.paymentStatus,
-                items: JSON.parse(order.items),
+                items: safeJSONParse(order.items, []),
                 type: 'standard',
                 customerName: order.customerName,
                 customerEmail: order.customerEmail,
@@ -87,16 +88,16 @@ export async function GET(request: NextRequest) {
         const formattedCustomOrders = customOrders.map((order: any) => {
             try {
                 const details = JSON.parse(order.details);
-                const itemName = order.orderType === 'modify' 
+                const itemName = order.orderType === 'modify'
                     ? `Modified Product Request (ID: ${details.productId})`
                     : `Custom ${details.material ? details.material.replace('-', ' ') : 'Tool'} Request`;
 
                 // Try to extract address from details or use placeholder
-                const shippingAddr = { 
-                    address: order.shippingAddress || '', 
-                    city: '', 
-                    postalCode: '', 
-                    country: '' 
+                const shippingAddr = {
+                    address: order.shippingAddress || '',
+                    city: '',
+                    postalCode: '',
+                    country: ''
                 };
 
                 return {
@@ -104,19 +105,19 @@ export async function GET(request: NextRequest) {
                     orderNumber: order.orderId || order.id.substring(0, 8),
                     date: order.createdAt.toISOString(),
                     createdAt: order.createdAt.toISOString(),
-                    total: order.price ? Number(order.price) : 0, 
+                    total: order.price ? Number(order.price) : 0,
                     subtotal: order.price ? Number(order.price) : 0,
                     shipping: 0,
                     tax: 0,
-                    status: order.status, 
+                    status: order.status,
                     paymentStatus: 'pending', // Custom orders are usually pending initially
                     items: [
-                    {
-                        name: itemName,
-                        quantity: 1,
-                        price: order.price ? Number(order.price) : 0,
-                        imageUrl: details.images?.[0] || null
-                    }
+                        {
+                            name: itemName,
+                            quantity: 1,
+                            price: order.price ? Number(order.price) : 0,
+                            imageUrl: details.images?.[0] || null
+                        }
                     ],
                     type: 'custom',
                     customerName: customer.name,
@@ -132,10 +133,10 @@ export async function GET(request: NextRequest) {
         }).filter(Boolean); // Remove failed parses
 
         // Combine and sort by date desc
-        const allOrders = [...formattedOrders, ...formattedCustomOrders].sort((a, b) => 
+        const allOrders = [...formattedOrders, ...formattedCustomOrders].sort((a, b) =>
             new Date(b.date).getTime() - new Date(a.date).getTime()
         );
-        
+
         console.log(`[API Orders] Returning ${allOrders.length} total orders`);
 
         return NextResponse.json(allOrders);

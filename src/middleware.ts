@@ -4,8 +4,44 @@ import { rateLimit, getClientIp } from '@/lib/security'
 
 // Simple auth check for admin routes
 // In production, use a proper auth solution like NextAuth.js
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
     const response = NextResponse.next()
+
+    // CSRF Protection for API routes with state-changing methods
+    if (request.nextUrl.pathname.startsWith('/api/')) {
+        const method = request.method;
+
+        // Only check CSRF for state-changing methods
+        if (['POST', 'PUT', 'DELETE', 'PATCH'].includes(method)) {
+            // Skip CSRF for public endpoints
+            const publicEndpoints = [
+                '/api/webhook', // Stripe webhook (has signature verification)
+                '/api/auth/login',
+                '/api/admin/login',
+                '/api/customer/login',
+                '/api/customer/signup',
+                '/api/paypal/webhook', // PayPal webhook
+            ];
+
+            const isPublicEndpoint = publicEndpoints.some(endpoint =>
+                request.nextUrl.pathname === endpoint
+            );
+
+            if (!isPublicEndpoint) {
+                // Get CSRF token from header
+                const csrfTokenHeader = request.headers.get('x-csrf-token');
+                const sessionToken = request.cookies.get('csrf_token')?.value;
+
+                // Validate CSRF token (simple comparison for now)
+                if (!csrfTokenHeader || !sessionToken || csrfTokenHeader !== sessionToken) {
+                    return NextResponse.json(
+                        { error: 'Invalid CSRF token' },
+                        { status: 403 }
+                    );
+                }
+            }
+        }
+    }
 
     // Security headers
     response.headers.set('X-DNS-Prefetch-Control', 'on')

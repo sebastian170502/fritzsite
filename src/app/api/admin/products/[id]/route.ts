@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { revalidateProduct, revalidateShop } from '@/lib/revalidate'
 import { notifyStockAvailable } from '@/lib/stock-notifications'
+import { safeJSONParse } from '@/lib/json-utils'
 
 export async function GET(
     req: Request,
@@ -25,7 +26,7 @@ export async function GET(
             ...product,
             images:
                 typeof product.images === 'string'
-                    ? JSON.parse(product.images)
+                    ? safeJSONParse(product.images, [])
                     : product.images,
         })
     } catch (error) {
@@ -44,6 +45,14 @@ export async function PUT(
     try {
         const { id } = await params
         const data = await req.json()
+
+        // Validate price if provided
+        if (data.price !== undefined && data.price < 0) {
+            return NextResponse.json(
+                { error: 'Price must be a positive number' },
+                { status: 400 }
+            )
+        }
 
         // Get previous stock level to check if it was out of stock
         const previousProduct = await prisma.product.findUnique({

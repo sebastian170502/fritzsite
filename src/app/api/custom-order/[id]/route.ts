@@ -1,11 +1,12 @@
 
 import { NextResponse } from 'next/server'
 import { prisma } from "@/lib/prisma";
+import { safeJSONParse } from '@/lib/json-utils';
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
-        
+
         // Find by friendly orderId (e.g. CO-123456)
         const customOrder = await prisma.customOrder.findUnique({
             where: { orderId: id }
@@ -24,8 +25,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             status: customOrder.status,
             name: customOrder.name,
             email: customOrder.email, // Needed for checkout prefill
-            details: JSON.parse(customOrder.details),
-            images: JSON.parse(customOrder.images)
+            details: safeJSONParse(customOrder.details, {}),
+            images: safeJSONParse(customOrder.images, [])
         };
 
         return NextResponse.json(safeOrder);
