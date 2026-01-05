@@ -257,13 +257,13 @@ UPSTASH_REDIS_REST_TOKEN="AXX..."
 
 ## 📈 Impact Summary
 
-| Metric | Before | After | Improvement |
-|--------|--------|-------|-------------|
-| **Security Grade** | B+ | A | ⬆️ Critical vuln fixed |
-| **Rate Limiting** | In-memory only | Redis + fallback | ⬆️ Production ready |
-| **Session Security** | Client-only | Server-validated | ⬆️ Much more secure |
-| **Scalability** | Single instance | Distributed | ⬆️ Multi-instance ready |
-| **Tests Passing** | 288/288 | 288/288 | ✅ No regressions |
+| Metric               | Before          | After            | Improvement            |
+| -------------------- | --------------- | ---------------- | ---------------------- |
+| **Security Grade**   | B+              | A                | ⬆️ Critical vuln fixed  |
+| **Rate Limiting**    | In-memory only  | Redis + fallback | ⬆️ Production ready     |
+| **Session Security** | Client-only     | Server-validated | ⬆️ Much more secure     |
+| **Scalability**      | Single instance | Distributed      | ⬆️ Multi-instance ready |
+| **Tests Passing**    | 288/288         | 288/288          | ✅ No regressions       |
 
 ---
 
