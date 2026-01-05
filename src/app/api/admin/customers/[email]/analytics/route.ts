@@ -35,7 +35,7 @@ export async function GET(
         // Calculate metrics
         const totalOrders = orders.length;
         const totalSpent = orders.reduce((sum: number, order: any) => sum + Number(order.total), 0);
-        const averageOrderValue = totalSpent / totalOrders;
+        const averageOrderValue = totalOrders > 0 ? totalSpent / totalOrders : 0;
         const lifetimeValue = totalSpent;
 
         const firstOrder = orders[0];

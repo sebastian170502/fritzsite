@@ -4,7 +4,17 @@ import { prisma } from '@/lib/prisma';
 export async function GET(request: NextRequest) {
     try {
         const searchParams = request.nextUrl.searchParams;
-        const days = parseInt(searchParams.get('days') || '30');
+        const daysParam = parseInt(searchParams.get('days') || '30');
+        
+        // Validate days parameter
+        if (isNaN(daysParam) || daysParam < 1 || daysParam > 365) {
+            return NextResponse.json(
+                { error: 'Invalid days parameter. Must be between 1 and 365.' },
+                { status: 400 }
+            );
+        }
+        
+        const days = daysParam;
 
         // Calculate start date
         const startDate = new Date();
@@ -71,8 +81,8 @@ export async function GET(request: NextRequest) {
                 totalRevenue: data.reduce((sum, d) => sum + d.revenue, 0),
                 totalOrders: data.reduce((sum, d) => sum + d.orders, 0),
                 totalProducts: data.reduce((sum, d) => sum + d.products, 0),
-                avgDailyRevenue: data.reduce((sum, d) => sum + d.revenue, 0) / days,
-                avgDailyOrders: data.reduce((sum, d) => sum + d.orders, 0) / days,
+                avgDailyRevenue: days > 0 ? data.reduce((sum, d) => sum + d.revenue, 0) / days : 0,
+                avgDailyOrders: days > 0 ? data.reduce((sum, d) => sum + d.orders, 0) / days : 0,
             },
         });
     } catch (error) {

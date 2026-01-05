@@ -12,7 +12,17 @@ export async function GET(request: NextRequest) {
         const productId = searchParams.get('productId');
         const type = searchParams.get('type') || 'collaborative';
         const customerEmail = searchParams.get('customerEmail');
-        const limit = parseInt(searchParams.get('limit') || '4');
+        const limitParam = parseInt(searchParams.get('limit') || '4');
+        
+        // Validate limit parameter
+        if (isNaN(limitParam) || limitParam < 1 || limitParam > 50) {
+            return NextResponse.json(
+                { error: 'Invalid limit parameter. Must be between 1 and 50.' },
+                { status: 400 }
+            );
+        }
+        
+        const limit = limitParam;
 
         let recommendations;
 
