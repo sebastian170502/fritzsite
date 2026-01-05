@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { prisma } from "@/lib/prisma";
+import { safeJSONParse } from '@/lib/json-utils';
 
 function getStripe() {
     if (!process.env.STRIPE_SECRET_KEY) {
@@ -39,6 +40,10 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Order has no price set' }, { status: 400 })
         }
 
+        // Parse JSON fields once for efficiency and safety
+        const orderDetails = safeJSONParse(order.details, {})
+        const orderImages = safeJSONParse(order.images, [])
+
         // Create Stripe Session
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -47,8 +52,8 @@ export async function POST(req: Request) {
                     currency: order.currency.toLowerCase(),
                     product_data: {
                         name: `Custom Order #${order.orderId}`,
-                        description: `Custom commission (${JSON.parse(order.details).orderType})`,
-                        images: JSON.parse(order.images)[0] ? [JSON.parse(order.images)[0]] : [],
+                        description: `Custom commission (${orderDetails.orderType || 'custom'})`,
+                        images: orderImages[0] ? [orderImages[0]] : [],
                     },
                     unit_amount: Math.round(Number(order.price) * 100),
                 },
@@ -64,11 +69,11 @@ export async function POST(req: Request) {
                 shipping_address_json: JSON.stringify(shippingAddress)
             }
         })
-        
+
         // Save session ID for ref
         await prisma.customOrder.update({
-             where: { id: order.id },
-             data: { stripeSessionId: session.id }
+            where: { id: order.id },
+            data: { stripeSessionId: session.id }
         });
 
         return NextResponse.json({ url: session.url, sessionId: session.id })

@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
                 tax: Number(order.tax),
                 status: order.status,
                 paymentStatus: order.paymentStatus,
-                items: JSON.parse(order.items),
+                items: safeJSONParse(order.items, []),
                 type: 'standard',
                 customerName: order.customerName,
                 customerEmail: order.customerEmail,

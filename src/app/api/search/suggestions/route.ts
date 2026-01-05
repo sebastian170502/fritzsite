@@ -49,7 +49,7 @@ export async function GET(req: Request) {
                 name: product.name,
                 slug: product.slug,
                 price: Number(product.price),
-                imageUrl: images[0] || '/placeholder.jpg',
+                imageUrl: (images && images.length > 0) ? images[0] : '/placeholder.jpg',
                 category: product.category,
                 inStock: product.stock > 0,
             }

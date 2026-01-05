@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { revalidateShop } from '@/lib/revalidate'
+import { safeJSONParse } from '@/lib/json-utils'
 
 export async function GET() {
     try {
@@ -13,7 +14,7 @@ export async function GET() {
             ...product,
             images:
                 typeof product.images === 'string'
-                    ? JSON.parse(product.images)
+                    ? safeJSONParse(product.images, [])
                     : product.images,
         }))
 
