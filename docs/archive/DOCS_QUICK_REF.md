@@ -119,15 +119,15 @@ See [SECURITY_IMPROVEMENTS.md#redis-setup](SECURITY_IMPROVEMENTS.md#redis-setup)
 
 ## 📊 Documentation Statistics
 
-| Category | Files | Lines | Status |
-|----------|-------|-------|--------|
-| Getting Started | 3 | ~500 | ✅ |
-| Development | 3 | ~1,200 | ✅ |
-| Security | 3 | ~900 | ✅ |
-| Architecture | 3 | ~900 | ✅ |
-| Reports | 6 | ~3,200 | ✅ |
-| API & Technical | 3 | ~1,000 | ✅ |
-| **Total** | **24** | **~8,500** | ✅ |
+| Category        | Files  | Lines      | Status |
+| --------------- | ------ | ---------- | ------ |
+| Getting Started | 3      | ~500       | ✅      |
+| Development     | 3      | ~1,200     | ✅      |
+| Security        | 3      | ~900       | ✅      |
+| Architecture    | 3      | ~900       | ✅      |
+| Reports         | 6      | ~3,200     | ✅      |
+| API & Technical | 3      | ~1,000     | ✅      |
+| **Total**       | **24** | **~8,500** | ✅      |
 
 ---
 

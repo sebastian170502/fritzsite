@@ -1,360 +1,160 @@
-# 🔨 Fritz's Forge - Production E-commerce Platform
+# 🔨 Fritz's Forge
 
-**Version 2.0.0** | [Changelog](CHANGELOG.md) | [Documentation Index](DOCUMENTATION_INDEX.md)
+**Version 2.0.0** | [Changelog](CHANGELOG.md) | [API Docs](API_DOCUMENTATION.md)
 
-A complete, production-ready e-commerce platform for handmade metalwork, featuring modern web technologies, comprehensive analytics, professional email communications, and robust security.
+Production-ready e-commerce platform for handmade metalwork. Built with Next.js 15, TypeScript, and Prisma.
 
-**Latest Updates (v2.0.0 - January 2026)**: Security hardening, component refactoring, API documentation, and email consolidation. See [CHANGELOG.md](CHANGELOG.md) for details.
+---
 
-## ✨ Complete Feature Set
+## ✨ Features
 
-### 🛒 E-commerce Core
+- 🛒 **E-commerce** - Product catalog, cart, checkout (Stripe), wishlist
+- 🎨 **Custom Orders** - Interactive design studio for custom metalwork
+- 👨‍💼 **Admin Panel** - Product/order/review management, analytics
+- 📊 **Analytics** - Google Analytics 4 with e-commerce tracking
+- 📧 **Emails** - Professional transactional emails (Resend)
+- 🔒 **Security** - Rate limiting, bcrypt auth, server-side sessions
+- 🔍 **SEO** - Structured data, sitemap, meta tags
+- ⚡ **Performance** - Database indexes, query caching, optimized images
 
-- **Product Catalog** - Dynamic product listings with images and details
-- **Product Pages** - Gallery, descriptions, pricing in EUR & RON
-- **Shopping Cart** - Persistent cart with Zustand state management
-- **Wishlist** - Save favorite items for later (Local Storage persisted)
-- **Checkout System** - Complete checkout flow with Stripe integration
-- **Custom Orders** - Interactive design studio for custom metalwork
-- **Order Management** - Admin panel for order tracking
-
-### 📊 Analytics & Tracking
-
-- **Google Analytics 4** - Full e-commerce event tracking
-- **Conversion Tracking** - Product views → cart → checkout → purchase
-- **Custom Events** - Searches, filters, custom orders, errors
-- **Revenue Tracking** - Transaction data with item details
-
-### 📧 Professional Email System
-
-- **Order Confirmations** - Itemized receipts with shipping details
-- **Shipping Notifications** - Tracking numbers and delivery estimates
-- **Review Requests** - Automated feedback collection
-- **Custom Order Updates** - Customer and admin notifications
-- **Responsive Templates** - Mobile-friendly HTML emails in Romanian
-
-### 🔍 SEO & Discoverability
-
-- **Structured Data** - JSON-LD for products, organization, breadcrumbs
-- **Meta Tags** - Open Graph and Twitter cards
-- **Dynamic Sitemap** - Auto-generated from products (`/sitemap.xml`)
-- **Robots.txt** - Optimized crawling configuration
-- **Rich Snippets** - Product ratings, prices, availability
-
-### 🔒 Security Features
-
-- **Rate Limiting** - Per-endpoint protection (checkout: 5/min, admin: 20/min, general: 60/min)
-- **Security Headers** - HSTS, CSP, X-Frame-Options, XSS protection
-- **Input Validation** - Email, phone, URL, content sanitization
-- **XSS Prevention** - HTML sanitization for user inputs
-- **SQL Injection Protection** - Pattern detection and validation
-- **Admin Authentication** - Secure cookie-based auth
-
-### ⚠️ Error Handling
-
-- **Error Boundaries** - Global and page-level error catching
-- **Custom Error Pages** - User-friendly 404 and 500 pages
-- **Error Logging** - Comprehensive logging (Sentry-ready)
-- **Retry Logic** - Exponential backoff for failed operations
-- **Loading States** - Skeleton loaders and progress indicators
-
-### ⚡ Performance Optimizations
-
-- **Database Indexes** - 2-3x faster queries on key fields
-- **Query Caching** - 5-10min in-memory cache (50-80% DB load reduction)
-- **Slow Query Detection** - Automatic performance monitoring
-- **Image Optimization** - Next.js Image with lazy loading
-- **Code Splitting** - Optimized bundle sizes
-
-### 👨‍💼 Admin Dashboard
-
-- **Product Management** - Full CRUD operations
-- **Review Moderation** - Approve/reject customer reviews
-- **Order Overview** - Track and manage orders
-- **Analytics Dashboard** - Key metrics and insights
+---
 
 ## 🚀 Quick Start
 
-### Prerequisites
-
-- Node.js 18+ and npm
-- Git
-
-### Installation
-
-1. **Clone the repository**
-
 ```bash
+# Clone and install
 git clone https://github.com/sebastian170502/fritzsite.git
 cd fritzsite
-```
-
-2. **Install dependencies**
-
-```bash
 npm install
-```
 
-3. **Set up environment variables**
-
-```bash
+# Setup environment
 cp .env.example .env.local
-```
+# Edit .env.local with your configuration
 
-Edit `.env.local` with your configuration:
-
-```env
-DATABASE_URL="file:./dev.db"
-NEXT_PUBLIC_URL="http://localhost:3000"
-ADMIN_USERNAME="admin"
-ADMIN_PASSWORD="your_secure_password"
-REVALIDATION_SECRET="your_secret_key"
-
-# Optional - Stripe Payments
-STRIPE_SECRET_KEY="sk_test_..."
-NEXT_PUBLIC_STRIPE_ENABLED="true"
-
-# Optional - Google Analytics
-NEXT_PUBLIC_GA_MEASUREMENT_ID="G-XXXXXXXXXX"
-
-# Optional - Transactional Emails
-RESEND_API_KEY="re_..."
-ADMIN_EMAIL="admin@fritzforge.com"
-```
-
-4. **Set up the database**
-
-```bash
+# Setup database
 npx prisma generate
 npx prisma db push
 npx tsx prisma/seed.ts
-```
 
-5. **Run the development server**
-
-```bash
+# Run development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000)
+
+**Admin Access**: `/admin/login` (use credentials from .env)
+
+---
 
 ## 🛠️ Tech Stack
 
-- **Framework**: Next.js 15.0.3 (App Router)
-- **Language**: TypeScript 5
-- **Database**: Prisma + SQLite (production: PostgreSQL)
-- **Styling**: Tailwind CSS 3 + shadcn/ui
-- **UI Components**: Radix UI primitives
-- **Forms**: React Hook Form + Zod validation
-- **State**: Zustand (cart management)
+- **Framework**: Next.js 15 (App Router) + TypeScript 5
+- **Database**: Prisma ORM + SQLite (dev) / PostgreSQL (prod)
+- **Styling**: Tailwind CSS + shadcn/ui
+- **Validation**: Zod + React Hook Form
+- **State**: Zustand (cart)
 - **Payments**: Stripe
 - **Email**: Resend
-- **Analytics**: Google Analytics 4
-- **Deployment**: Vercel
+- **Testing**: Vitest (288 tests)
+
+---
 
 ## 📁 Project Structure
 
 ```
-fritzsite/
-├── src/
-│   ├── app/                    # Next.js 15 App Router
-│   │   ├── api/               # API routes
-│   │   ├── admin/             # Admin dashboard
-│   │   ├── checkout/          # Checkout page
-│   │   ├── custom/            # Custom orders
-│   │   ├── shop/              # Product pages
-│   │   └── success/           # Order confirmation
-│   ├── components/            # React components
-│   │   ├── analytics/         # GA4 tracking
-│   │   ├── cart/              # Shopping cart
-│   │   ├── products/          # Product displays
-│   │   ├── seo/               # SEO components
-│   │   └── ui/                # shadcn/ui
-│   ├── hooks/                 # Custom hooks
-│   ├── lib/                   # Utilities
-│   │   ├── analytics.ts       # GA4 events
-│   │   ├── cache.ts           # Query caching
-│   │   ├── email.ts           # Email sending
-│   │   ├── email-templates.ts # Email HTML
-│   │   ├── metadata.ts        # SEO metadata
-│   │   ├── security.ts        # Security utils
-│   │   └── prisma.ts          # Database client
-│   └── middleware.ts          # Rate limiting, security
-├── prisma/
-│   ├── schema.prisma          # Database schema
-│   └── seed.ts                # Seed data
-├── public/                    # Static assets
-└── scripts/                   # Utility scripts
+src/
+├── app/              # Next.js App Router
+│   ├── api/         # API endpoints
+│   ├── admin/       # Admin dashboard
+│   ├── shop/        # Product pages
+│   └── custom/      # Custom orders
+├── components/      # React components
+├── lib/             # Utilities & config
+└── middleware.ts    # Security & rate limiting
 ```
 
-## 📊 Key Features
-
-### Analytics Events Tracked
-
-- Product views
-- Add to cart / Remove from cart
-- Begin checkout
-- Purchase completed
-- Product searches
-- Custom order requests
-- Filter usage
-- Error exceptions
-
-### Email Templates
-
-- **Order Confirmation** - Itemized receipt with shipping
-- **Shipping Notification** - Tracking number and delivery date
-- **Review Request** - Request feedback on purchased items
-- All emails: Romanian language, mobile responsive, plain text versions
-
-### Security Measures
-
-- Rate limiting on all API endpoints
-- Security headers (HSTS, CSP, X-Frame-Options)
-- Input validation and sanitization
-- SQL injection prevention
-- XSS protection
-- Admin authentication
-
-### Performance Features
-
-- Database connection pooling
-- Query result caching (5-10 min TTL)
-- Indexed database queries
-- Slow query detection and logging
-- Optimized image loading
-
-## 🚀 Deployment
-
-See [DEPLOYMENT.md](./DEPLOYMENT.md) for complete deployment guide including:
-
-- Vercel deployment steps
-- Database setup (PostgreSQL)
-- Environment configuration
-- Email setup (Resend)
-- Payment setup (Stripe)
-- Analytics configuration (GA4)
-- Security hardening
-- Monitoring and logging
-
-## 📝 Environment Variables
-
-### Required
-
-- `DATABASE_URL` - Database connection
-- `NEXT_PUBLIC_URL` - Site URL
-- `ADMIN_USERNAME` - Admin login
-- `ADMIN_PASSWORD` - Admin password
-- `REVALIDATION_SECRET` - API secret
-
-### Optional
-
-- `STRIPE_SECRET_KEY` - Stripe payments
-- `NEXT_PUBLIC_STRIPE_ENABLED` - Enable Stripe
-- `NEXT_PUBLIC_GA_MEASUREMENT_ID` - Google Analytics
-- `RESEND_API_KEY` - Email service
-- `ADMIN_EMAIL` - Admin email address
+---
 
 ## 📚 Documentation
 
-### Quick Links
-- **[📖 Documentation Index](DOCUMENTATION_INDEX.md)** - Complete documentation directory
-- **[📋 Changelog](CHANGELOG.md)** - Version history and upgrade guides
-- **[🚀 Quick Start](QUICK_START.md)** - Get started in 5 minutes
-- **[🔧 Deployment Guide](DEPLOYMENT.md)** - Production deployment
-- **[📡 API Documentation](API_DOCUMENTATION.md)** - Complete API reference (34 endpoints)
-- **[🔒 Security Guide](SECURITY_IMPROVEMENTS.md)** - Security improvements & setup
+**Essential**
+- [Quick Start](QUICK_START.md) - 5-minute setup
+- [Deployment](DEPLOYMENT.md) - Production deployment
+- [API Reference](API_DOCUMENTATION.md) - All endpoints
+- [Changelog](CHANGELOG.md) - Version history
 
-### Technical Documentation
-- **[Component Architecture](COMPONENT_REFACTORING.md)** - Component structure & refactoring
-- **[Email System](EMAIL_CONSOLIDATION.md)** - Email templates & components
-- **[Project Context](PROJECT_CONTEXT.md)** - Architecture overview
-- **[Features](FEATURES.md)** - Complete feature list
+**Technical** (see `docs/technical/`)
+- Security improvements & setup
+- Component architecture
+- Email system
+- Checkout & email setup
 
-### Reports & Reviews
-- **[Final Summary](FINAL_IMPLEMENTATION_SUMMARY.md)** - Executive summary
-- **[Code Review](CODE_REVIEW.md)** - Comprehensive code analysis
-- **[Improvements](CODE_IMPROVEMENTS_SUMMARY.md)** - All improvements overview
+**Archive** (see `docs/archive/`)
+- Historical reviews and reports
 
-> 💡 **Tip**: Start with [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md) to find exactly what you need.
+---
+
+## 🔧 Environment Variables
+
+### Required
+```env
+DATABASE_URL="file:./dev.db"
+NEXT_PUBLIC_URL="http://localhost:3000"
+ADMIN_USERNAME="admin"
+ADMIN_PASSWORD_HASH="$2b$10$..."  # Use scripts/migrate-admin-password.ts
+SESSION_SECRET="64-char-random-string"
+REVALIDATION_SECRET="your_secret_key"
+```
+
+### Optional
+```env
+# Payments
+STRIPE_SECRET_KEY="sk_test_..."
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
+
+# Redis (for production)
+UPSTASH_REDIS_REST_URL="https://..."
+UPSTASH_REDIS_REST_TOKEN="..."
+
+# Email
+RESEND_API_KEY="re_..."
+ADMIN_EMAIL="admin@fritzforge.com"
+
+# Analytics
+NEXT_PUBLIC_GA_MEASUREMENT_ID="G-..."
+```
+
+---
 
 ## 🧪 Testing
 
 ```bash
-# Type checking
-npm run type-check
-
-# Build test
-npm run build
-
-# Start production server
-npm start
+npm test              # Run tests
+npm run build         # Production build
+npm start             # Start production server
 ```
 
-## ✨ Recent Updates
-
-### Version 2.0.0 (January 2026) - Security & Architecture
-
-**Major Infrastructure Improvements** - See [CHANGELOG.md](CHANGELOG.md) for complete details
-
-- ✅ **Security Hardening** (3 critical fixes)
-  - Enforced bcrypt password hashing (CRITICAL vulnerability fixed)
-  - Redis-based distributed rate limiting
-  - Server-side session store with timeout policies
-  
-- ✅ **Component Refactoring** (8 new reusable components)
-  - Custom order form split (732 → 268 lines, 63% reduction)
-  - Customer dashboard refactored (701 → 253 lines, 64% reduction)
-  
-- ✅ **API Documentation** (34 endpoints documented)
-  - OpenAPI 3.0 specification
-  - Interactive Swagger UI at `/api-docs`
-  - Complete API reference guide
-  
-- ✅ **Email Consolidation** (83% less duplication)
-  - 15 reusable email components
-  - Centralized brand configuration
-  - Type-safe interfaces
-
-**Statistics**: 109 files changed (+25,881 / -1,899 lines), 288/288 tests passing, Security grade: B → A
-
-### Version 1.5.0 (January 2026) - Testing Infrastructure
-
-- ✅ **288 Tests** - Comprehensive test coverage (100%)
-- ✅ **Type Safety** - TypeScript interfaces and Zod validation
-- ✅ **Error Handling** - Standardized error classes and responses
-- ✅ **Constants** - Centralized configuration (no magic numbers)
-
-### Version 1.0.0 (December 2025) - Initial Production
-
-- ✅ **Checkout System** - Full Stripe integration with webhook support
-- ✅ **Prisma Optimizations** - Database indexes, query caching, performance monitoring
-- ✅ **SEO & Metadata** - Structured data, sitemap, robots.txt, social sharing
-- ✅ **Analytics & Tracking** - Google Analytics 4 with complete e-commerce event tracking
-- ✅ **Email System** - Professional transactional emails (orders, shipping, reviews)
-- ✅ **Order Tracking** - Customer dashboard, admin AWB management, live updates
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push to branch (`git push origin feature/amazing-feature`)
-5. Open Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License.
-
-## 📞 Support
-
-For issues or questions:
-
-- GitHub Issues: [repository]/issues
-- Email: support@fritzforge.com
+**Status**: 288/288 tests passing ✅
 
 ---
 
-**Built with ❤️ and 🔨 by Fritz's Forge**
+## 📊 Latest Updates (v2.0.0 - Jan 2026)
 
-_Handcrafted with code, just like our metalwork._
+- ✅ **Security**: Bcrypt auth, Redis rate limiting, server-side sessions
+- ✅ **Architecture**: 8 reusable components, 63-64% size reduction
+- ✅ **API Docs**: 34 endpoints with OpenAPI 3.0 + Swagger UI
+- ✅ **Testing**: 288 tests, 100% passing
+
+See [CHANGELOG.md](CHANGELOG.md) for complete details.
+
+---
+
+## 📞 Support
+
+- **Issues**: [GitHub Issues](https://github.com/sebastian170502/fritzsite/issues)
+- **Email**: fritzsforge@gmail.com
+- **API Docs**: Visit `/api-docs` when running
+
+---
+
+**Built with ❤️ by Fritz's Forge**
