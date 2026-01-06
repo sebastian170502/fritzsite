@@ -35,18 +35,30 @@ export async function POST(req: Request) {
 
         const ADMIN_USERNAME = process.env.ADMIN_USERNAME || 'admin'
         const ADMIN_PASSWORD_HASH = process.env.ADMIN_PASSWORD_HASH
+        const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD
 
-        // Security: Enforce bcrypt in all environments
-        if (!ADMIN_PASSWORD_HASH) {
-            console.error('CRITICAL: ADMIN_PASSWORD_HASH is not set. Run: npx tsx scripts/migrate-admin-password.ts <password>')
+        // Security: Enforce bcrypt in production, allow plain text in dev
+        if (!ADMIN_PASSWORD_HASH && !ADMIN_PASSWORD) {
+            console.error('CRITICAL: Neither ADMIN_PASSWORD_HASH nor ADMIN_PASSWORD is set.')
             return NextResponse.json(
                 { error: 'Server configuration error' },
                 { status: 500 }
             )
         }
 
-        // Verify credentials using bcrypt
-        if (username === ADMIN_USERNAME && await comparePassword(password, ADMIN_PASSWORD_HASH)) {
+        let passwordMatch = false
+
+        if (ADMIN_PASSWORD_HASH) {
+            // Use bcrypt comparison if hash is available
+            passwordMatch = username === ADMIN_USERNAME && await comparePassword(password, ADMIN_PASSWORD_HASH)
+        } else if (ADMIN_PASSWORD) {
+            // Fallback to plain text comparison (dev only)
+            console.warn('WARNING: Using plain text password comparison. Use bcrypt hash in production!')
+            passwordMatch = username === ADMIN_USERNAME && password === ADMIN_PASSWORD
+        }
+
+        // Verify credentials
+        if (passwordMatch) {
             const cookieStore = await cookies()
             const csrfToken = generateCSRFToken()
 
