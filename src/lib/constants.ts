@@ -78,7 +78,7 @@ export const VALIDATION = {
     NAME_MIN_LENGTH: 2,
     NAME_MAX_LENGTH: 100,
     DESCRIPTION_MAX_LENGTH: 2000,
-    PHONE_REGEX: /^\+?[1-9]\d{1,14}$/,
+    PHONE_REGEX: /^\+?[0-9]\d{1,14}$/,
     POSTAL_CODE_MIN_LENGTH: 3,
 } as const;
 

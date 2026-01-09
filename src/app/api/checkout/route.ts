@@ -47,7 +47,11 @@ export async function POST(req: Request) {
                 currency: DEFAULTS.CURRENCY.toLowerCase(),
                 product_data: {
                     name: item.name,
-                    images: item.imageUrl ? [item.imageUrl] : [],
+                    images: item.imageUrl 
+                        ? [item.imageUrl.startsWith('http') 
+                            ? item.imageUrl 
+                            : `${process.env.NEXT_PUBLIC_URL}${item.imageUrl}`] 
+                        : [],
                 },
                 unit_amount: Math.round(item.price * 100), // Convert to cents
             },
@@ -81,6 +85,7 @@ export async function POST(req: Request) {
 
         return NextResponse.json({ url: session.url, sessionId: session.id })
     } catch (error) {
+        console.error("[Checkout Error Details]", error instanceof Error ? error.message : error);
         // Log error with context
         if (error instanceof Error) {
             logError({

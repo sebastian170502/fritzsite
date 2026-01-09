@@ -21,6 +21,8 @@ export async function middleware(request: NextRequest) {
                 '/api/customer/login',
                 '/api/customer/signup',
                 '/api/paypal/webhook', // PayPal webhook
+                '/api/checkout', // Guest checkout
+                '/api/checkout/simulate', // Guest checkout simulation
             ];
 
             const isPublicEndpoint = publicEndpoints.some(endpoint =>

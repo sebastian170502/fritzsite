@@ -3,6 +3,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useCartStore } from "@/hooks/use-cart";
+import { useStore } from "@/hooks/use-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,7 +22,9 @@ import { trackBeginCheckout } from "@/lib/analytics";
 
 export default function CheckoutPage() {
   const router = useRouter();
-  const { items, total, clearCart } = useCartStore();
+  // Safely access store preventing hydration mismatch
+  const cartStore = useStore(useCartStore, (state) => state);
+  
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -33,12 +36,9 @@ export default function CheckoutPage() {
   });
 
   const [isSuccess, setIsSuccess] = useState(false);
-  const [isMounted, setIsMounted] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
-    setIsMounted(true);
-    
     // Check if user is logged in and pre-fill data
     const checkAuth = async () => {
       try {
@@ -64,22 +64,28 @@ export default function CheckoutPage() {
   }, []);
 
   useEffect(() => {
-    if (isMounted && items.length === 0 && !isSuccess) {
+    if (cartStore && cartStore.items.length === 0 && !isSuccess) {
       router.push("/shop");
-    } else if (isMounted && items.length > 0) {
+    } else if (cartStore && cartStore.items.length > 0) {
       // Track begin checkout
       trackBeginCheckout(
-          items.map((item) => ({
+          cartStore.items.map((item) => ({
           id: item.id,
           name: item.name,
           category: item.category,
           price: item.price,
           quantity: item.quantity,
           })),
-          total()
+          cartStore.total()
       );
     }
-  }, [items, router, total, isSuccess, isMounted]);
+  }, [cartStore, router, isSuccess]);
+
+  if (!cartStore) {
+    return null;
+  }
+
+  const { items, total, clearCart } = cartStore;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -113,19 +119,17 @@ export default function CheckoutPage() {
             items: items.map((item) => ({
               id: item.id,
               name: item.name,
-              price: item.price,
-              quantity: item.quantity,
+              price: Number(item.price),
+              quantity: Number(item.quantity),
+              imageUrl: item.imageUrl, // Pass image url for stripe metadata
             })),
             customerInfo: {
               name: formData.name,
               email: formData.email,
-              phone: formData.phone,
-              shippingAddress: {
-                address: formData.address,
-                city: formData.city,
-                postalCode: formData.postalCode,
-                country: "Romania",
-              },
+              phone: formData.phone.replace(/[^\d+]/g, ''), // Remove strict formatting chars
+              address: formData.address,
+              city: formData.city,
+              postalCode: formData.postalCode,
             },
           }),
         });
@@ -184,15 +188,13 @@ export default function CheckoutPage() {
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      toast.error("Failed to process order. Please try again.");
+      toast.error(error instanceof Error ? error.message : "Failed to process order");
     } finally {
       setLoading(false);
     }
   };
 
-  if (!isMounted || items.length === 0) {
-    return null;
-  }
+
 
   return (
     <div className="min-h-screen bg-background py-8">

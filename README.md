@@ -78,18 +78,21 @@ src/
 ## 📚 Documentation
 
 **Essential**
+
 - [Quick Start](QUICK_START.md) - 5-minute setup
 - [Deployment](DEPLOYMENT.md) - Production deployment
 - [API Reference](API_DOCUMENTATION.md) - All endpoints
 - [Changelog](CHANGELOG.md) - Version history
 
 **Technical** (see `docs/technical/`)
+
 - Security improvements & setup
 - Component architecture
 - Email system
 - Checkout & email setup
 
 **Archive** (see `docs/archive/`)
+
 - Historical reviews and reports
 
 ---
@@ -97,6 +100,7 @@ src/
 ## 🔧 Environment Variables
 
 ### Required
+
 ```env
 DATABASE_URL="file:./dev.db"
 NEXT_PUBLIC_URL="http://localhost:3000"
@@ -107,6 +111,7 @@ REVALIDATION_SECRET="your_secret_key"
 ```
 
 ### Optional
+
 ```env
 # Payments
 STRIPE_SECRET_KEY="sk_test_..."
@@ -149,16 +154,20 @@ npm start             # Start production server
 ### Latest (v2.0.0) - Full Changelog
 
 **Infrastructure**
+
 - ✅ **Security**: Bcrypt auth, Redis rate limiting, server-side sessions
 - ✅ **Architecture**: 8 reusable components (63-64% size reduction)
 - ✅ **API Documentation**: 34 endpoints with OpenAPI 3.0 + Swagger UI
 - ✅ **Testing**: 288 tests, 100% passing
 
 **Bug Fixes** (20 total across 4 rounds)
+
 - ✅ **Round 1**: Build & type safety (6 bugs) - Production build fixed
 - ✅ **Round 2**: Runtime bugs (6 bugs) - Stock, JSON parsing, validation
 - ✅ **Round 3**: Async/await (4 bugs) - Race conditions eliminated
-- ✅ **Round 4**: Next.js 15 (4 bugs) - Full compatibility achieved
+- ✅ **Payment System**: Stripe integration enabled
+- ✅ **Stability**: Persistent Cart hydration fixes (useStore)
+- ✅ **Tracking**: Full order tracking system (Admin + Customer)
 
 See [CHANGELOG.md](CHANGELOG.md) for complete details.
 
